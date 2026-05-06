@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDE — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ids-blue-700: #004F8B; --ids-blue-600: #006199; --ids-blue-500: #0077C5;
+  --ids-blue-400: #47A0D9; --ids-blue-100: #D9EDF7; --ids-blue-50:  #EBF5FB;
+  --ids-ink-900:  #1A1A1A; --ids-ink-700:  #393A3D; --ids-ink-500:  #6B6C72;
+  --ids-ink-300:  #9EA0A5; --ids-ink-100:  #D4D7DC;
+  --ids-surface-white: #FFFFFF; --ids-surface-page: #F7F8FA;
+  --ids-green-600: #0A7A00; --ids-green-100: #E3F5E1;
+  --ids-red-600:   #C00711; --ids-red-100:   #FDECEA;
+  --ids-orange-600:#C84B00; --ids-orange-100:#FEF0E6;
+  --ids-yellow-600:#9A6700; --ids-yellow-100:#FEF9EC;
+  --ids-purple-600:#5C3A9B; --ids-purple-100:#EDE9F8;
+  --ids-teal-600:  #007A72; --ids-teal-100:  #E0F5F4;
+  --background:           var(--ids-surface-page);
+  --foreground:           var(--ids-ink-700);
+  --card:                 var(--ids-surface-white);
+  --primary:              var(--ids-blue-500);
+  --primary-foreground:   #FFFFFF;
+  --secondary:            var(--ids-blue-50);
+  --secondary-foreground: var(--ids-blue-700);
+  --muted:                #F0F2F5;
+  --muted-foreground:     var(--ids-ink-500);
+  --accent:               var(--ids-blue-50);
+  --accent-foreground:    var(--ids-blue-700);
+  --border:               #E5E7EB;
+  --ring:                 var(--ids-blue-500);
+  --radius:               0.75rem;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+}
+html.dark {
+  --background:           #0F1117;
+  --foreground:           #E2E4EB;
+  --card:                 #171B27;
+  --primary:              #47A0D9;
+  --primary-foreground:   #0F1117;
+  --secondary:            #1A2744;
+  --secondary-foreground: #89C4F4;
+  --muted:                #1C2030;
+  --muted-foreground:     #7A7F96;
+  --accent:               #1A2744;
+  --accent-foreground:    #89C4F4;
+  --border:               #252A3C;
+  --ring:                 #47A0D9;
+  --ids-blue-50:          #111E36; --ids-blue-100:  #1A2F50;
+  --ids-blue-400:         #3A8FCC; --ids-blue-500:  #47A0D9;
+  --ids-blue-700:         #89C4F4;
+  --ids-ink-900:          #F0F2F7; --ids-ink-700:   #E2E4EB;
+  --ids-ink-500:          #7A7F96; --ids-ink-300:   #4A4F65;
+  --ids-ink-100:          #252A3C;
+  --ids-green-100:  #0E2B14; --ids-green-600: #4CAF50;
+  --ids-red-100:    #2B0E10; --ids-red-600:   #F47A7E;
+  --ids-orange-100: #2B1708; --ids-orange-600:#F0935A;
+  --ids-yellow-100: #2B220A; --ids-yellow-600:#D4A338;
+  --ids-purple-100: #1C1538; --ids-purple-600:#9B7DE0;
+  --ids-teal-100:   #0A2422; --ids-teal-600:  #3EB8B0;
+  --ids-surface-white: #171B27; --ids-surface-page: #0F1117;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.25);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.20);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.40), 0 1px 3px rgba(0,0,0,.25);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background); color: var(--foreground);
+  font-size: 14px; line-height: 1.65; min-height: 100vh;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.005em;
+}
+
+/* ── Header ── */
+.header {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50; padding: 0 32px;
+}
+html.dark .header { background: rgba(15,17,23,.88); }
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 36px; height: 68px;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 600; font-size: 14.5px; color: var(--foreground); flex-shrink: 0;
+}
+.header-logo {
+  width: 32px; height: 32px; background: var(--ids-teal-600);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 800; font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,122,114,.35);
+}
+html.dark .header-logo { background: var(--ids-teal-600); }
+.header-sep { color: var(--ids-ink-300); font-weight: 300; margin: 0 -6px; }
+
+/* ── Nav tabs ── */
+.nav-tabs { display: flex; align-items: center; gap: 1px; flex: 1; overflow-x: auto; }
+.nav-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 7px 16px; font-size: 13.5px; font-weight: 500;
+  color: var(--muted-foreground); border-radius: calc(var(--radius) - 2px);
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap; font-family: inherit; line-height: 1.4;
+}
+.nav-tab:hover  { background: var(--muted); color: var(--foreground); }
+.nav-tab.active { background: var(--accent); color: var(--ids-teal-600); font-weight: 600; }
+html.dark .nav-tab.active { color: var(--ids-teal-600); }
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  margin-left: auto; flex-shrink: 0;
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: 9999px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 500;
+  color: var(--muted-foreground); font-family: inherit;
+  transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.theme-toggle:hover { background: var(--accent); color: var(--ids-teal-600); border-color: var(--ids-teal-100); }
+.theme-toggle-icon { font-size: 14px; line-height: 1; }
+
+/* ── Layout ── */
+.page-content { max-width: 1280px; margin: 0 auto; padding: 48px 32px 64px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.page-header { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; color: var(--ids-ink-900); }
+.page-header p { font-size: 14.5px; color: var(--muted-foreground); line-height: 1.6; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ids-ink-300); margin: 40px 0 16px;
+}
+.section-label:first-child { margin-top: 0; }
+.separator { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* ── Card ── */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  padding: 28px; margin-bottom: 20px; transition: box-shadow 0.18s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-title { font-size: 14.5px; font-weight: 600; margin-bottom: 14px; color: var(--ids-ink-900); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center; border-radius: 9999px;
+  padding: 3px 11px; font-size: 11.5px; font-weight: 600;
+  line-height: 1.4; border: 1px solid transparent;
+}
+.badge-default   { background: var(--primary); color: #fff; }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-outline   { background: transparent; color: var(--foreground); border-color: var(--border); }
+.badge-success   { background: var(--ids-green-100); color: var(--ids-green-600); }
+.badge-warning   { background: var(--ids-yellow-100); color: var(--ids-yellow-600); }
+.badge-error     { background: var(--ids-red-100); color: var(--ids-red-600); }
+.badge-purple    { background: var(--ids-purple-100); color: var(--ids-purple-600); }
+.badge-teal      { background: var(--ids-teal-100); color: var(--ids-teal-600); }
+
+/* ── Alert ── */
+.alert {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; display: flex; gap: 13px;
+  align-items: flex-start; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;
+}
+.alert-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+.alert-content { flex: 1; }
+.alert-content strong { font-weight: 600; }
+.alert-info    { background: var(--ids-blue-50);    border-color: var(--ids-blue-100);  color: var(--ids-blue-700); }
+.alert-success { background: var(--ids-green-100);  border-color: #b7e4b3;              color: var(--ids-green-600); }
+.alert-warning { background: var(--ids-yellow-100); border-color: #f0d98a;              color: var(--ids-yellow-600); }
+.alert-error   { background: var(--ids-red-100);    border-color: #f5bbbf;              color: var(--ids-red-600); }
+.alert-teal    { background: var(--ids-teal-100);   border-color: #99d6d2;              color: var(--ids-teal-600); }
+
+/* ── Grids ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+@media(max-width:960px) { .g3,.g4 { grid-template-columns:1fr 1fr; } }
+@media(max-width:640px) { .g2,.g3,.g4 { grid-template-columns:1fr; } }
+
+/* ── Table ── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+table.shad { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.shad thead tr { border-bottom: 1px solid var(--border); }
+table.shad th {
+  padding: 12px 18px; text-align: left; font-weight: 600;
+  color: var(--muted-foreground); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .06em;
+  background: var(--muted);
+}
+table.shad td {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  vertical-align: middle; line-height: 1.6; color: var(--foreground);
+}
+table.shad tbody tr:last-child td { border-bottom: none; }
+table.shad tbody tr:hover td { background: var(--muted); }
+code { background: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 11.5px; font-family: 'SF Mono','Fira Code',monospace; }
+
+/* ── Stat grid ── */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(145px,1fr)); gap: 14px; margin-bottom: 24px; }
+.stat-box {
+  text-align: center; padding: 22px 18px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--card);
+  box-shadow: var(--shadow-xs); transition: box-shadow 0.18s, transform 0.18s;
+}
+.stat-box:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.stat-num   { font-size: 30px; font-weight: 800; color: var(--ids-teal-600); letter-spacing: -.04em; line-height: 1; }
+.stat-label { font-size: 12px; color: var(--muted-foreground); margin-top: 7px; line-height: 1.4; }
+
+/* ── Person card ── */
+.person-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s;
+}
+.person-card:hover { box-shadow: var(--shadow-md); }
+.person-name { font-weight: 700; font-size: 14px; color: var(--ids-ink-900); }
+.person-role { font-size: 12px; color: var(--ids-teal-600); font-weight: 600; margin: 5px 0 8px; }
+.person-ctx  { font-size: 12.5px; color: var(--muted-foreground); line-height: 1.55; }
+
+/* ── Principle card ── */
+.prin-card {
+  border: 1px solid var(--border); border-left: 4px solid var(--ids-teal-600);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 14px;
+  background: var(--card); box-shadow: var(--shadow-xs);
+}
+.prin-title { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; color: var(--ids-ink-900); }
+.prin-desc  { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+
+/* ── Feature card (colored left accent) ── */
+.feat-card {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ids-teal-600);
+  border-radius: var(--radius);
+  padding: 20px 20px 20px 18px;
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s;
+}
+.feat-card:hover { box-shadow: var(--shadow-md); }
+.feat-card.blue   { border-left-color: var(--ids-blue-500); }
+.feat-card.purple { border-left-color: var(--ids-purple-600); }
+.feat-card.orange { border-left-color: var(--ids-orange-600); }
+.feat-card.red    { border-left-color: var(--ids-red-600); }
+.feat-card.yellow { border-left-color: var(--ids-yellow-600); }
+.feat-card h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 7px; color: var(--ids-ink-900); }
+.feat-card p  { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; margin: 0; }
+
+/* ── MCP card ── */
+.mcp-card {
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 24px; background: var(--card); box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+.mcp-card:hover { box-shadow: var(--shadow-md); border-color: var(--ids-teal-600); }
+.mcp-name { font-size: 15px; font-weight: 800; color: var(--ids-ink-900); margin-bottom: 4px; font-family: 'SF Mono','Fira Code',monospace; }
+.mcp-desc { font-size: 13px; color: var(--muted-foreground); margin-bottom: 16px; line-height: 1.6; }
+.mcp-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.mcp-tool {
+  background: var(--ids-teal-100); border: 1px solid #99d6d2;
+  border-radius: 6px; padding: 3px 10px;
+  font-size: 11.5px; font-weight: 600; color: var(--ids-teal-600);
+  font-family: 'SF Mono','Fira Code',monospace;
+}
+
+/* ── Step row ── */
+.step-row {
+  display: flex; gap: 16px; padding: 16px 0;
+  border-bottom: 1px solid var(--border); align-items: flex-start;
+}
+.step-row:last-child { border-bottom: none; }
+.step-num {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ids-teal-600); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; margin-top: 2px;
+}
+.step-body { flex: 1; }
+.step-title { font-weight: 700; font-size: 13.5px; color: var(--ids-ink-900); margin-bottom: 4px; }
+.step-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+
+/* ── Code block ── */
+.code-block {
+  background: #1a1b26; color: #c0caf5; border-radius: var(--radius);
+  padding: 16px 20px; font-family: 'SF Mono','Fira Code',monospace;
+  font-size: 12.5px; line-height: 1.85; overflow-x: auto; margin: 12px 0;
+  box-shadow: var(--shadow-sm);
+}
+html.dark .code-block { background: #0D1117; }
+.code-block .comment { color: #565f89; }
+.code-block .key { color: #7aa2f7; font-weight: 600; }
+.code-block .val { color: #9ece6a; }
+.code-block .cmd { color: #bb9af7; }
+
+/* ── Access row ── */
+.access-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.access-row:last-child { border-bottom: none; }
+.access-icon { font-size: 18px; flex-shrink: 0; }
+.access-desc { flex: 1; font-size: 13.5px; }
+.access-desc strong { display: block; font-weight: 600; margin-bottom: 3px; color: var(--ids-ink-900); }
+.access-desc span   { color: var(--muted-foreground); font-size: 12.5px; }
+.access-desc a { color: var(--ids-teal-600); text-decoration: none; }
+.access-desc a:hover { text-decoration: underline; }
+
+/* ── Quote ── */
+.quote {
+  border-left: 4px solid var(--ids-teal-600); padding: 14px 18px; margin-bottom: 14px;
+  background: var(--ids-teal-100); border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13.5px; font-style: italic; line-height: 1.7; color: var(--foreground);
+}
+html.dark .quote { background: #0a2422; }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: var(--muted-foreground); font-weight: 600; }
+
+/* ── Tool pills ── */
+.tool-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tool-pill {
+  background: var(--secondary); border: 1px solid var(--ids-blue-100);
+  border-radius: 9999px; padding: 5px 14px;
+  font-size: 12.5px; color: var(--secondary-foreground); font-weight: 500;
+}
+
+/* ── Intro hero card ── */
+.intro-card {
+  background: linear-gradient(135deg, #005c54 0%, var(--ids-teal-600) 100%);
+  color: white; border-radius: var(--radius);
+  padding: 40px 44px; margin-bottom: 36px;
+  box-shadow: 0 8px 32px rgba(0,122,114,.25), 0 2px 8px rgba(0,122,114,.12);
+  position: relative; overflow: hidden;
+}
+html.dark .intro-card {
+  background: linear-gradient(135deg, #003330 0%, #005c54 60%, #007a72 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+}
+.intro-card::before {
+  content: ''; position: absolute; top: -60px; right: -40px;
+  width: 220px; height: 220px; background: rgba(255,255,255,.06);
+  border-radius: 50%; pointer-events: none;
+}
+.intro-card h2 { font-size: 22px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 10px; line-height: 1.2; }
+.intro-card p  { font-size: 14.5px; color: rgba(255,255,255,.85); line-height: 1.7; margin: 0; max-width: 680px; }
+
+/* ── Footnote ── */
+.footnote { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 48px; font-size: 12px; color: var(--muted-foreground); line-height: 1.8; }
+.footnote strong { color: var(--foreground); }
+
+/* ── Typography ── */
+a { color: var(--ids-teal-600); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ol, ul { padding-left: 22px; }
+li { margin-bottom: 7px; line-height: 1.65; font-size: 13.5px; }
+h3 { font-size: 15px; font-weight: 700; margin: 22px 0 12px; color: var(--ids-ink-900); letter-spacing: -.015em; }
+h4 { font-size: 13.5px; font-weight: 700; margin: 0 0 6px; color: var(--ids-ink-900); }
+p  { font-size: 13.5px; line-height: 1.7; margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+
+/* ══════════════════════════════════════
+   HAMBURGER / MOBILE NAV
+══════════════════════════════════════ */
+.nav-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  color: var(--foreground); padding: 6px; border-radius: 6px;
+  margin-left: auto; flex-shrink: 0; transition: background 0.12s;
+}
+.nav-hamburger:hover { background: var(--muted); }
+.nav-hamburger svg { display: block; }
+.mobile-nav { display: none; position: fixed; inset: 0; z-index: 100; }
+.mobile-nav.open { display: block; }
+.mobile-nav-backdrop {
+  position: absolute; inset: 0; background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.mobile-nav-sheet {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: min(280px, 80vw); background: var(--card);
+  border-right: 1px solid var(--border); box-shadow: var(--shadow-md);
+  display: flex; flex-direction: column;
+  transform: translateX(-100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+}
+.mobile-nav.open .mobile-nav-sheet { transform: translateX(0); }
+.mobile-nav-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+}
+.mobile-nav-title { font-size: 14px; font-weight: 700; color: var(--ids-ink-900); }
+.mobile-nav-close {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  color: var(--muted-foreground); padding: 4px; border-radius: 6px;
+  font-size: 18px; line-height: 1; transition: background 0.12s;
+}
+.mobile-nav-close:hover { background: var(--muted); color: var(--foreground); }
+.mobile-nav-links { padding: 12px 10px; flex: 1; overflow-y: auto; }
+.mobile-nav-link {
+  display: block; width: 100%; background: none; border: none; cursor: pointer;
+  text-align: left; font-family: inherit;
+  padding: 11px 14px; border-radius: calc(var(--radius) - 2px);
+  font-size: 14px; font-weight: 500; color: var(--muted-foreground);
+  transition: background 0.12s, color 0.12s;
+}
+.mobile-nav-link:hover  { background: var(--muted); color: var(--foreground); }
+.mobile-nav-link.active { background: var(--ids-teal-100); color: var(--ids-teal-600); font-weight: 600; }
+.mobile-nav-footer { padding: 12px 16px 20px; border-top: 1px solid var(--border); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .page-content { padding: 36px 24px 48px; }
+  .header { padding: 0 20px; }
+  .header-inner { gap: 20px; height: 60px; }
+  .intro-card { padding: 30px 28px; }
+  .intro-card h2 { font-size: 20px; }
+}
+@media (max-width: 640px) {
+  .nav-tabs    { display: none; }
+  .theme-toggle { display: none; }
+  .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+  .header { padding: 0 16px; }
+  .header-inner { height: 56px; gap: 12px; }
+  .header-logo { width: 28px; height: 28px; font-size: 12px; }
+  .header-brand { font-size: 13.5px; gap: 9px; }
+  .page-content { padding: 24px 16px 48px; }
+  .intro-card { padding: 24px 20px; margin-bottom: 24px; }
+  .intro-card h2 { font-size: 18px; }
+  .page-header { margin-bottom: 24px; padding-bottom: 18px; }
+  .page-header h1 { font-size: 20px; }
+  .card { padding: 18px 16px; margin-bottom: 14px; }
+  .person-card { padding: 16px; }
+  h3 { font-size: 14px; }
+  li, p { font-size: 13px; }
+  .badge { padding: 3px 9px; font-size: 11px; }
+}
+@media (max-width: 375px) {
+  .page-content { padding: 20px 14px 40px; }
+  .header { padding: 0 14px; }
+  .intro-card { padding: 20px 16px; }
+  .intro-card h2 { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">DDE</div>
+      <span>Data Discovery &amp; Exploration</span>
+      <span class="header-sep">·</span>
+      <span style="font-weight:400;color:var(--muted-foreground)">Onboarding</span>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('overview',this)">Overview</button>
+      <button class="nav-tab" onclick="showTab('mcps',this)">MCP Tools</button>
+      <button class="nav-tab" onclick="showTab('setup',this)">Getting Started</button>
+      <button class="nav-tab" onclick="showTab('workflows',this)">Workflows &amp; Use Cases</button>
+      <button class="nav-tab" onclick="showTab('research',this)">User Research</button>
+      <button class="nav-tab" onclick="showTab('team',this)">Team &amp; Links</button>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-toggle-icon" id="themeIcon">☀️</span>
+      <span id="themeLabel">Light</span>
+    </button>
+    <button class="nav-hamburger" id="hamburger" onclick="openMobileNav()" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-backdrop" onclick="closeMobileNav()"></div>
+  <div class="mobile-nav-sheet">
+    <div class="mobile-nav-header">
+      <div class="header-logo" style="width:26px;height:26px;font-size:10px;border-radius:6px">DDE</div>
+      <span class="mobile-nav-title">DDE Onboarding</span>
+      <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+    </div>
+    <div class="mobile-nav-links">
+      <button class="mobile-nav-link active" onclick="mobileTab('overview',this)">📡 Overview</button>
+      <button class="mobile-nav-link" onclick="mobileTab('mcps',this)">🔧 MCP Tools</button>
+      <button class="mobile-nav-link" onclick="mobileTab('setup',this)">⚙️ Getting Started</button>
+      <button class="mobile-nav-link" onclick="mobileTab('workflows',this)">⚡ Workflows &amp; Use Cases</button>
+      <button class="mobile-nav-link" onclick="mobileTab('research',this)">📊 User Research</button>
+      <button class="mobile-nav-link" onclick="mobileTab('team',this)">👥 Team &amp; Links</button>
+    </div>
+    <div class="mobile-nav-footer">
+      <button class="theme-toggle" style="width:100%;justify-content:center" onclick="toggleTheme()">
+        <span class="theme-toggle-icon" id="themeIconMobile">☀️</span>
+        <span id="themeLabelMobile">Light mode</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ TAB 1 · OVERVIEW ══════════ -->
+<div id="tab-overview" class="panel active">
+<div class="page-content">
+
+  <div class="intro-card">
+    <h2>Data Discovery &amp; Exploration (DDE) — Onboarding</h2>
+    <p>Intuit's platform for searching, understanding, and accessing data assets from your IDE. DDE exposes data tables, schemas, columns, and lineage through MCP-powered agentic tools — turning a 45-minute search into a 4-minute conversation.</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-num">45→4</div><div class="stat-label">Minutes from question to insight (with MCP)</div></div>
+    <div class="stat-box"><div class="stat-num">14</div><div class="stat-label">MCP tools available across all DDE servers</div></div>
+    <div class="stat-box"><div class="stat-num">80%+</div><div class="stat-label">Accuracy on data discovery queries</div></div>
+    <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">MCPs: discover, access, explore</div></div>
+  </div>
+
+  <div class="section-label">What is DDE?</div>
+  <div class="g3">
+    <div class="feat-card">
+      <h4>🔍 Data Discovery</h4>
+      <p>Search across Intuit's data catalog — tables, columns, schemas, lineage. Backed by the DDE API layer at <code>dde-mcp-server.api.intuit.com</code>. Think of it as Google for Intuit's internal data lake.</p>
+    </div>
+    <div class="feat-card purple">
+      <h4>🔐 Data Access</h4>
+      <p>Request and manage access to data assets — all from your IDE. The <code>dde-access-mcp</code> handles access requests to DLAP and DACM without leaving Cursor or Claude Code.</p>
+    </div>
+    <div class="feat-card blue">
+      <h4>⚡ Data Exploration</h4>
+      <p>Run queries and explore data interactively on Databricks. The Databricks MCP bridges your conversational AI workflow with actual compute. Exploration is backed by Databricks clusters.</p>
+    </div>
+  </div>
+
+  <div class="section-label">How DDE fits in the Intuit stack</div>
+  <div class="card">
+    <div class="g2">
+      <div>
+        <h4>The data workflow today</h4>
+        <div style="font-size:13px;color:var(--muted-foreground);line-height:2.1;margin-top:8px">
+          <div>🏢 <strong style="color:var(--foreground)">Dev Portal</strong> — Service registry, asset management</div>
+          <div style="padding-left:18px">↳ 🔍 <strong style="color:var(--foreground)">DDE (Data Discovery &amp; Exploration)</strong></div>
+          <div style="padding-left:36px">↳ 🗄️ <strong style="color:var(--foreground)">Data Lake (ADAPT / Iceberg)</strong> — Raw data tables</div>
+          <div style="padding-left:36px">↳ 🔐 <strong style="color:var(--foreground)">DACM / DLAP</strong> — Data access control &amp; management</div>
+          <div style="padding-left:36px">↳ ⚡ <strong style="color:var(--foreground)">Databricks</strong> — Interactive compute for exploration</div>
+          <div style="padding-left:36px">↳ 📋 <strong style="color:var(--foreground)">CDC (Customer Data Cloud)</strong> — User &amp; tax attribute data</div>
+        </div>
+      </div>
+      <div>
+        <h4>What DDE MCPs give you</h4>
+        <ul style="color:var(--muted-foreground);font-size:13px;margin-top:8px">
+          <li>Natural language search across the entire data catalog</li>
+          <li>Table schema inspection and column-level detail</li>
+          <li>Data lineage tracing (upstream/downstream)</li>
+          <li>Access request submission and status tracking</li>
+          <li>Databricks query execution and result analysis</li>
+          <li>Collection management for bounded search contexts</li>
+          <li>Table ownership and endorsement information</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">The problem DDE solves</div>
+  <div class="card">
+    <div class="g2">
+      <div>
+        <h4>Before DDE MCPs</h4>
+        <div class="alert alert-error" style="margin-bottom:0;margin-top:10px">
+          <span class="alert-icon">😫</span>
+          <div class="alert-content">
+            A data developer needed to: (1) Open DDE UI in browser, (2) Search manually, (3) Copy table names, (4) Switch to Databricks, (5) Write SQL, (6) Go back to DACM to request access, (7) Wait for approval email, (8) Switch back and run queries.
+            <strong> Total: ~45 minutes per data question.</strong>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4>After DDE MCPs</h4>
+        <div class="alert alert-success" style="margin-bottom:0;margin-top:10px">
+          <span class="alert-icon">🚀</span>
+          <div class="alert-content">
+            Ask your IDE: "Find tables related to customer tax events." Agent searches, inspects schemas, checks access, submits request if needed, and drafts a query — <strong>all in one conversation.</strong> Total: ~4 minutes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Key terminology</div>
+  <div class="table-wrap">
+    <table class="shad">
+      <thead><tr><th>Term</th><th>What it means</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DDE</strong></td><td>Data Discovery &amp; Exploration — the platform and team</td><td>devportal.intuit.com/app/dp/capability/17zylvxjz0edgc68mgi8</td></tr>
+        <tr><td><strong>data-discovery-mcp</strong></td><td>MCP server for searching the data catalog via natural language</td><td>Install via codegen CLI or MCP Marketplace</td></tr>
+        <tr><td><strong>dde-access-mcp</strong></td><td>MCP server for requesting and managing access to data tables</td><td>Dev Portal service onboarding required</td></tr>
+        <tr><td><strong>Databricks MCP</strong></td><td>MCP server for interactive query execution on Databricks clusters</td><td>Separate install; requires UC adoption</td></tr>
+        <tr><td><strong>ADAPT</strong></td><td>Intuit's data lake. Tables stored here in Hive/Iceberg format.</td><td>adapt.api.intuit.com</td></tr>
+        <tr><td><strong>DACM</strong></td><td>Data Access Control Management — governs who can SELECT which tables</td><td>dataaccesscontrolmgmt.api.intuit.com</td></tr>
+        <tr><td><strong>DLAP</strong></td><td>Data Lake Access Portal — access request workflow UI</td><td>Internal portal</td></tr>
+        <tr><td><strong>IRN</strong></td><td>Intuit Resource Name — unique identifier for every data asset</td><td>e.g. irn:intuit:datalake:dataasset:prd:hivetable:schema.table</td></tr>
+        <tr><td><strong>codegen CLI</strong></td><td>Intuit dev CLI for MCP installation. <code>codegen mcp install data-discovery-mcp:latest</code></td><td>Terminal</td></tr>
+        <tr><td><strong>intuit-remote-mcp-proxy</strong></td><td>Local proxy daemon bridging IDE ↔ remote MCP server. Runs on localhost:8098</td><td>Installed alongside data-discovery-mcp</td></tr>
+        <tr><td><strong>INTUIT_API_KEY</strong></td><td>API key for authenticating with DDE services. Starts with <code>prdaky...</code></td><td>Request from DDE team in Slack</td></tr>
+        <tr><td><strong>eiamcli</strong></td><td>Intuit IAM CLI. Run <code>eiamcli login</code> and <code>eiamcli iamticket</code> to refresh auth.</td><td>Terminal</td></tr>
+        <tr><td><strong>Collections</strong></td><td>Curated subsets of data assets for bounded search context</td><td>DDE UI + data-discovery-mcp</td></tr>
+        <tr><td><strong>HCAP</strong></td><td>High-Compliance Access Protocol — exercise extra caution using MCPs in HCAP environments</td><td>Internal policy</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-warning" style="margin-top:20px">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-content"><strong>HCAP Warning (April 2026):</strong> Please exercise caution when using DDE MCPs through agents while in HCAP. Review the latest guidance in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> before running agentic workflows in high-compliance contexts.</div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Slack #dde-agentic-discovery-exploration-users (live channel, Apr 2026) · AIW Onboarding (internal) · Data 3.0 Strategy Presentation (Apr 2026) · DevPortal capability page<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ TAB 2 · MCP TOOLS ══════════ -->
+<div id="tab-mcps" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>DDE MCP Tools</h1>
+    <p>Four MCP servers cover the full data workflow: authenticate, discover what exists, request access, and run queries. Install once, use everywhere your AI agent runs.</p>
+  </div>
+
+  <div class="alert alert-teal">
+    <span class="alert-icon">💡</span>
+    <div class="alert-content"><strong>DAST Plugin available:</strong> All four MCPs are bundled in the <a href="https://github.intuit.com/platformexps-patterns/devassist-plugins-registry/tree/master/intuit-data-discovery-access-exploration-capability-plugin" target="_blank">intuit-data-discovery-access-exploration-capability-plugin ↗</a> — the easiest way to get all DDE capabilities at once. Also available via <a href="https://mcp-marketplace.app.intuit.com/mcp-marketplace-ui/mcpmarketplace?mcpId=mcp-31913&isV2MCP=true" target="_blank">MCP Marketplace ↗</a>.</div>
+  </div>
+
+  <div class="section-label">MCP 1 — Data Discovery</div>
+  <div class="mcp-card">
+    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <div class="mcp-name">data-discovery-mcp</div>
+        <div class="mcp-desc">Search Intuit's entire data catalog using natural language. Find tables by business concept, inspect schemas, explore column metadata and data lineage — all without leaving your IDE.</div>
+        <div style="margin-bottom:10px"><span class="badge badge-teal">Primary MCP</span> <span class="badge badge-success">14 tools</span> <span class="badge" style="background:var(--ids-teal-100);color:var(--ids-teal-600);border:1px solid #99d6d2">80%+ accuracy</span></div>
+        <div class="code-block">codegen mcp install data-discovery-mcp:latest</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Server endpoint: <code>dde-mcp-server.api.intuit.com</code> · Proxy: localhost:8098</div>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <h4 style="margin-bottom:10px">Available tools</h4>
+        <div class="mcp-tools">
+          <span class="mcp-tool">searchTables</span>
+          <span class="mcp-tool">getTableSchema</span>
+          <span class="mcp-tool">getColumnDetails</span>
+          <span class="mcp-tool">getDataLineage</span>
+          <span class="mcp-tool">searchCollections</span>
+          <span class="mcp-tool">getTableOwner</span>
+          <span class="mcp-tool">getAssetMetadata</span>
+          <span class="mcp-tool">searchWithinCollection</span>
+        </div>
+        <div class="alert alert-warning" style="margin-top:14px;margin-bottom:0;padding:12px 14px">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content" style="font-size:12.5px"><strong>Known limitation:</strong> <code>searchTables</code> has a hard cap of 100 results with no pagination. No <code>filterByOwner</code> support yet. Work in progress per team.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">MCP 2 — Data Access</div>
+  <div class="mcp-card">
+    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <div class="mcp-name">dde-access-mcp</div>
+        <div class="mcp-desc">Request, check, and manage access to data tables — directly from your IDE. Interfaces with DACM (Data Access Control Management) and DLAP. Requires Dev Portal service onboarding and a separate INTUIT_API_KEY.</div>
+        <div style="margin-bottom:10px"><span class="badge badge-purple">Access Control</span> <span class="badge badge-outline">Service onboarding required</span></div>
+        <div class="code-block"><span class="comment"># Dev Portal onboarding required first</span>
+<span class="comment"># Ask in #dde-agentic-discovery-exploration-users for API key</span>
+codegen mcp install dde-access-mcp:latest</div>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <h4 style="margin-bottom:10px">Available tools</h4>
+        <div class="mcp-tools">
+          <span class="mcp-tool">request_access</span>
+          <span class="mcp-tool">check_access_status</span>
+          <span class="mcp-tool">list_my_access</span>
+          <span class="mcp-tool">get_table_owner</span>
+          <span class="mcp-tool">cancel_access_request</span>
+        </div>
+        <div class="alert alert-info" style="margin-top:14px;margin-bottom:0;padding:12px 14px">
+          <span class="alert-icon">💬</span>
+          <div class="alert-content" style="font-size:12.5px"><strong>Feature request (from users):</strong> <code>request_access</code> currently doesn't return the approver's name. You have to go to the DDE UI to find the owner. Community has requested this be surfaced in the API response.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">MCP 3 — Databricks Exploration</div>
+  <div class="mcp-card">
+    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <div class="mcp-name">databricks-mcp</div>
+        <div class="mcp-desc">Run SQL queries, analyze data, and interact with Databricks clusters from your IDE. Pairs with data-discovery-mcp for a complete discover → access → explore workflow. Best used after you have table access confirmed.</div>
+        <div style="margin-bottom:10px"><span class="badge badge-secondary">Exploration</span> <span class="badge badge-warning">UC adoption required</span></div>
+        <div class="alert alert-warning" style="margin-bottom:0;margin-top:8px;padding:12px 14px">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content" style="font-size:12.5px"><strong>Databricks Connect is blocked</strong> until Unity Catalog (UC) Adoption launch. For full interactive compute, local laptop connections are currently the interim path. Follow <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> for updates.</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <h4 style="margin-bottom:10px">Available tools</h4>
+        <div class="mcp-tools">
+          <span class="mcp-tool">execute_query</span>
+          <span class="mcp-tool">list_catalogs</span>
+          <span class="mcp-tool">list_schemas</span>
+          <span class="mcp-tool">describe_table</span>
+          <span class="mcp-tool">get_query_history</span>
+          <span class="mcp-tool">create_table</span>
+        </div>
+        <div class="alert alert-teal" style="margin-top:14px;margin-bottom:0;padding:12px 14px">
+          <span class="alert-icon">🏆</span>
+          <div class="alert-content" style="font-size:12.5px"><strong>GED success story:</strong> The Agentic Data Discovery &amp; Exploration GED project demonstrated using Databricks MCP + data-discovery-mcp together for end-to-end data workflows. See the demo in <a href="https://global-engineering-days.app.intuit.com/project-dashboard/4ff8ca0e-ccfd-4d33-ae2e-7b04fd4f9ab6" target="_blank">GED project dashboard ↗</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">MCP 4 — Authentication</div>
+  <div class="mcp-card">
+    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <div class="mcp-name">auth-mcp</div>
+        <div class="mcp-desc">Handles authentication and token management for DDE services. Required as a companion server alongside data-discovery-mcp and dde-access-mcp to keep your IAM session alive and refresh tokens automatically without leaving your IDE.</div>
+        <div style="margin-bottom:10px"><span class="badge badge-outline">Auth</span> <span class="badge badge-secondary">Required companion</span></div>
+        <div class="code-block">codegen mcp install auth-mcp:latest</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Install alongside the other DDE MCPs for seamless auth management</div>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <h4 style="margin-bottom:10px">Why you need it</h4>
+        <div class="alert alert-teal" style="margin-bottom:0;padding:12px 14px">
+          <span class="alert-icon">🔑</span>
+          <div class="alert-content" style="font-size:12.5px">Without <code>auth-mcp</code>, your session tokens can expire mid-workflow, causing silent failures or <code>AuthenticationFailed</code> errors. This server refreshes credentials in the background so long-running discovery sessions don't break. See the full setup guide at <a href="https://wiki.cloud.intuit.com/wiki/spaces/MEDO/pages/3590526266" target="_blank">Confluence MEDO/3590526266 ↗</a>.</div>
+        </div>
+        <div class="alert alert-warning" style="margin-top:10px;margin-bottom:0;padding:12px 14px">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content" style="font-size:12.5px"><strong>HCAP environments:</strong> Exercise extra caution using auth-mcp in high-compliance contexts. Review the latest guidance in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> before use.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Also available: CDC Capability Plugin</div>
+  <div class="card">
+    <div class="card-title">CDC (Customer Data Cloud) — User &amp; Tax Attribute Discovery</div>
+    <p>A specialized skill plugin covering user attributes, tax attributes, and CG marketing data from the Customer Data Cloud. Part of the 3X Productivity initiative.</p>
+    <div class="g2" style="margin-top:12px">
+      <div class="feat-card">
+        <h4>🎯 data-cdc-attribute-discovery skill</h4>
+        <p>Discovers CDC attributes across User and Tax attribute domains. V1 scope covers the most important attributes used in CG marketing, agentic, and critical use cases.</p>
+      </div>
+      <div class="feat-card blue">
+        <h4>📦 CDC Capability Plugin</h4>
+        <p>Install via DAST to get CDC discovery integrated into your agent workflow. Connects to the broader DDE ecosystem.</p>
+      </div>
+    </div>
+    <div class="alert alert-success" style="margin-top:12px;margin-bottom:0">
+      <span class="alert-icon">🚀</span>
+      <div class="alert-content"><strong>Launched:</strong> CDC Capability Plugin &amp; Skills V1 shipped in April 2026. Announced in #pdx-launched. More attribute domains coming in V2.</div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Slack #dde-agentic-discovery-exploration-users · #pdx-launched · #ask-data-genius-bar · MCP Marketplace listing<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ TAB 3 · GETTING STARTED ══════════ -->
+<div id="tab-setup" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Getting Started</h1>
+    <p>Step-by-step setup for data-discovery-mcp — the most commonly used DDE server. Full guide: <a href="https://github.intuit.com/dataundstd-dmsearch/dde-mcp-guide" target="_blank">github.intuit.com/dataundstd-dmsearch/dde-mcp-guide ↗</a></p>
+  </div>
+
+  <div class="alert alert-teal">
+    <span class="alert-icon">💡</span>
+    <div class="alert-content"><strong>Fastest path:</strong> Install the <a href="https://github.intuit.com/platformexps-patterns/devassist-plugins-registry/tree/master/intuit-data-discovery-access-exploration-capability-plugin" target="_blank">DAST plugin</a> — it bundles data-discovery-mcp, dde-access-mcp and all dependencies in one shot. Enable once, works in Cursor and Claude Code (CLI).</div>
+  </div>
+
+  <div class="alert alert-warning" style="margin-bottom:16px">
+    <span class="alert-icon">🍎</span>
+    <div class="alert-content"><strong>Apple Silicon (M1/M2/M3) users:</strong> If you have an Intel-era Homebrew installation at <code>/usr/local/bin/brew</code>, you must uninstall it and reinstall the ARM version at <code>/opt/homebrew</code> before proceeding. Mixing architectures causes silent failures during Podman and codegen setup. Request temporary admin via ServiceNow before starting. Full guide: <a href="https://wiki.cloud.intuit.com/wiki/spaces/MEDO/pages/3590526266" target="_blank">Confluence MEDO/3590526266 ↗</a></div>
+  </div>
+
+  <div class="section-label">Setup steps — data-discovery-mcp</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:24px 28px">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Prerequisites — eiam, codegen, node, yarn</div>
+          <div class="step-desc">You need the Intuit <code>eiamcli</code> and <code>codegen</code> CLI (v0.74.3+), plus <code>node</code> and <code>yarn</code>. Check versions first. Install from Dev Portal if missing.</div>
+          <div class="code-block">eiamcli --version      <span class="comment"># Intuit IAM CLI</span>
+codegen --version      <span class="comment"># should be 0.74.3 or newer</span>
+node --version         <span class="comment"># required for codegen internals</span>
+yarn --version         <span class="comment"># required for some MCP installs</span></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Log in with eiamcli</div>
+          <div class="step-desc">IAM authentication is required before the proxy can communicate with DDE services. Refresh your ticket if you see 401 errors later.</div>
+          <div class="code-block"><span class="cmd">eiamcli login</span>          <span class="comment"># first-time login</span>
+<span class="cmd">eiamcli iamticket</span>      <span class="comment"># refresh ticket when it expires</span></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Install and start Podman</div>
+          <div class="step-desc">DDE MCPs require a container runtime. Podman is the recommended option (Docker also works). You must initialise and start the Podman machine before running codegen installs — otherwise the setup fails silently.</div>
+          <div class="code-block"><span class="comment"># Install Podman Desktop from https://podman-desktop.io or via brew</span>
+brew install podman
+<span class="cmd">podman machine init</span>    <span class="comment"># initialise VM (one-time; may fail on bad gateway — retry)</span>
+<span class="cmd">podman machine start</span>   <span class="comment"># start the VM before codegen installs</span>
+<span class="cmd">podman info</span>            <span class="comment"># verify it's running</span></div>
+          <div class="alert alert-warning" style="margin-top:10px;margin-bottom:0;padding:12px 14px">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content" style="font-size:12.5px"><strong>Podman machine restart clears containers.</strong> If you restart your laptop and the MCP stops working, re-run <code>podman machine start</code> and then toggle the MCP off/on in your IDE.</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Install all four DDE MCPs via codegen</div>
+          <div class="step-desc">Install each server in order. <code>auth-mcp</code> handles token refresh and is required alongside the others. <code>intuit-remote-mcp-proxy</code> is installed automatically with <code>data-discovery-mcp</code>. When prompted, select your IDE (Cursor or Claude Code).</div>
+          <div class="code-block"><span class="cmd">codegen mcp install auth-mcp:latest</span>
+<span class="cmd">codegen mcp install data-discovery-mcp:latest</span>
+<span class="cmd">codegen mcp install dde-access-mcp:latest</span>
+<span class="cmd">codegen mcp install databricks-mcp:latest</span>
+<span class="comment"># Select IDE when prompted for each</span>
+<span class="comment"># If NOT prompted for API key, see troubleshooting below</span></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Configure your INTUIT_API_KEY</div>
+          <div class="step-desc">The codegen installer sometimes skips the API key prompt. If your searches fail with <strong>"Failed to search data entities"</strong>, manually set the key. Request one in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> — it starts with <code>prdaky...</code>.</div>
+          <div class="code-block"><span class="comment"># Check your mcp.json — it should look like this:</span>
+<span class="key">"data-discovery-mcp"</span>: {
+  <span class="key">"url"</span>: <span class="val">"http://localhost:8098/api/mcp"</span>
+},
+<span class="key">"intuit-remote-mcp-proxy"</span>: {
+  <span class="key">"command"</span>: <span class="val">"codegen"</span>,
+  <span class="key">"env"</span>: { <span class="key">"INTUIT_API_KEY"</span>: <span class="val">"prdaky..."</span> },
+  <span class="key">"args"</span>: [<span class="val">"mcp"</span>, <span class="val">"remote-init"</span>]
+}</div>
+          <div class="alert alert-error" style="margin-top:10px;margin-bottom:0;padding:12px 14px">
+            <span class="alert-icon">🚨</span>
+            <div class="alert-content" style="font-size:12.5px"><strong>Common mistake:</strong> The URL should be <code>http://localhost:8098/api/mcp</code> — NOT <code>http://localhost:8098/data-discovery-mcp</code>. The proxy must not have the MCP name appended to the path. Claude Code users especially watch out for this routing issue.</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">Add Cursor Rules for DDE</div>
+          <div class="step-desc">The DDE team maintains a Cursor Rules file that gives your AI agent best-practice guidance on how to use the DDE MCPs correctly — including which tools to call, how to handle IRNs, and when to pause for access approval. Add it to your Cursor project.</div>
+          <div class="code-block"><span class="comment"># In Cursor: press cmd+shift+p → "Add Cursor Rule"</span>
+<span class="comment"># Paste the rule from GitHub:</span>
+<span class="comment"># github.intuit.com/cognition-discovery/discovery-docs</span>
+<span class="comment"># → dde-data-discovery-rules.md</span></div>
+          <div class="alert alert-teal" style="margin-top:10px;margin-bottom:0;padding:12px 14px">
+            <span class="alert-icon">💡</span>
+            <div class="alert-content" style="font-size:12.5px">The rules file significantly improves agent behavior — it teaches Cursor how to chain discovery → access → query workflows without hallucinating tool names or IRN formats.</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-title">Start the remote proxy and verify</div>
+          <div class="step-desc">Enable/toggle the MCPs in your IDE. The remote proxy should start on port 8098. Verify all 14 tools from data-discovery-mcp load successfully.</div>
+          <div class="code-block"><span class="comment"># Proxy runs on localhost:8098</span>
+<span class="comment"># In Cursor: Settings → MCP → toggle data-discovery-mcp to green ✅</span>
+<span class="comment"># In Claude Code CLI: tools should auto-load on session start</span></div>
+        </div>
+      </div>
+      <div class="step-row" style="border-bottom:none">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="step-title">Test with a sample query</div>
+          <div class="step-desc">Try asking your agent to find a table. If you see results, you're good. If not, check the troubleshooting section.</div>
+          <div class="code-block"><span class="comment"># Example prompts to test your setup:</span>
+"Find tables related to customer tax filing events"
+"What columns does intuit_foundation_identityandcustomer360... contain?"
+"Search for tables in the adapt_7216 schema"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Using DDE MCPs in Claude Code (CLI)</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:24px 28px">
+      <p style="margin-bottom:16px;color:var(--muted-foreground)">Claude Code CLI uses a slightly different MCP configuration than Cursor. The <code>claude mcp add --scope user</code> command registers MCPs globally for your user. Use these commands after completing the codegen installs above.</p>
+      <div class="step-row">
+        <div class="step-num" style="background:var(--ids-blue-500)">A</div>
+        <div class="step-body">
+          <div class="step-title">Register MCPs with Claude Code CLI</div>
+          <div class="code-block"><span class="comment"># Register the remote proxy as a user-scoped MCP</span>
+<span class="cmd">claude mcp add --scope user intuit-remote-mcp-proxy \</span>
+  codegen mcp remote-init
+
+<span class="comment"># Register data-discovery-mcp pointing to the proxy</span>
+<span class="cmd">claude mcp add --scope user data-discovery-mcp \</span>
+  --url http://localhost:8098/api/mcp
+
+<span class="comment"># Register auth-mcp</span>
+<span class="cmd">claude mcp add --scope user auth-mcp \</span>
+  codegen mcp auth-init
+
+<span class="comment"># Verify all MCPs are registered</span>
+<span class="cmd">claude mcp list</span></div>
+        </div>
+      </div>
+      <div class="step-row" style="border-bottom:none">
+        <div class="step-num" style="background:var(--ids-blue-500)">B</div>
+        <div class="step-body">
+          <div class="step-title">Copy Cursor-configured MCPs to Claude Code</div>
+          <div class="step-desc">If you already have MCPs set up in Cursor, there's a faster path — copy the MCP config directly. See the Confluence guide for details on syncing configs between IDEs.</div>
+          <div class="code-block"><span class="comment"># Full guide: wiki.cloud.intuit.com/wiki/spaces/MEDO/pages/3591559561</span>
+<span class="comment"># "Adding Cursor Configured MCP Servers to Claude Code CLI"</span></div>
+          <div class="alert alert-info" style="margin-top:10px;margin-bottom:0;padding:12px 14px">
+            <span class="alert-icon">📌</span>
+            <div class="alert-content" style="font-size:12.5px">Claude Code CLI only supports <strong>Streamable HTTP transport</strong> for DDE MCPs — this works. The Claude Desktop <em>app</em> does not support this transport. Do not confuse Claude Code CLI (terminal) with Claude Desktop (GUI).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Compatible IDEs</div>
+  <div class="g3">
+    <div class="feat-card">
+      <h4>✅ Cursor</h4>
+      <p>Fully supported. All 14 tools work. The primary recommended IDE for DDE MCP usage. Best experience for interactive data discovery workflows.</p>
+    </div>
+    <div class="feat-card">
+      <h4>✅ Claude Code (CLI)</h4>
+      <p>Fully supported. Works with the remote proxy on localhost:8098. Watch out for the URL routing issue (see step 4). Most users on Claude Code report it working after fixing the path.</p>
+    </div>
+    <div class="feat-card red">
+      <h4>❌ Claude Desktop App</h4>
+      <p>Not yet supported. Claude Desktop does not support the <strong>Streamable HTTP transport</strong> that DDE MCPs use. Use Claude Code CLI as the alternative.</p>
+    </div>
+  </div>
+
+  <div class="section-label">Common issues &amp; fixes</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="shad">
+      <thead><tr><th>Error / Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>"Failed to search data entities"</code></td>
+          <td>INTUIT_API_KEY not configured in proxy env</td>
+          <td>Manually add <code>"INTUIT_API_KEY": "prdaky..."</code> to <code>intuit-remote-mcp-proxy.env</code> in mcp.json. Request key in Slack.</td>
+        </tr>
+        <tr>
+          <td>Port 8050 error — "reach out to admin"</td>
+          <td>No self-serve fix available currently</td>
+          <td>Post in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> and tag @Akash Mohan or @Shaswati Mukherjee.</td>
+        </tr>
+        <tr>
+          <td><code>AuthenticationFailed</code> XML error</td>
+          <td>IAM ticket expired or missing</td>
+          <td>Run <code>eiamcli iamticket</code> to refresh. Then restart your IDE or toggle the MCP off/on.</td>
+        </tr>
+        <tr>
+          <td><code>401 Unauthorized</code> on dde-access-mcp</td>
+          <td>Missing or wrong API key for DLAP/DACM auth</td>
+          <td>Request an API key for dde-access-mcp specifically — it may differ from data-discovery-mcp key. Ask in Slack.</td>
+        </tr>
+        <tr>
+          <td><code>403 Forbidden</code> on request_access</td>
+          <td>Insufficient permissions to submit access request to that table</td>
+          <td>Submit the request via the DDE UI as a workaround. Check the IRN is formatted correctly.</td>
+        </tr>
+        <tr>
+          <td>Proxy routing to <code>/api/mcp/data-discovery-mcp</code> (404)</td>
+          <td>Proxy appends MCP name to URL — Claude Code-specific bug</td>
+          <td>Set the URL to <code>http://localhost:8098/api/mcp</code> exactly (no trailing MCP name). This is a known issue reported in the channel.</td>
+        </tr>
+        <tr>
+          <td>Podman/Docker socket error during setup</td>
+          <td>Container runtime not running</td>
+          <td>Start Docker Desktop or Podman Desktop before running setup. For Podman: <code>podman machine init</code> may fail on bad gateway — retry or use Docker.</td>
+        </tr>
+        <tr>
+          <td>Containers disappeared from Podman</td>
+          <td>Podman machine restart cleared containers</td>
+          <td>Re-run <code>codegen mcp install data-discovery-mcp:latest</code> to recreate containers. Restart the proxy.</td>
+        </tr>
+        <tr>
+          <td>MCP tools load but intermittently fail</td>
+          <td>Network instability or proxy timeout</td>
+          <td>Toggle MCP off/on in IDE. Restart Cursor. Check proxy is still running on 8098.</td>
+        </tr>
+        <tr>
+          <td>Claude Desktop: "Streamable HTTP not supported"</td>
+          <td>Claude Desktop lacks Streamable HTTP transport</td>
+          <td>Switch to Claude Code CLI. DDE MCPs are not supported in Claude Desktop (as of Apr 2026).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:4px">
+    <span class="alert-icon">📌</span>
+    <div class="alert-content"><strong>Check the pinned message</strong> in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a> for the latest installation guide and known issue list. The team keeps it up to date.</div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Slack #dde-agentic-discovery-exploration-users (live channel, Apr 2026) · Confluence MEDO/3590526266 (DDE MCP Server Setup Guide) · Confluence MEDO/3591559561 (Adding Cursor MCPs to Claude Code CLI) · github.intuit.com/dataundstd-dmsearch/dde-mcp-guide<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ TAB 4 · WORKFLOWS & USE CASES ══════════ -->
+<div id="tab-workflows" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Workflows &amp; Use Cases</h1>
+    <p>Common agentic patterns for data discovery, access management, and exploration. These workflows were validated by the DDE community in Cursor and Claude Code.</p>
+  </div>
+
+  <div class="section-label">The end-to-end data workflow</div>
+  <div class="card">
+    <p style="color:var(--muted-foreground);font-size:13px;margin-bottom:16px">The three DDE MCPs are designed to chain together in a single agent conversation. Here's the full workflow:</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:stretch">
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--card);min-width:120px;text-align:center;box-shadow:var(--shadow-xs)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-foreground);margin-bottom:5px">Step 1</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ids-ink-900)">🔍 Discover</div>
+        <div style="font-size:11px;color:var(--muted-foreground);margin-top:5px">data-discovery-mcp<br>searchTables</div>
+      </div>
+      <div style="align-self:center;color:var(--ids-ink-300);font-size:20px;flex-shrink:0">→</div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--card);min-width:120px;text-align:center;box-shadow:var(--shadow-xs)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-foreground);margin-bottom:5px">Step 2</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ids-ink-900)">📋 Inspect</div>
+        <div style="font-size:11px;color:var(--muted-foreground);margin-top:5px">data-discovery-mcp<br>getTableSchema</div>
+      </div>
+      <div style="align-self:center;color:var(--ids-ink-300);font-size:20px;flex-shrink:0">→</div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--card);min-width:120px;text-align:center;box-shadow:var(--shadow-xs)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-foreground);margin-bottom:5px">Step 3</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ids-ink-900)">🔐 Check Access</div>
+        <div style="font-size:11px;color:var(--muted-foreground);margin-top:5px">dde-access-mcp<br>list_my_access</div>
+      </div>
+      <div style="align-self:center;color:var(--ids-ink-300);font-size:20px;flex-shrink:0">→</div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--card);min-width:120px;text-align:center;box-shadow:var(--shadow-xs)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-foreground);margin-bottom:5px">Step 4</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ids-ink-900)">📨 Request</div>
+        <div style="font-size:11px;color:var(--muted-foreground);margin-top:5px">dde-access-mcp<br>request_access</div>
+      </div>
+      <div style="align-self:center;color:var(--ids-ink-300);font-size:20px;flex-shrink:0">→</div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--ids-teal-100);border-color:#99d6d2;min-width:120px;text-align:center;box-shadow:var(--shadow-xs)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ids-teal-600);margin-bottom:5px">Step 5</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ids-ink-900)">⚡ Explore</div>
+        <div style="font-size:11px;color:var(--muted-foreground);margin-top:5px">databricks-mcp<br>execute_query</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Common use cases</div>
+  <div class="g2">
+    <div class="feat-card">
+      <h4>🎯 New feature research</h4>
+      <p>When starting a new feature, ask your agent to find all tables related to a business concept. Get schema details and understand data shape before writing any code.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Find all tables related to customer tax filing events. Show me the top 5 most relevant with their schemas."</div>
+    </div>
+    <div class="feat-card purple">
+      <h4>🔗 Data lineage tracing</h4>
+      <p>Understand upstream/downstream dependencies before making schema changes or building pipelines. Avoid breaking downstream consumers accidentally.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Show me the lineage for adapt_7216.member_events. What tables depend on it?"</div>
+    </div>
+    <div class="feat-card blue">
+      <h4>🔐 Access workflow (agentic)</h4>
+      <p>Ask your agent to check if you have access, identify the owner, and submit a request — without switching tools. Track status in the same conversation.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Check if I have SELECT access to member_profile. If not, request it and tell me who the approver is."</div>
+    </div>
+    <div class="feat-card orange">
+      <h4>📊 Team ownership audit</h4>
+      <p>Find all tables owned by a specific team or project for maintenance or migration planning. Useful for leads doing data stewardship.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Find all tables owned by the identity360 team. List them with their current access status."</div>
+    </div>
+    <div class="feat-card yellow">
+      <h4>🔍 Column-level search</h4>
+      <p>Search for specific column names or data types across the entire catalog. Useful when you know what attribute you need but not which table has it.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Which tables have a column called 'tax_year' or 'filing_status'? Show schemas."</div>
+    </div>
+    <div class="feat-card">
+      <h4>📦 Collection-based search</h4>
+      <p>Use Collections to create a bounded search context. Search within a pre-defined set of trusted tables rather than the full catalog. Great for team-specific workflows.</p>
+      <div class="code-block" style="margin-top:10px;font-size:11.5px">"Search within my 'tax-platform' collection for tables related to deductions."</div>
+    </div>
+  </div>
+
+  <div class="section-label">Real workflows from the community</div>
+
+  <div class="quote">
+    "This marks a step-change in accelerating the developer journey. With MCP-powered agentic discovery, developers can move from business question to insight — from 45 minutes to 4 minutes!"
+    <cite>— Akash Mohan, PM · #pdx-launched</cite>
+  </div>
+
+  <div class="quote">
+    "DDE MCP is more than 80% accurate and we have a lot of feedback we provide as evidence in the responses. If the design team needs a demo we could have our engineer also do a shareout."
+    <cite>— Kanchi Bhawalkar · #pdx-design</cite>
+  </div>
+
+  <div class="quote">
+    "Even if you often know where to go to get data, you can deploy Cursor in the background to be doing research for new/unknown use-cases."
+    <cite>— Craig Follmer · #data-ml-exploration-support</cite>
+  </div>
+
+  <div class="section-label">Access workflow gotchas</div>
+  <div class="card">
+    <p>The access lifecycle has a known pain point that many users hit. Here's the recommended approach while the team works on full agentic support:</p>
+    <div class="g2" style="margin-top:12px">
+      <div>
+        <h4>The problem</h4>
+        <ol style="color:var(--muted-foreground);font-size:13px">
+          <li>Agent runs a query — gets <code>INSUFFICIENT_PERMISSIONS</code></li>
+          <li>Agent calls <code>request_access</code> — gets <code>APPROVAL_REQUESTED</code></li>
+          <li>Access approval takes 3–4 days</li>
+          <li>User forgets which query they needed, or forgets to follow up</li>
+          <li>No way to track pending requests agentically</li>
+        </ol>
+      </div>
+      <div>
+        <h4>Recommended workaround</h4>
+        <ul style="color:var(--muted-foreground);font-size:13px">
+          <li>Save the full query in a file when access is requested</li>
+          <li>Note the table IRN and requested time</li>
+          <li>Use <code>check_access_status</code> periodically to poll</li>
+          <li>Go to DDE UI to find the approver's name and follow up directly</li>
+          <li>Consider using <code>list_my_access</code> at session start to know what's available</li>
+        </ul>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:12px;margin-bottom:0">
+      <span class="alert-icon">💬</span>
+      <div class="alert-content">The team is tracking a feature request to surface approver info in the <code>request_access</code> response. Vote for it and follow progress in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a>.</div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Slack #dde-agentic-discovery-exploration-users · #pdx-launched · #data-ml-exploration-support · #pdx-design<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ TAB 5 · USER RESEARCH ══════════ -->
+<div id="tab-research" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>User Research &amp; Insights</h1>
+    <p>What we know about how developers use DDE MCPs — from Follow-Me-Homes, Slack feedback, and the active research program run by <strong>Carolyn Nguyen</strong> (DDE UX Researcher).</p>
+  </div>
+
+  <div class="alert alert-info">
+    <span class="alert-icon">📂</span>
+    <div class="alert-content"><strong>Research repositories:</strong> Follow-Me-Home recordings and session artifacts are stored in <a href="https://drive.google.com/drive/folders/1Yn9KzBXcjJ_gRtwMd--h51-6z_SMjIme" target="_blank">Google Drive ↗</a> and <a href="https://app.heymarvin.com/projects/35183/files/" target="_blank">Hey Marvin (Project 35183) ↗</a>. Hey Marvin AI summary findings available at the <a href="https://app.heymarvin.com/search/?token=What+are+summary+findings+of+the+data+discovery+process%3F&tab=ask_ai&projects=35183&groupId=b2754ea4-74f4-4f12-bdf9-b1777234dfd3&conversationId=104002&priority=score" target="_blank">Ask AI tab ↗</a>.</div>
+  </div>
+
+  <div class="section-label">Active research initiatives</div>
+  <div class="g2">
+    <div class="feat-card">
+      <h4>📋 Cursor Chat History Study</h4>
+      <p>Carolyn Nguyen is collecting exported Cursor chat histories from DDE MCP users to understand: how developers find and request table access, and how they refer back to previously discovered assets. Fully async, ~5 mins per session.</p>
+      <p style="margin-top:8px;font-size:12.5px;color:var(--muted-foreground)">To participate: Export a Cursor conversation where you used DDE for data work and post in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a>. Spotlight rewards available.</p>
+    </div>
+    <div class="feat-card purple">
+      <h4>🗳️ Agentic DDE vs. IDE Poll</h4>
+      <p>Carolyn ran a poll to understand whether users prefer CLI/Cursor/Claude vs. a native Agentic DDE UI experience — and whether there's demand for IDE-embedded DDE agent features vs. standalone.</p>
+      <p style="margin-top:8px;font-size:12.5px;color:var(--muted-foreground)">Context: The team is evaluating whether to build an agentic experience within the DDE web app itself, or double down on IDE-first MCP tooling.</p>
+    </div>
+    <div class="feat-card blue">
+      <h4>⭐ Endorsement &amp; Asset Description Survey</h4>
+      <p>Short feedback survey on how useful endorsement flags and AI-generated asset descriptions in DDE are for day-to-day discovery. Spotlights for all participants.</p>
+      <p style="margin-top:8px;font-size:12.5px;color:var(--muted-foreground)">These signals inform how the DDE team prioritizes catalog quality improvements and trust indicators.</p>
+    </div>
+    <div class="feat-card orange">
+      <h4>🤝 1:1 Onboarding Sessions</h4>
+      <p>Akash Mohan runs individual onboarding sessions with teams (e.g., UCP Workbench). Hands-on setup + live workflow demo. If your team wants a session, reach out in Slack.</p>
+    </div>
+  </div>
+
+  <div class="section-label">Key findings — Hey Marvin research (Project 35183)</div>
+
+  <div class="alert alert-teal" style="margin-bottom:20px">
+    <span class="alert-icon">📊</span>
+    <div class="alert-content"><strong>Research scope:</strong> DDE user interviews and follow-me-home sessions analyzed in Hey Marvin Project 35183 — "Data Platform Research." Findings represent real user workflows, friction points, and impact measurements collected across Intuit data teams.</div>
+  </div>
+
+  <div class="prin-card">
+    <div class="prin-title">🧠 Theme 1 — Tribal knowledge is the default discovery mechanism</div>
+    <div class="prin-desc">Without DDE, analysts depend heavily on institutional knowledge held by a small number of senior colleagues. New joiners have no systematic way to find relevant data outside their immediate team's domain. This creates asymmetric productivity and slows cross-team data reuse.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-purple-600)">
+    <div class="prin-title">⛓️ Theme 2 — Multi-team access requests create cascading delays</div>
+    <div class="prin-desc">Getting set up for a single use case often requires reaching out to three or four different teams for access to different data assets. Each handoff adds waiting time and context-switching. Users lose the thread of what they were originally building.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-orange-600)">
+    <div class="prin-title">⏱️ Theme 3 — Access approval takes up to a week for new joiners</div>
+    <div class="prin-desc">Manual approval workflows require human sign-off and can take up to one week for basic table access. This delay directly blocks new hires from being productive during their critical onboarding window. DDE's agentic workflows aim to collapse this to minutes for approved schemas.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-blue-500)">
+    <div class="prin-title">🚀 Theme 4 — DDE MCPs dramatically reduce time-to-insight</div>
+    <div class="prin-desc">Users who successfully onboard to DDE MCPs report the biggest single quality-of-life improvement in their workflow. The shift from manual browser-based discovery to natural language search collapses a 45-minute multi-tool workflow to under 5 minutes. This is the core value proposition confirmed by user interviews.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-yellow-600)">
+    <div class="prin-title">📋 Theme 5 — Onboarding delay compounds the productivity gap</div>
+    <div class="prin-desc">New team members feel the impact most acutely. When the tools that would accelerate onboarding are themselves difficult to onboard to, the productivity gap widens. Users interviewed noted that having DDE from day one would have significantly shortened their ramp-up time.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-green-600)">
+    <div class="prin-title">🔍 Theme 6 — Natural language search removes the "knowing the right words" barrier</div>
+    <div class="prin-desc">Historically, finding data required knowing the exact schema name, team ownership, or Intuit-internal naming conventions. DDE's natural language search means analysts can describe what they're looking for in business terms, not technical identifiers. This opens the catalog to a much wider audience.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-red-600)">
+    <div class="prin-title">🔐 Theme 7 — Access approval interrupts agentic workflows</div>
+    <div class="prin-desc">Even after setup, the access request → wait → resume cycle breaks the agentic flow. There is no in-IDE way to track pending approvals, and the approver's identity isn't surfaced. Users manually save intermediate state to files and come back days later — if they remember where they were.</div>
+  </div>
+
+  <div class="prin-card" style="border-left-color:var(--ids-ink-500)">
+    <div class="prin-title">✅ Theme 8 — Trust signals matter as much as discoverability</div>
+    <div class="prin-desc">Finding a table is only half the job. Users need confidence that the data is accurate, endorsed, and actively maintained. Endorsement flags and AI-generated table descriptions partially address this, but sparse or stale metadata erodes trust in the MCP's results — even when the search itself is correct.</div>
+  </div>
+
+  <div class="section-label">Verbatim quotes from research sessions</div>
+
+  <div class="quote">
+    "Reliance on 'tribal knowledge' prevents analysts from finding relevant data outside their immediate, siloed domains."
+    <cite>— Hey Marvin research finding · Project 35183 · Data Platform Research</cite>
+  </div>
+  <div class="quote">
+    "To get one use case straightened up, I need to reach out three or four different teams to get access."
+    <cite>— Research participant · Hey Marvin Project 35183</cite>
+  </div>
+  <div class="quote">
+    "It took me about one week to get access — this step requires manual approval."
+    <cite>— Research participant · Hey Marvin Project 35183</cite>
+  </div>
+  <div class="quote">
+    "If I had this in the beginning, my time of onboarding would have definitely been way faster."
+    <cite>— Research participant describing impact of DDE MCPs · Hey Marvin Project 35183</cite>
+  </div>
+  <div class="quote">
+    "The MCP is doing research in the background for me — I'm working on other things while it discovers the data I need."
+    <cite>— Craig Follmer · #data-ml-exploration-support</cite>
+  </div>
+
+  <div class="section-label">Key pain points summary</div>
+  <div class="table-wrap">
+    <table class="shad">
+      <thead><tr><th>Pain point</th><th>Impact</th><th>DDE solution</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Tribal knowledge dependency</td>
+          <td>New joiners blocked; silos persist</td>
+          <td>Natural language search + catalog indexing</td>
+        </tr>
+        <tr>
+          <td>Multi-team access requests</td>
+          <td>3–4 teams per use case; cascading delays</td>
+          <td><code>dde-access-mcp</code> centralizes requests</td>
+        </tr>
+        <tr>
+          <td>Manual approval wait time</td>
+          <td>Up to 1 week for new joiners</td>
+          <td>Agentic request submission + status tracking</td>
+        </tr>
+        <tr>
+          <td>"Right words" barrier to search</td>
+          <td>Analysts can't find data they don't know names for</td>
+          <td>Business-language NL search via <code>searchTables</code></td>
+        </tr>
+        <tr>
+          <td>Approval interrupts agentic flow</td>
+          <td>Lost context; users abandon workflows</td>
+          <td>In-progress: async approval tracking</td>
+        </tr>
+        <tr>
+          <td>Stale metadata erodes trust</td>
+          <td>Users hesitate to use found tables</td>
+          <td>Endorsement flags + AI-generated descriptions</td>
+        </tr>
+        <tr>
+          <td>Setup friction blocks adoption</td>
+          <td>Users give up before first successful query</td>
+          <td>DAST plugin + improved install flow (in progress)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Research resources</div>
+  <div class="card">
+    <div class="access-row">
+      <div class="access-icon">📁</div>
+      <div class="access-desc">
+        <strong>Google Drive — FMH &amp; Research Recordings</strong>
+        <span>Follow-Me-Home sessions, interview recordings, research artifacts. <a href="https://drive.google.com/drive/folders/1Yn9KzBXcjJ_gRtwMd--h51-6z_SMjIme" target="_blank">Open folder ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🧠</div>
+      <div class="access-desc">
+        <strong>Hey Marvin — Project 35183</strong>
+        <span>All research session files and recordings. <a href="https://app.heymarvin.com/projects/35183/files/" target="_blank">Open project ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">✨</div>
+      <div class="access-desc">
+        <strong>Hey Marvin — AI Summary Findings</strong>
+        <span>Ask AI for synthesized findings on the data discovery process. <a href="https://app.heymarvin.com/search/?token=What+are+summary+findings+of+the+data+discovery+process%3F&tab=ask_ai&projects=35183&groupId=b2754ea4-74f4-4f12-bdf9-b1777234dfd3&conversationId=104002&priority=score" target="_blank">View AI summary ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📚</div>
+      <div class="access-desc">
+        <strong>Degreed — Intro to DDE Training</strong>
+        <span>Structured onboarding pathway for DDE. Requires Intuit Degreed login. <a href="https://degreed.com/pathway/e9jxlrd38w/pathway" target="_blank">Open pathway ↗</a></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Hey Marvin Project 35183 — "Data Platform Research" · Slack #dde-agentic-discovery-exploration-users (Mar–Apr 2026) · Google Drive research folder (FMH sessions &amp; recordings)<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ TAB 6 · TEAM & LINKS ══════════ -->
+<div id="tab-team" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Team &amp; Links</h1>
+    <p>Key contacts, Slack channels, and resources for DDE. The primary support channel is <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a>.</p>
+  </div>
+
+  <div class="section-label">Core team</div>
+  <div class="g3">
+    <div class="person-card">
+      <div class="person-name">Shaswati Mukherjee</div>
+      <div class="person-role">Engineering — MCP Owner</div>
+      <div class="person-ctx">Owns <code>data-discovery-mcp</code> and <code>dde-access-mcp</code>. Primary engineering contact for MCP issues and feature requests. Most responsive in <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">#dde-agentic-discovery-exploration-users</a>.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Akash Mohan</div>
+      <div class="person-role">Product Manager</div>
+      <div class="person-ctx">PM for DDE MCP and agentic workflows. Runs community engagement, onboarding sessions, and cross-team alignment. Point of escalation for access or setup blockers.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Carolyn Nguyen</div>
+      <div class="person-role">UX Designer / Researcher</div>
+      <div class="person-ctx">Owns the DDE user research program. Running studies on IDE usage patterns, access workflows, and catalog trust signals. Reach out for research participation or design feedback.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Vamsi Kothapalli</div>
+      <div class="person-role">Engineering</div>
+      <div class="person-ctx">DDE engineering team. Point of contact for complex access issues and MCP routing problems.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Param Oberoi</div>
+      <div class="person-role">Engineering</div>
+      <div class="person-ctx">DDE engineering team. Handles MCP access requests and onboarding escalations.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Akbar Rangara</div>
+      <div class="person-role">Engineering Lead</div>
+      <div class="person-ctx">DDE engineering leadership. Involved in platform direction and partnership with AIW/DevPortal teams.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Key Slack channels</div>
+  <div class="card">
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc">
+        <strong>#dde-agentic-discovery-exploration-users</strong>
+        <span>Primary support &amp; community channel. Post MCP setup questions, feature requests, and share workflows. <a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">C09GCJUPE3B ↗</a></span>
+      </div>
+      <span class="badge badge-teal">Primary</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc">
+        <strong>#codeassist-mcp-marketplace</strong>
+        <span>Questions about installing from the MCP Marketplace. Escalate here if the codegen install fails.</span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc">
+        <strong>#data-ml-exploration-support</strong>
+        <span>Broader data &amp; ML exploration support. DDE MCPs are referenced here alongside other data tools.</span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc">
+        <strong>#ds-agentic-dev-mcp-support</strong>
+        <span>Data science community channel for agentic MCP development questions.</span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc">
+        <strong>#ask-data-genius-bar</strong>
+        <span>General data questions. DDE MCPs recommended here frequently for discovery workflows.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Key links &amp; resources</div>
+  <div class="card">
+    <div class="access-row">
+      <div class="access-icon">📖</div>
+      <div class="access-desc">
+        <strong>DDE MCP Setup Guide (GitHub)</strong>
+        <span>The authoritative installation guide with Docker/Podman setup options. <a href="https://github.intuit.com/dataundstd-dmsearch/dde-mcp-guide" target="_blank">github.intuit.com/dataundstd-dmsearch/dde-mcp-guide ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🏢</div>
+      <div class="access-desc">
+        <strong>DDE Dev Portal Capability Page</strong>
+        <span>Service onboarding, documentation, and capability overview. <a href="https://devportal.intuit.com/app/dp/capability/17zylvxjz0edgc68mgi8" target="_blank">devportal.intuit.com/app/dp/capability/17zylvxjz0edgc68mgi8 ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🛒</div>
+      <div class="access-desc">
+        <strong>MCP Marketplace — data-discovery-mcp</strong>
+        <span>Install directly from the marketplace without using codegen CLI. <a href="https://mcp-marketplace.app.intuit.com/mcp-marketplace-ui/mcpmarketplace?mcpId=mcp-31913&isV2MCP=true" target="_blank">Open in Marketplace ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🔌</div>
+      <div class="access-desc">
+        <strong>DAST Plugin — Full DDE Bundle</strong>
+        <span>Installs all DDE MCPs at once via the Dev Assist plugin registry. <a href="https://github.intuit.com/platformexps-patterns/devassist-plugins-registry/tree/master/intuit-data-discovery-access-exploration-capability-plugin" target="_blank">Open on GitHub ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📚</div>
+      <div class="access-desc">
+        <strong>Intro to DDE — Degreed Pathway</strong>
+        <span>Structured training pathway for DDE concepts and tools. Requires Intuit Degreed account. <a href="https://degreed.com/pathway/e9jxlrd38w/pathway" target="_blank">degreed.com/pathway/e9jxlrd38w ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🏆</div>
+      <div class="access-desc">
+        <strong>GED: Agentic Data Discovery Project</strong>
+        <span>End-to-end demo of Databricks MCP + data-discovery-mcp chained in a single workflow. <a href="https://global-engineering-days.app.intuit.com/project-dashboard/4ff8ca0e-ccfd-4d33-ae2e-7b04fd4f9ab6" target="_blank">GED Dashboard ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📁</div>
+      <div class="access-desc">
+        <strong>User Research — Google Drive</strong>
+        <span>Follow-Me-Home recordings and research session artifacts. <a href="https://drive.google.com/drive/folders/1Yn9KzBXcjJ_gRtwMd--h51-6z_SMjIme" target="_blank">Open folder ↗</a></span>
+      </div>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🧠</div>
+      <div class="access-desc">
+        <strong>Hey Marvin — Research Repo</strong>
+        <span>All user research sessions, recordings, and AI-synthesized findings. <a href="https://app.heymarvin.com/projects/35183/files/" target="_blank">Open project ↗</a></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Onboarding checklist</div>
+  <div class="card">
+    <div class="card-title">✅ DDE Onboarding Checklist</div>
+    <div class="table-wrap">
+      <table class="shad">
+        <thead><tr><th>Item</th><th>How</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Install codegen CLI (v0.74.3+)</td><td>Dev Portal → CLI setup guide</td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Run <code>eiamcli login</code></td><td>Terminal</td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Install <code>data-discovery-mcp:latest</code></td><td><code>codegen mcp install data-discovery-mcp:latest</code></td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Configure INTUIT_API_KEY in proxy env</td><td>Request key in #dde-agentic-discovery-exploration-users, add to mcp.json</td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Verify 14 MCP tools load (green ✅ in IDE)</td><td>Toggle MCP in Cursor or start Claude Code session</td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Run a test search query</td><td>Ask agent to find tables related to your domain</td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Join #dde-agentic-discovery-exploration-users</td><td><a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">Slack channel ↗</a></td><td><span class="badge badge-outline">To do</span></td></tr>
+          <tr><td>Request dde-access-mcp API key (if needed)</td><td>Tag @Shaswati Mukherjee in Slack</td><td><span class="badge badge-outline">Optional</span></td></tr>
+          <tr><td>Complete Degreed DDE pathway</td><td><a href="https://degreed.com/pathway/e9jxlrd38w/pathway" target="_blank">degreed.com/pathway ↗</a></td><td><span class="badge badge-outline">Optional</span></td></tr>
+          <tr><td>Read DDE setup guide on GitHub</td><td><a href="https://github.intuit.com/dataundstd-dmsearch/dde-mcp-guide" target="_blank">github.intuit.com ↗</a></td><td><span class="badge badge-outline">Optional</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> Slack #dde-agentic-discovery-exploration-users (live, Apr 2026) · DevPortal capability page · github.intuit.com/dataundstd-dmsearch/dde-mcp-guide · MCP Marketplace<br>
+    <strong>Compiled:</strong> April 2026 · Content sourced from Slack channel reads, Google Drive, and DevPortal
+  </div>
+
+</div>
+</div>
+
+</main>
+
+<script>
+// ── Tab switching ──
+function showTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Mobile nav ──
+function openMobileNav() {
+  document.getElementById('mobileNav').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function mobileTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  // sync desktop nav
+  document.querySelectorAll('.nav-tab').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes("'" + name + "'"));
+  });
+  closeMobileNav();
+}
+
+// ── Theme toggle ──
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  const icon = dark ? '☀️' : '🌙';
+  const label = dark ? 'Light' : 'Dark';
+  document.getElementById('themeIcon').textContent = icon;
+  document.getElementById('themeLabel').textContent = label;
+  document.getElementById('themeIconMobile').textContent = icon;
+  document.getElementById('themeLabelMobile').textContent = label + ' mode';
+  localStorage.setItem('dde-theme', dark ? 'dark' : 'light');
+}
+function toggleTheme() {
+  applyTheme(!document.documentElement.classList.contains('dark'));
+}
+// Init theme
+(function() {
+  const saved = localStorage.getItem('dde-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const useDark = saved ? saved === 'dark' : prefersDark;
+  applyTheme(useDark);
+})();
+
+// Close drawer on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileNav();
+});
+</script>
+</body>
+</html>

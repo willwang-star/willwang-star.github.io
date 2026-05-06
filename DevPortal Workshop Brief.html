@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DevPortal Workshop Brief · May 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  /* ── Design Tokens ────────────────────────────────────────────────── */
+  :root {
+    --color-bg:           #F7F5F2;
+    --color-surface:      #FFFFFF;
+    --color-surface-2:    #F2EFE9;
+    --color-border:       #E4DFD8;
+    --color-text:         #1A1A1A;
+    --color-text-2:       #5C5C5C;
+    --color-text-3:       #8A8A8A;
+    --color-accent:       #0077C5;
+    --color-accent-soft:  #E8F4FC;
+    --color-green:        #2E7D32;
+    --color-green-soft:   #E8F5E9;
+    --color-amber:        #B45309;
+    --color-amber-soft:   #FFF8E7;
+    --color-red:          #B91C1C;
+    --color-red-soft:     #FEF2F2;
+    --color-purple:       #6D28D9;
+    --color-purple-soft:  #F3F0FF;
+    --color-nav-bg:       rgba(247, 245, 242, 0.94);
+    --font:               'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --radius-sm:          6px;
+    --radius-md:          12px;
+    --shadow-sm:          0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md:          0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --max-w:              1140px;
+    --nav-h:              56px;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Sticky Nav ───────────────────────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 32px;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-logo {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--color-border);
+    flex-shrink: 0;
+  }
+  /* Nav links — scrollable strip on any width */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links li { flex-shrink: 0; }
+  .nav-links a {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-2);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover {
+    color: var(--color-text);
+    background: var(--color-border);
+  }
+  .nav-links a.active {
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  /* ── Mobile nav adjustments ───────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .nav-inner  { padding: 0 16px; gap: 8px; }
+    .nav-logo   { display: none; }
+    .nav-divider { display: none; }
+    .nav-links a { padding: 6px 10px; font-size: 12px; }
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────────────── */
+  .hero {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 72px 32px 56px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+    margin-bottom: 20px;
+  }
+  .eyebrow-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-border);
+  }
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 54px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--color-accent);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--color-text-2);
+    max-width: 540px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+  }
+  .stat-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    padding: 9px 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-pill-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+  }
+  .stat-pill-label {
+    font-size: 13px;
+    color: var(--color-text-2);
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .hero-sub { font-size: 15px; }
+    .stat-pill-num { font-size: 18px; }
+    .stat-pill { padding: 8px 14px; }
+  }
+
+  /* ── Section Wrapper ──────────────────────────────────────────────── */
+  .section {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 64px 32px;
+    border-top: 1px solid var(--color-border);
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 44px;
+  }
+  .section-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-text);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .section-titles h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .section-titles p {
+    font-size: 15px;
+    color: var(--color-text-2);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 600px) {
+    .section { padding: 44px 20px; }
+    .section-titles h2 { font-size: 22px; }
+    .section-titles p { font-size: 14px; }
+  }
+
+  /* ── Cards ────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .card-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 960px) {
+    .card-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .card-grid-4, .card-grid-3, .card-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ── Area 01 · Vision Arc ─────────────────────────────────────────── */
+  .timeline {
+    display: flex;
+    margin-bottom: 36px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+  .timeline-step {
+    flex: 1;
+    padding: 24px 20px;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    position: relative;
+  }
+  .timeline-step:last-child { border-right: none; }
+  .timeline-step.current { background: var(--color-accent); }
+  .timeline-step.current .tl-year  { color: rgba(255,255,255,0.65); }
+  .timeline-step.current .tl-title { color: #fff; }
+  .timeline-step.current .tl-body  { color: rgba(255,255,255,0.78); }
+  .tl-year {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+    margin-bottom: 6px;
+  }
+  .tl-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .tl-body {
+    font-size: 12.5px;
+    color: var(--color-text-2);
+    line-height: 1.55;
+  }
+  .tl-arrow {
+    position: absolute;
+    right: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    font-size: 10px;
+    color: var(--color-text-3);
+  }
+
+  /* Stack timeline vertically on mobile */
+  @media (max-width: 700px) {
+    .timeline { flex-direction: column; }
+    .timeline-step { border-right: none; border-bottom: 1px solid var(--color-border); }
+    .timeline-step:last-child { border-bottom: none; }
+    .tl-arrow { display: none; }
+  }
+
+  .vision-card-label {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 3px 8px;
+    margin-bottom: 14px;
+  }
+  .label-changed { background: var(--color-amber-soft);  color: var(--color-amber); }
+  .label-stayed  { background: var(--color-green-soft);  color: var(--color-green); }
+  .label-shipped { background: var(--color-accent-soft); color: var(--color-accent); }
+  .label-ahead   { background: var(--color-purple-soft); color: var(--color-purple); }
+
+  .vision-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 11px;
+  }
+  .vision-item:last-child { margin-bottom: 0; }
+  .vision-dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 7px;
+  }
+  .dot-changed { background: var(--color-amber); }
+  .dot-stayed  { background: var(--color-green); }
+  .dot-shipped { background: var(--color-accent); }
+  .dot-ahead   { background: var(--color-purple); }
+  .vision-item p        { font-size: 13px; color: var(--color-text-2); line-height: 1.55; }
+  .vision-item strong   { color: var(--color-text); font-weight: 600; }
+
+  /* ── Area 02 · Research Signal ────────────────────────────────────── */
+  .signal-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .signal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .signal-category {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  .signal-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .badge-critical { background: var(--color-red-soft);   color: var(--color-red);   }
+  .badge-high     { background: var(--color-amber-soft); color: var(--color-amber); }
+  .badge-noted    { background: var(--color-green-soft); color: var(--color-green); }
+  .signal-quote {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--color-text-2);
+    border-left: 3px solid var(--color-border);
+    padding-left: 12px;
+    line-height: 1.55;
+  }
+  .signal-note {
+    font-size: 12.5px;
+    color: var(--color-text-3);
+  }
+
+  .challenge-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 24px 28px;
+    margin-top: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .challenge-block h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 16px;
+  }
+  .challenge-row {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .challenge-row:last-child { border-bottom: none; }
+  .challenge-row h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 4px;
+  }
+  .challenge-row p {
+    font-size: 13px;
+    color: var(--color-text-2);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 600px) {
+    .challenge-block { padding: 20px 18px; }
+  }
+
+  /* ── Area 03 · Stakeholder Alignment ─────────────────────────────── */
+  .align-col-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+  .align-col-head h3 { font-size: 13px; font-weight: 700; }
+  .align-col-marker { font-size: 16px; }
+  .align-head-supported {
+    background: var(--color-green-soft);
+    color: var(--color-green);
+    border: 1px solid #C8E6C9;
+    border-bottom: none;
+  }
+  .align-head-contested {
+    background: var(--color-amber-soft);
+    color: var(--color-amber);
+    border: 1px solid #FFE0B2;
+    border-bottom: none;
+  }
+  .align-col-body {
+    border: 1px solid var(--color-border);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    overflow: hidden;
+  }
+  .align-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .align-item:last-child { border-bottom: none; }
+  .align-item h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 5px;
+  }
+  .align-item p {
+    font-size: 13px;
+    color: var(--color-text-2);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .align-voices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .avatar-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--color-surface-2);
+    color: var(--color-text-2);
+    border: 1px solid var(--color-border);
+  }
+
+  /* ── Area 04 · Future State ───────────────────────────────────────── */
+  .future-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .future-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #CAC4BA;
+  }
+  .future-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .time-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .tb-6mo {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border: 1px solid #B3D7EF;
+  }
+  .tb-1yr {
+    background: var(--color-purple-soft);
+    color: var(--color-purple);
+    border: 1px solid #C4B5FD;
+  }
+  .future-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.3;
+  }
+  .future-card p {
+    font-size: 13.5px;
+    color: var(--color-text-2);
+    line-height: 1.6;
+  }
+  .future-card .signal-quote { font-size: 12.5px; }
+
+  .tension-box {
+    background: var(--color-text);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 32px 36px;
+    margin-top: 36px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+  }
+  .tension-box h3 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .tension-box p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.88);
+  }
+  .tension-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.15);
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+  @media (max-width: 700px) {
+    .tension-box { flex-direction: column; gap: 20px; padding: 24px 20px; }
+    .tension-divider { width: 100%; height: 1px; }
+  }
+
+  /* ── Sources ──────────────────────────────────────────────────────── */
+  .sources-section {
+    background: var(--color-surface-2);
+    border-top: 1px solid var(--color-border);
+  }
+  .sources-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 56px 32px;
+  }
+  .sources-inner h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: var(--color-text);
+  }
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 700px) {
+    .sources-inner { padding: 40px 20px; }
+    .sources-grid { grid-template-columns: 1fr; }
+  }
+  .source-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .source-item a {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .source-item a:hover { text-decoration: underline; }
+  .source-item p {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+  .source-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-top: 7px;
+    background: var(--color-surface-2);
+    color: var(--color-text-3);
+    border: 1px solid var(--color-border);
+  }
+
+  /* ── Footer ───────────────────────────────────────────────────────── */
+  footer {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 24px 32px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  footer p { font-size: 12px; color: var(--color-text-3); }
+
+  @media (max-width: 600px) {
+    footer { padding: 20px; flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+
+  /* ── Utility ──────────────────────────────────────────────────────── */
+  .mt-32 { margin-top: 32px; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">DevPortal · Workshop Brief</span>
+    <div class="nav-divider"></div>
+    <ul class="nav-links">
+      <li><a href="#vision">01 Vision</a></li>
+      <li><a href="#research">02 Research</a></li>
+      <li><a href="#stakeholders">03 Stakeholders</a></li>
+      <li><a href="#future">04 Future</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="eyebrow">
+    <span>DevPortal</span>
+    <span class="eyebrow-dot"></span>
+    <span>Workshop Brief</span>
+    <span class="eyebrow-dot"></span>
+    <span>May 2026</span>
+  </div>
+  <h1>Vision, Research &amp; the <em>Path Forward</em></h1>
+  <p class="hero-sub">A synthesis of two years of platform strategy, user research, and stakeholder alignment — prepared for the DevPortal workshop team.</p>
+  <div class="stat-pills">
+    <div class="stat-pill">
+      <span class="stat-pill-num">20+</span>
+      <span class="stat-pill-label">developer voices</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-num">32–48</span>
+      <span class="stat-pill-label">satisfaction out of 100</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-num">17</span>
+      <span class="stat-pill-label">verticals to integrate</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-num">2-yr</span>
+      <span class="stat-pill-label">committed horizon</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-num">4</span>
+      <span class="stat-pill-label">research areas synthesized</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- AREA 01 · VISION ARC                                              -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="vision">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-titles">
+      <h2>Vision Arc: 2024 → 2026</h2>
+      <p>How the DevPortal strategy evolved — what changed, what stayed anchored, what shipped, and what's still ahead.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-step">
+      <div class="tl-year">2024 · Early</div>
+      <div class="tl-title">Unified Portal Concept</div>
+      <div class="tl-body">Fragmented tools (Scout, AIW, GED) surface a shared pain: no coherent home. Design sprint launches to define a unified Developer Portal.</div>
+      <div class="tl-arrow">→</div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-year">2024 · Late</div>
+      <div class="tl-title">Bronze / Silver / Gold</div>
+      <div class="tl-body">PDX Design formalises phased unification. Bronze = shared nav &amp; SSO. Silver = lift-and-shift AIW. Gold = native workbench integration. JTBD personas defined.</div>
+      <div class="tl-arrow">→</div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-year">2025</div>
+      <div class="tl-title">Platform Architecture + Experience Principles</div>
+      <div class="tl-body">Platform-as-a-platform doc defines horizontal kernel + vertical workbenches. Delivery Team becomes the ownership unit. March 2025 design research crystallises the core UX principles: 80/20 paved paths, intent-based tasks, proactive anticipation, and explicit guardrails for what DevPortal should <em>not</em> do.</div>
+      <div class="tl-arrow">→</div>
+    </div>
+    <div class="timeline-step current">
+      <div class="tl-year">2026 · Now</div>
+      <div class="tl-title">Agentic &amp; Federated</div>
+      <div class="tl-body">Agentic Chat (multi-agent orchestration), MCP server in alpha, federated microfrontend shell (Context SDK), and 4 DDE production MCPs. Portal is reframing as ambient intelligence, not a destination.</div>
+    </div>
+  </div>
+
+  <div class="card-grid-4">
+    <div class="card">
+      <div class="vision-card-label label-changed">What Changed</div>
+      <div class="vision-item">
+        <span class="vision-dot dot-changed"></span>
+        <p><strong>Destination → Ambient.</strong> Early vision = one portal URL. Current = intelligence surfaces where devs already work (IDE, CLI, Slack).</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-changed"></span>
+        <p><strong>Workbench = lift-and-shift.</strong> Silver now means iframed AIW, not deeper integration. Reframed Feb 2026 after cost/complexity tradeoffs.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-changed"></span>
+        <p><strong>Search → Discovery + Intelligence.</strong> Keyword search evolved into semantic retrieval (Glean + Knowledge Graph) and agentic synthesis.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-changed"></span>
+        <p><strong>Portal governance → Plugin governance.</strong> AppFabric debate: top-down vs. bottom-up is now the active tension.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="vision-card-label label-stayed">What Stayed</div>
+      <div class="vision-item">
+        <span class="vision-dot dot-stayed"></span>
+        <p><strong>Single source of truth</strong> for developer knowledge remains the north star across every document.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-stayed"></span>
+        <p><strong>Delivery Team as ownership unit.</strong> Introduced in 2025, still the foundational accountability construct.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-stayed"></span>
+        <p><strong>80/20 paved paths.</strong> Solve the 80% of common workflows with opinionated defaults; allow customisation for the remaining 20%. Introduced in 2025, never contested.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-stayed"></span>
+        <p><strong>JTBD persona framework.</strong> The 5 archetypes (AI Newcomer, AI Specialist, Integration Engineer, SRE, EM) still drive research and design decisions.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-stayed"></span>
+        <p><strong>Federated, not monolithic.</strong> Every architecture proposal maintains teams own their vertical; the platform provides shared capabilities only.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="vision-card-label label-shipped">What Shipped</div>
+      <div class="vision-item">
+        <span class="vision-dot dot-shipped"></span>
+        <p><strong>Scout integration</strong> complete — only vertical fully onboarded to Bronze as of early 2026.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-shipped"></span>
+        <p><strong>DDE 4 production MCPs</strong> — data-discovery, dde-access, databricks, auth. Reduced data-discovery from 45 min → 4 min.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-shipped"></span>
+        <p><strong>CDC Capability Plugin</strong> launched April 2026. First AppFabric plugin in production.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-shipped"></span>
+        <p><strong>Agentic Chat alpha</strong> with Gateway, M&amp;A, and SRE agents. DevPortal MCP server in alpha alongside it.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-shipped"></span>
+        <p><strong>Knowledge Graph (Neo4j)</strong> + Glean semantic layer operational as the intelligence foundation.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="vision-card-label label-ahead">Still Ahead</div>
+      <div class="vision-item">
+        <span class="vision-dot dot-ahead"></span>
+        <p><strong>16 of 17 verticals</strong> remain at Bronze or below. Silver and Gold for GED, AIW, and others is still the pending majority of the roadmap.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-ahead"></span>
+        <p><strong>GenUX / GenOS clarification.</strong> Whether DevPortal builds its own generative UX layer or delegates to GenOS is an open architecture decision.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-ahead"></span>
+        <p><strong>A2A (Agent-to-Agent) protocol.</strong> Multi-agent coordination beyond current monolithic orchestration — planned but not designed.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-ahead"></span>
+        <p><strong>Persona-driven IA at Gold.</strong> The 5 JTBD role-based navigation and personalized surfaces remain a Gold-phase deliverable.</p>
+      </div>
+      <div class="vision-item">
+        <span class="vision-dot dot-ahead"></span>
+        <p><strong>Day 0 Plugin.</strong> IDE-embedded guided onboarding workflow for first-day engineers — still in concept phase.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- AREA 02 · RESEARCH SIGNAL                                         -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="research">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-titles">
+      <h2>Research Signal &amp; Unsolved Challenges</h2>
+      <p>What 20+ developer voices tell us, mapped against the current vision — and the gaps that haven't closed yet.</p>
+    </div>
+  </div>
+
+  <div class="card-grid-3">
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">Search &amp; Discovery</div>
+        <span class="signal-badge badge-critical">Critical · 7 reports</span>
+      </div>
+      <div class="signal-quote">"I have to search five different places before I find what I need — search results are full of outdated docs."</div>
+      <div class="signal-note">The Knowledge Graph + Glean layer is the direct architectural response. Not yet production-wide.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">Documentation Quality</div>
+        <span class="signal-badge badge-critical">Critical · 6 reports</span>
+      </div>
+      <div class="signal-quote">"Documentation is either missing or so out of date it's misleading. You end up asking colleagues instead."</div>
+      <div class="signal-note">Autura / GitHub→Autura pipeline is the intended fix. Adoption and maintenance culture remains unsolved.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">Onboarding</div>
+        <span class="signal-badge badge-critical">Critical · 6 reports</span>
+      </div>
+      <div class="signal-quote">"Setting up my first GenAI agent required reading 8 different documents. There was no single start-here path."</div>
+      <div class="signal-note">AI Newcomer JTBD satisfaction: 32/100 — lowest of all personas. Day 0 Plugin concept is the proposed answer.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">AI Tooling Friction</div>
+        <span class="signal-badge badge-high">High · 4 reports</span>
+      </div>
+      <div class="signal-quote">"30% of support threads are auth/access errors. You're blocked for 1–7 days before you can even run code."</div>
+      <div class="signal-note">Only 26% of GenAI use cases have done evaluations — a UX guidance gap, not a capability gap. Median 3 days to first working agent via GenUX.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">Reliability &amp; Trust</div>
+        <span class="signal-badge badge-high">High · 5 reports</span>
+      </div>
+      <div class="signal-quote">"When the portal goes down, I don't even know where to look. There's no status, no fallback."</div>
+      <div class="signal-note">DDE MCPs have known silent auth failures. 100-result hard cap with no pagination. Trust gaps undermine adoption even when capability exists.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header">
+        <div class="signal-category">Positive Signal</div>
+        <span class="signal-badge badge-noted">Noted · 3 reports</span>
+      </div>
+      <div class="signal-quote">"The DDE MCP cut my data discovery time from 45 minutes to under 5. That's the kind of thing that makes me actually use a tool."</div>
+      <div class="signal-note">Speed improvements and proactive surfacing are praised when they work. The 45→4 min example is the strongest product proof point available.</div>
+    </div>
+  </div>
+
+  <div class="challenge-block mt-32">
+    <h3>Unsolved Challenges — Vision Hasn't Closed These Gaps</h3>
+    <div class="challenge-row">
+      <h4>Documentation Maintenance Culture</h4>
+      <p>Tooling (Autura pipeline) exists, but there's no incentive structure or ownership model ensuring teams keep docs fresh. Research shows stale docs are as damaging as missing ones.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Auth / Access Friction at Day 0</h4>
+      <p>30% of AIW support threads are auth errors; 1–7 day unblocking times. Silver-phase portal integration doesn't address access provisioning — it only moves the iframe.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Evaluation Culture for GenAI</h4>
+      <p>Only 26% of GenAI use cases have run evaluations. This is a UX guidance gap — developers don't know how or why to evaluate. The vision focuses on tooling, not the workflow habits around it.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Cross-Vertical Navigation (JTBD → IA)</h4>
+      <p>Satisfaction is 32–48/100 across all personas. Persona-driven IA is a Gold-phase goal, but research shows the pain is Silver-phase urgent. There's a phasing mismatch.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Reliability &amp; Silent Failures</h4>
+      <p>DDE MCPs have a 100-result hard cap with no pagination and silent auth failures. Production gaps in today's shipped tooling erode trust even as the vision accelerates forward.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Silver / Gold Reset</h4>
+      <p>Amit Soni flagged: "The Silver/Gold breakdown needs a reset." The FY26 targets ($4M observability savings, &gt;80% CES) require a clearer path than current phase definitions provide.</p>
+    </div>
+  </div>
+
+  <!-- Design Guardrails -->
+  <div class="challenge-block mt-32">
+    <h3>Design Guardrails — What DevPortal Should Not Do <span style="font-weight:400;color:var(--color-text-3);font-size:12px;margin-left:8px;">March 2025 research</span></h3>
+    <div class="challenge-row">
+      <h4>Don't try to do everything</h4>
+      <p>DevPortal should not include every possible tool a developer might need. Feature sprawl creates navigation complexity and erodes the value of what's actually curated. Scope discipline is a product decision, not a gap.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Don't clone what external tools already do well</h4>
+      <p>It should not hide the tools it builds or replicate features already covered by GitHub, Jira, VS Code, or other external tools. Wrapping external tools in portal chrome adds a login step without adding value.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Don't create more context switching</h4>
+      <p>Avoid causing more tab-switching or platform-hopping. If a DevPortal feature requires a developer to leave their current workflow to use the portal, the integration model needs rethinking — not the developer's habits.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Don't create documentation for documentation's sake</h4>
+      <p>Documentation that nobody reads is worse than no documentation — it creates false confidence and clutters search results. Documentation must be discoverable, maintained, and tied to a real user task.</p>
+    </div>
+    <div class="challenge-row">
+      <h4>Don't force users into a single way of working</h4>
+      <p>The 80/20 rule applies: paved paths for the common case, flexibility for edge cases. The portal should guide without mandating — one workflow fits all is an anti-pattern for a platform serving 5 distinct JTBD personas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- AREA 03 · STAKEHOLDER ALIGNMENT                                   -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="stakeholders">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-titles">
+      <h2>Stakeholder Alignment Map</h2>
+      <p>Which directions have clear team consensus, and where the real debates live — grounded in doc evidence and Slack signals.</p>
+    </div>
+  </div>
+
+  <div class="card-grid-2">
+    <div>
+      <div class="align-col-head align-head-supported">
+        <h3>Well Supported Across Stakeholders</h3>
+      </div>
+      <div class="align-col-body">
+        <div class="align-item">
+          <h4>Unified Portal as the Home Base</h4>
+          <p>Broad alignment that developer tools need a common home. Bronze/Silver/Gold phasing is accepted as the practical path, even if timelines are debated.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Praneet</span>
+            <span class="avatar-chip">Bhavana</span>
+            <span class="avatar-chip">April</span>
+            <span class="avatar-chip">PDX Design</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Delivery Team as the Ownership Unit</h4>
+          <p>The DevPortal-as-a-Platform doc decision log shows no objection to Delivery Teams as the accountability construct. Referenced consistently across architecture and research docs.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Praneet</span>
+            <span class="avatar-chip">Hemant</span>
+            <span class="avatar-chip">Elnaz</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Knowledge Graph as Intelligence Foundation</h4>
+          <p>Neo4j + Glean semantic layer is treated as assumed infrastructure across vision, agentic, and experience-layer documents. No contested signal found.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Praneet</span>
+            <span class="avatar-chip">Bhavana</span>
+            <span class="avatar-chip">Agentic Vision doc</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Persona-Driven IA &amp; Self-Serve Capabilities</h4>
+          <p>All stakeholder groups cite the JTBD framework as valid. The 5-persona matrix and role-based surfaces are referenced in design sprint, PDX deck, and research docs without challenge.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Will Wang</span>
+            <span class="avatar-chip">Jacque</span>
+            <span class="avatar-chip">Natasha</span>
+            <span class="avatar-chip">Muyi</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Agentic Chat as the Next Interaction Layer</h4>
+          <p>The multi-agent orchestration vision (Gateway + domain agents) has leadership buy-in. CJ's quote: "at least a 2-year plan, needs more serious commitment" signals ambition alignment, not skepticism.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">CJ (leadership)</span>
+            <span class="avatar-chip">Agentic doc authors</span>
+            <span class="avatar-chip">Landon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="align-col-head align-head-contested">
+        <h3>Contested or Unresolved</h3>
+      </div>
+      <div class="align-col-body">
+        <div class="align-item">
+          <h4>Silver / Gold Phase Definitions</h4>
+          <p>Amit Soni explicitly flagged the phase breakdown as needing a reset. Feb 2026 decision log shows workbench = lift-and-shift is a pragmatic retreat from the original Gold integration aspiration.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Amit</span>
+            <span class="avatar-chip">Bhavana</span>
+            <span class="avatar-chip">PDX Design</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>AppFabric Plugin Governance</h4>
+          <p>The Experience Layer doc surfaces a live tension: top-down (platform team owns the plugin API surface) vs. bottom-up (vertical teams contribute freely). No decision recorded as of the doc's last edit.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Bhavana</span>
+            <span class="avatar-chip">Vertical teams</span>
+            <span class="avatar-chip">Platform team</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>DevPortal vs. GenOS — Agent Ownership</h4>
+          <p>The Agentic Experiences doc leaves blank: "DevPortal Agent vs. Intuit Assist — decision pending." Whether DevPortal builds its own GenUX or defers to GenOS is unresolved and architecturally significant.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Agentic doc (open)</span>
+            <span class="avatar-chip">Amit</span>
+            <span class="avatar-chip">CJ</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Deprecation &amp; Sunset Decisions</h4>
+          <p>Multiple Slack verbatims reference confusion about which old tools are going away and when. No stakeholder has published a clear deprecation plan for Scout-era tooling or pre-platform docs.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Developers (Slack)</span>
+            <span class="avatar-chip">Onboarding team</span>
+          </div>
+        </div>
+        <div class="align-item">
+          <h4>Jira &amp; GitHub Ingest — Agent or Webhook?</h4>
+          <p>The Agentic Experiences doc shows a blank cell: "agent vs. ingest for Jira/GitHub — left blank." Whether context is pulled on-demand by agents or pre-ingested into the Knowledge Graph affects cost, latency, and freshness.</p>
+          <div class="align-voices">
+            <span class="avatar-chip">Agentic doc (blank)</span>
+            <span class="avatar-chip">Hemant</span>
+            <span class="avatar-chip">DDE team</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- AREA 04 · FUTURE STATE                                            -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="future">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-titles">
+      <h2>Future State Brainstorm</h2>
+      <p>Designing for a world where most developers never visit a portal URL — they live in IDE, CLI, and chat. What does DevPortal become in that world?</p>
+    </div>
+  </div>
+
+  <div class="card-grid-3">
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>The Portal Becomes a Knowledge API</h3>
+      <p>DevPortal's web UI recedes. Its true product is a high-fidelity, always-current knowledge graph that any IDE plugin, CLI tool, or AI agent can query. Developers never navigate to it — their tools do.</p>
+      <div class="signal-quote">"The 45→4 minute data discovery improvement came from the MCP, not the portal UI. That's the direction."</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+      </div>
+      <h3>IDE as the Primary Interface</h3>
+      <p>The Day 0 Plugin becomes the canonical first experience. VS Code / Cursor sidebar surfaces onboarding flows, compliance checks (HCAP warnings), and discovery — without leaving the editor. The portal URL is a fallback, not the default.</p>
+      <div class="signal-quote">"8 documents to set up a first agent — that workflow needs to live inside the IDE, not across tabs."</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Agents as First-Class Platform Citizens</h3>
+      <p>A2A (Agent-to-Agent) protocol enables DevPortal to dispatch specialized agents (SRE, M&amp;A, onboarding) that coordinate without human handoffs. Developer intent → outcome, with the portal as orchestration layer only.</p>
+      <div class="signal-quote">"The multi-agent architecture needs more serious commitment — this is at least a 2-year play." — CJ leadership</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Intent-Based Task Flows</h3>
+      <p>Developers declare intent ("I want to build a GenAI agent", "I need to onboard a new service") and the portal assembles the right sequence of steps, tools, and docs for that specific goal — rather than leaving users to navigate a feature tree.</p>
+      <div class="signal-quote">March 2025 research principle: "Prioritise intent-based tasks and provide modular building blocks." Aligns directly with the Day 0 Plugin concept and paved-path philosophy.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Ambient Intelligence in the Developer Flow</h3>
+      <p>Instead of developers pulling information, the platform pushes relevant context proactively — PDLC stage warnings in the PR, compliance nudges in the pipeline, cost anomaly alerts in Slack. Zero portal visits required.</p>
+      <div class="signal-quote">"Personalise the developer experience by anticipating needs and issues proactively." — March 2025 research principle</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Self-Healing Documentation</h3>
+      <p>Agents monitor code merges and API changes, then auto-propose doc updates via Autura. Human review becomes the exception, not the rule. Stale docs — the #1 research complaint — become structurally impossible.</p>
+      <div class="signal-quote">"Documentation is either missing or so out of date it's misleading."</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Composable Workbench for Any Vertical</h3>
+      <p>The Gold-phase vision: any vertical team publishes a plugin via AppFabric that composes into the portal shell with zero custom integration work. The portal becomes a runtime, not a destination.</p>
+      <div class="signal-quote">Requires resolving the top-down vs. bottom-up plugin governance debate before any Gold-phase work can begin.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-card-top">
+        <span class="time-badge tb-6mo">6 months</span>
+        <span class="time-badge tb-1yr">1 year</span>
+      </div>
+      <h3>Persona-Adaptive Surfaces</h3>
+      <p>When a developer does open DevPortal, the experience is fully role-aware: AI Newcomer sees onboarding paths and evaluation guides; SRE sees reliability dashboards; EM sees team health. One URL, five different products.</p>
+      <div class="signal-quote">Satisfaction scores (32–48/100) improve immediately when context is role-relevant. This is a Silver/Gold crossover opportunity.</div>
+    </div>
+  </div>
+
+  <div class="tension-box">
+    <div>
+      <h3>The Core Design Tension</h3>
+      <p>The portal needs to be excellent enough that developers <em>choose</em> to use it — while also being invisible enough that developers <em>don't need</em> to. These aren't contradictory: the portal is the orchestration brain; the IDE and CLI are the hands.</p>
+    </div>
+    <div class="tension-divider"></div>
+    <div>
+      <h3>The Design Question for This Workshop</h3>
+      <p>If most tasks move to IDE and CLI in 12 months, which portal surfaces justify investment? What is irreducibly valuable about the web UI — and what should we consciously let go of?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- SOURCES                                                           -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="sources-section" id="sources">
+  <div class="sources-inner">
+    <h2>Sources</h2>
+    <div class="sources-grid">
+
+      <div class="source-item">
+        <a href="https://docs.google.com/document/d/1qVIc5-fbemRT3vumJ2PE4ZiKnYa4Dy2BjhCEMH9nFzk" target="_blank">Target State: Agentic Experiences in Dev Portal</a>
+        <p>Q3 2026 roadmap, Intuit Assist vs. DevPortal Agent comparison, A2A protocol, open architecture questions. Key: Jira/GitHub ingest decision left blank.</p>
+        <span class="source-tag">Google Doc</span>
+      </div>
+
+      <div class="source-item">
+        <a href="https://docs.google.com/document/d/1UM5zrHr8PITiJuj-umRdHOn7cN-oRj86XHqlS7NC_eM" target="_blank">DevPortal User Research</a>
+        <p>Will Wang's research synthesis. 20+ Slack verbatims across 6 categories. Satisfaction scores 32–48/100 by JTBD persona.</p>
+        <span class="source-tag">Google Doc</span>
+      </div>
+
+      <div class="source-item">
+        <a href="https://docs.google.com/document/d/1_bGRWvLrrEHPWD3MjBqB0zovoyHMztw52uWbe4E7hno" target="_blank">Target State: Experience Layer in DevPortal</a>
+        <p>Bhavana Reddy Gajjala. Federated shell, Context SDK, sandbox extension + module federation POC results, AppFabric integration challenges.</p>
+        <span class="source-tag">Google Doc</span>
+      </div>
+
+      <div class="source-item">
+        <a href="https://docs.google.com/document/d/1C9OpTL4cN3e0AorZEpGI4wbyffA75dsV9PhlUoXpV6Y" target="_blank">DevPortal-as-a-Platform Vision</a>
+        <p>Praneet Singh. Horizontal kernel + vertical workbench architecture. Decisions log: Feb 9 workbench redefinition, Feb 2 Silver = lift-and-shift.</p>
+        <span class="source-tag">Google Doc</span>
+      </div>
+
+      <div class="source-item">
+        <a href="https://docs.google.com/presentation/d/162Rvyy7_eO9FVyu95LC-Dn0zuXlOYwXyw3EI9rakZoU" target="_blank">Unified Development Portal Dec 2025</a>
+        <p>PDX Design. Bronze/Silver/Gold phases, JTBD workflow examples, GED customer quotes, IA deep dive, persona matrix, design sprint outcomes.</p>
+        <span class="source-tag">Google Slides</span>
+      </div>
+
+      <div class="source-item">
+        <a href="https://docs.google.com/presentation/d/1s2XY_3bmMTWOlBie1BXl5FWG_sJuSHv7LacM98d8v70" target="_blank">DevPortal Vision Design Sprint</a>
+        <p>Sprint goals, personas, LEGO analogy for extensibility, IA framework, Crazy 8s and storyboard methodology outcomes.</p>
+        <span class="source-tag">Google Slides</span>
+      </div>
+
+      <div class="source-item">
+        <a href="#">AI-Summarised Research Notes — March 17, 2025</a>
+        <p>Three AI-summarised documents covering DevPortal features and experiences, enhancing developer experience, and a functionalities assessment. Key contributions: 80/20 paved paths principle, intent-based task model, design guardrails (what DevPortal should not do), proactive anticipation of user needs.</p>
+        <span class="source-tag">Provided Screenshot</span>
+      </div>
+
+      <div class="source-item">
+        <a href="computer:///sessions/quirky-vigilant-cerf/mnt/Dev Potral/DevPortal User Research.html">DevPortal User Research.html</a>
+        <p>IDS-styled HTML version of Will's research doc. 6 category sections, verbatim quotes, design implications for Silver phase.</p>
+        <span class="source-tag">Local HTML</span>
+      </div>
+
+      <div class="source-item">
+        <a href="computer:///sessions/quirky-vigilant-cerf/mnt/Dev Potral/Dev Portal Onboarding.html">Dev Portal Onboarding.html</a>
+        <p>5 JTBD personas with satisfaction scores, 17-vertical integration status table, Amit's Silver/Gold reset flag, FY26 targets ($4M savings, &gt;80% CES), full team directory.</p>
+        <span class="source-tag">Local HTML</span>
+      </div>
+
+      <div class="source-item">
+        <a href="computer:///sessions/quirky-vigilant-cerf/mnt/Dev Potral/AIW Onboarding.html">AIW Onboarding.html</a>
+        <p>CJ's 2-year commitment quote, 8-document first-agent problem, 26% GenAI eval rate, median 3 days to first agent, 30% auth-error support threads, Day 0 Plugin concept.</p>
+        <span class="source-tag">Local HTML</span>
+      </div>
+
+      <div class="source-item">
+        <a href="computer:///sessions/quirky-vigilant-cerf/mnt/Dev Potral/DDE Onboarding.html">DDE Onboarding.html</a>
+        <p>4 DDE production MCPs, 45→4 min data discovery improvement, CDC Capability Plugin (April 2026), HCAP compliance warnings, 100-result cap limitation, silent auth failures.</p>
+        <span class="source-tag">Local HTML</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────── -->
+<footer>
+  <p>DevPortal Workshop Brief · Prepared by Will Wang, Principal Designer · May 2026</p>
+  <p>Intuit · Internal Use Only</p>
+</footer>
+
+<script>
+  // ── Nav active state: scroll-position based (no IntersectionObserver race) ──
+  const anchors = ['vision', 'research', 'stakeholders', 'future', 'sources'];
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const NAV_H = 64; // a little extra offset so highlight triggers slightly before the section title reaches the nav
+
+  function updateNav() {
+    const scrollY = window.scrollY;
+    const docH = document.documentElement.scrollHeight;
+    const winH = window.innerHeight;
+
+    // If scrolled to the bottom, always highlight "sources"
+    if (scrollY + winH >= docH - 4) {
+      setActive('sources');
+      return;
+    }
+
+    // Walk anchors in reverse; the last one whose top is above the current scroll wins
+    let current = '';
+    for (let i = anchors.length - 1; i >= 0; i--) {
+      const el = document.getElementById(anchors[i]);
+      if (!el) continue;
+      if (el.getBoundingClientRect().top + scrollY - NAV_H <= scrollY) {
+        current = anchors[i];
+        break;
+      }
+    }
+
+    setActive(current);
+  }
+
+  function setActive(id) {
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (id && href === '#' + id) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav(); // set on load
+</script>
+</body>
+</html>

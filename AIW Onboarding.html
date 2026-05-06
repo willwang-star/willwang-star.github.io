@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workbench — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ids-blue-700: #004F8B; --ids-blue-600: #006199; --ids-blue-500: #0077C5;
+  --ids-blue-400: #47A0D9; --ids-blue-100: #D9EDF7; --ids-blue-50:  #EBF5FB;
+  --ids-ink-900:  #1A1A1A; --ids-ink-700:  #393A3D; --ids-ink-500:  #6B6C72;
+  --ids-ink-300:  #9EA0A5; --ids-ink-100:  #D4D7DC;
+  --ids-surface-white: #FFFFFF; --ids-surface-page: #F7F8FA;
+  --ids-green-600: #0A7A00; --ids-green-100: #E3F5E1;
+  --ids-red-600:   #C00711; --ids-red-100:   #FDECEA;
+  --ids-orange-600:#C84B00; --ids-orange-100:#FEF0E6;
+  --ids-yellow-600:#9A6700; --ids-yellow-100:#FEF9EC;
+  --ids-purple-600:#5C3A9B; --ids-purple-100:#EDE9F8;
+  --ids-teal-600:  #007A72; --ids-teal-100:  #E0F5F4;
+
+  /* shadcn/ui semantic tokens → IDS */
+  --background:           var(--ids-surface-page);
+  --foreground:           var(--ids-ink-700);
+  --card:                 var(--ids-surface-white);
+  --primary:              var(--ids-blue-500);
+  --primary-foreground:   #FFFFFF;
+  --secondary:            var(--ids-blue-50);
+  --secondary-foreground: var(--ids-blue-700);
+  --muted:                #F0F2F5;
+  --muted-foreground:     var(--ids-ink-500);
+  --accent:               var(--ids-blue-50);
+  --accent-foreground:    var(--ids-blue-700);
+  --border:               #E5E7EB;
+  --ring:                 var(--ids-blue-500);
+  --radius:               0.75rem;
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+}
+
+/* ── Dark mode ── */
+html.dark {
+  --background:           #0F1117;
+  --foreground:           #E2E4EB;
+  --card:                 #171B27;
+  --primary:              #47A0D9;
+  --primary-foreground:   #0F1117;
+  --secondary:            #1A2744;
+  --secondary-foreground: #89C4F4;
+  --muted:                #1C2030;
+  --muted-foreground:     #7A7F96;
+  --accent:               #1A2744;
+  --accent-foreground:    #89C4F4;
+  --border:               #252A3C;
+  --ring:                 #47A0D9;
+  --ids-blue-50:          #111E36;
+  --ids-blue-100:         #1A2F50;
+  --ids-blue-400:         #3A8FCC;
+  --ids-blue-500:         #47A0D9;
+  --ids-blue-700:         #89C4F4;
+  --ids-ink-900:          #F0F2F7;
+  --ids-ink-700:          #E2E4EB;
+  --ids-ink-500:          #7A7F96;
+  --ids-ink-300:          #4A4F65;
+  --ids-ink-100:          #252A3C;
+  --ids-green-100:        #0E2B14; --ids-green-600: #4CAF50;
+  --ids-red-100:          #2B0E10; --ids-red-600:   #F47A7E;
+  --ids-orange-100:       #2B1708; --ids-orange-600:#F0935A;
+  --ids-yellow-100:       #2B220A; --ids-yellow-600:#D4A338;
+  --ids-purple-100:       #1C1538; --ids-purple-600:#9B7DE0;
+  --ids-teal-100:         #0A2422; --ids-teal-600:  #3EB8B0;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.25);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.20);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.40), 0 1px 3px rgba(0,0,0,.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+
+/* ── Header ── */
+.header {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  padding: 0 32px;
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 36px; height: 68px;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 600; font-size: 14.5px; color: var(--foreground); flex-shrink: 0;
+}
+.header-logo {
+  width: 32px; height: 32px; background: var(--primary);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 800; font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0,119,197,.35);
+}
+.header-sep { color: var(--ids-ink-300); font-weight: 300; margin: 0 -6px; }
+
+/* ── Nav tabs ── */
+.nav-tabs { display: flex; align-items: center; gap: 1px; flex: 1; overflow-x: auto; }
+.nav-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 7px 16px; font-size: 13.5px; font-weight: 500;
+  color: var(--muted-foreground); border-radius: calc(var(--radius) - 2px);
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap; font-family: inherit; line-height: 1.4;
+}
+.nav-tab:hover  { background: var(--muted); color: var(--foreground); }
+.nav-tab.active { background: var(--accent); color: var(--primary); font-weight: 600; }
+
+/* ── Layout ── */
+.page-content { max-width: 1280px; margin: 0 auto; padding: 48px 32px 64px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.page-header {
+  margin-bottom: 36px; padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.page-header h1 {
+  font-size: 26px; font-weight: 700; letter-spacing: -0.03em;
+  margin-bottom: 8px; color: var(--ids-ink-900);
+}
+.page-header p { font-size: 14.5px; color: var(--muted-foreground); line-height: 1.6; }
+
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ids-ink-300);
+  margin: 40px 0 16px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.18s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-title { font-size: 14.5px; font-weight: 600; margin-bottom: 14px; color: var(--ids-ink-900); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center; border-radius: 9999px;
+  padding: 3px 11px; font-size: 11.5px; font-weight: 600;
+  line-height: 1.4; border: 1px solid transparent; letter-spacing: 0.01em;
+}
+.badge-default   { background: var(--primary); color: #fff; }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); border-color: var(--ids-blue-100); }
+.badge-outline   { background: transparent; color: var(--foreground); border-color: var(--border); }
+.badge-success   { background: var(--ids-green-100); color: var(--ids-green-600); }
+.badge-warning   { background: var(--ids-yellow-100); color: var(--ids-yellow-600); }
+.badge-error     { background: var(--ids-red-100); color: var(--ids-red-600); }
+.badge-purple    { background: var(--ids-purple-100); color: var(--ids-purple-600); }
+
+/* ── Alert ── */
+.alert {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; display: flex; gap: 13px;
+  align-items: flex-start; margin-bottom: 18px; font-size: 13.5px;
+  line-height: 1.6;
+}
+.alert-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+.alert-content { flex: 1; }
+.alert-content strong { font-weight: 600; }
+.alert-info    { background: var(--ids-blue-50);    border-color: var(--ids-blue-100);   color: var(--ids-blue-700); }
+.alert-success { background: var(--ids-green-100);  border-color: #b7e4b3;               color: var(--ids-green-600); }
+.alert-warning { background: var(--ids-yellow-100); border-color: #f0d98a;               color: var(--ids-yellow-600); }
+.alert-error   { background: var(--ids-red-100);    border-color: #f5bbbf;               color: var(--ids-red-600); }
+.alert-teal    { background: var(--ids-teal-100);   border-color: #99d6d2;               color: var(--ids-teal-600); }
+.alert-default { background: var(--ids-blue-50);    border-color: var(--ids-blue-100); }
+
+/* ── Grids ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+@media(max-width:960px) { .g3,.g4 { grid-template-columns:1fr 1fr; } }
+@media(max-width:640px) { .g2,.g3,.g4 { grid-template-columns:1fr; } }
+
+.separator { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* ── Table ── */
+table.shad { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.shad thead tr { border-bottom: 1px solid var(--border); }
+table.shad th {
+  padding: 12px 18px; text-align: left; font-weight: 600;
+  color: var(--muted-foreground); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+table.shad td {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.6;
+}
+table.shad tbody tr:last-child td { border-bottom: none; }
+table.shad tbody tr:hover { background: var(--muted); }
+table.shad code {
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 6px; font-size: 11.5px;
+  font-family: 'SF Mono','Fira Code',monospace;
+}
+
+/* ── Stat grid ── */
+.stat-grid {
+  display: grid; grid-template-columns: repeat(auto-fit,minmax(145px,1fr));
+  gap: 14px; margin-bottom: 24px;
+}
+.stat-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px 18px; text-align: center;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.stat-box:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.stat-num   { font-size: 30px; font-weight: 800; color: var(--primary); letter-spacing: -.04em; line-height: 1; }
+.stat-label { font-size: 12px; color: var(--muted-foreground); margin-top: 7px; line-height: 1.4; }
+
+/* ── Person card ── */
+.person-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s;
+}
+.person-card:hover { box-shadow: var(--shadow-md); }
+.person-name { font-weight: 700; font-size: 14px; color: var(--ids-ink-900); }
+.person-role { font-size: 12px; color: var(--primary); font-weight: 600; margin: 5px 0 8px; }
+.person-ctx  { font-size: 12.5px; color: var(--muted-foreground); line-height: 1.55; }
+
+/* ── Principle card ── */
+.prin-card {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; margin-bottom: 14px; background: var(--card);
+  box-shadow: var(--shadow-xs);
+}
+.prin-title { font-weight: 700; font-size: 13.5px; margin-bottom: 6px; color: var(--ids-ink-900); }
+.prin-desc  { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+
+/* ── Feature card (colored left accent) ── */
+.feat-card {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 20px 20px 20px 18px;
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s;
+}
+.feat-card:hover { box-shadow: var(--shadow-md); }
+.feat-card.green  { border-left-color: var(--ids-green-600); }
+.feat-card.orange { border-left-color: var(--ids-orange-600); }
+.feat-card.purple { border-left-color: var(--ids-purple-600); }
+.feat-card.teal   { border-left-color: var(--ids-teal-600); }
+.feat-card.red    { border-left-color: var(--ids-red-600); }
+.feat-card h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 7px; color: var(--ids-ink-900); }
+.feat-card p  { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; margin: 0; }
+
+/* ── Flow steps ── */
+.flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.flow-step {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; background: var(--card);
+  min-width: 120px; text-align: center;
+  box-shadow: var(--shadow-xs);
+}
+.flow-step.hl   { border-color: var(--ids-blue-200, #A8D5F0); background: var(--ids-blue-50); }
+.flow-step.warn { border-color: #f5cba0; background: var(--ids-orange-100); }
+.flow-num  {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--muted-foreground); margin-bottom: 5px;
+}
+.flow-desc { font-size: 12.5px; font-weight: 700; color: var(--ids-ink-900); line-height: 1.3; }
+.flow-loc  { font-size: 11px; color: var(--muted-foreground); margin-top: 5px; line-height: 1.3; }
+.flow-arrow {
+  align-self: center; color: var(--ids-ink-300);
+  font-size: 20px; flex-shrink: 0; padding-top: 2px;
+}
+
+/* ── Roadmap track ── */
+.rm-track { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+@media(max-width:768px) { .rm-track { grid-template-columns:1fr 1fr; } }
+.rm-phase {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; background: var(--card); box-shadow: var(--shadow-xs);
+}
+.rm-badge { font-size: 11px; font-weight: 700; margin-bottom: 10px; display: block; letter-spacing: .02em; }
+.rm-badge.live   { color: var(--ids-green-600); }
+.rm-badge.dev    { color: var(--primary); }
+.rm-badge.design { color: var(--ids-purple-600); }
+.rm-name   { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: var(--ids-ink-900); }
+.rm-timing { font-size: 12px; color: var(--muted-foreground); margin-bottom: 14px; }
+.rm-item   {
+  font-size: 12.5px; color: var(--muted-foreground);
+  padding: 4px 0 4px 14px; position: relative; line-height: 1.4;
+}
+.rm-item::before { content:"·"; position:absolute; left:3px; color:var(--ids-blue-400); font-size:14px; line-height:1.2; }
+
+/* ── Quote ── */
+.quote {
+  border-left: 4px solid var(--primary); padding: 14px 18px;
+  margin-bottom: 14px; background: #FAFBFF;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13.5px; font-style: italic; line-height: 1.7; color: var(--ids-ink-700);
+}
+.quote cite {
+  display: block; margin-top: 8px; font-style: normal;
+  font-size: 12px; color: var(--muted-foreground); font-weight: 600;
+}
+
+/* ── Access row ── */
+.access-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.access-row:last-child { border-bottom: none; }
+.access-icon { font-size: 18px; flex-shrink: 0; }
+.access-desc { flex: 1; font-size: 13.5px; }
+.access-desc strong { display: block; font-weight: 600; margin-bottom: 3px; color: var(--ids-ink-900); }
+.access-desc span   { color: var(--muted-foreground); font-size: 12.5px; }
+.access-desc a { color: var(--primary); text-decoration: none; }
+.access-desc a:hover { text-decoration: underline; }
+
+/* ── Tool pills ── */
+.tool-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tool-pill {
+  background: var(--secondary); border: 1px solid var(--ids-blue-100);
+  border-radius: 9999px; padding: 5px 14px;
+  font-size: 12.5px; color: var(--secondary-foreground); font-weight: 500;
+}
+
+/* ── Code block ── */
+.code-block {
+  background: #1a1b26; color: #c0caf5; border-radius: var(--radius);
+  padding: 20px 24px; font-family: 'SF Mono','Fira Code',monospace;
+  font-size: 12.5px; line-height: 1.85; overflow-x: auto; margin: 14px 0;
+  box-shadow: var(--shadow-sm);
+}
+.code-block .comment { color: #565f89; }
+.code-block strong   { color: #7aa2f7; font-weight: 600; }
+
+/* ── Intro hero card ── */
+.intro-card {
+  background: linear-gradient(135deg, var(--ids-blue-700) 0%, var(--ids-blue-500) 100%);
+  color: white; border-radius: var(--radius);
+  padding: 40px 44px; margin-bottom: 36px;
+  box-shadow: 0 8px 32px rgba(0,77,139,.22), 0 2px 8px rgba(0,77,139,.12);
+  position: relative; overflow: hidden;
+}
+.intro-card::before {
+  content: '';
+  position: absolute; top: -60px; right: -40px;
+  width: 220px; height: 220px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.intro-card h2 {
+  font-size: 22px; font-weight: 800; letter-spacing: -.03em;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.intro-card p {
+  font-size: 14.5px; color: rgba(255,255,255,.82);
+  line-height: 1.7; margin: 0; max-width: 680px;
+}
+
+/* ── Dark mode component tweaks ── */
+html.dark .header {
+  background: rgba(15,17,23,.88);
+}
+html.dark .intro-card {
+  background: linear-gradient(135deg, #003366 0%, #004F8B 60%, #1a6fa8 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+}
+html.dark .intro-card::before { background: rgba(255,255,255,.04); }
+html.dark .quote { background: #111827; }
+html.dark .code-block { background: #0D1117; }
+html.dark table.shad tbody tr:hover { background: var(--muted); }
+html.dark .stat-box:hover, html.dark .person-card:hover,
+html.dark .feat-card:hover, html.dark .card:hover { box-shadow: var(--shadow-md); }
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  margin-left: auto; flex-shrink: 0;
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: 9999px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 500;
+  color: var(--muted-foreground); font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.theme-toggle:hover { background: var(--accent); color: var(--primary); border-color: var(--ids-blue-100); }
+.theme-toggle-icon { font-size: 14px; line-height: 1; }
+
+/* ── Footnote ── */
+.footnote {
+  border-top: 1px solid var(--border); padding-top: 20px; margin-top: 48px;
+  font-size: 12px; color: var(--muted-foreground); line-height: 1.8;
+}
+
+/* ── Typography ── */
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ol, ul { padding-left: 22px; }
+li { margin-bottom: 7px; line-height: 1.65; font-size: 13.5px; }
+h3 { font-size: 15px; font-weight: 700; margin: 22px 0 12px; color: var(--ids-ink-900); letter-spacing: -.015em; }
+h4 { font-size: 13.5px; font-weight: 700; margin: 0 0 6px; color: var(--ids-ink-900); }
+p  { font-size: 13.5px; line-height: 1.7; margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+
+/* ════════════════════════════════════════
+   MOBILE — hamburger nav drawer
+════════════════════════════════════════ */
+
+/* Hamburger button — hidden on desktop */
+.nav-hamburger {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  color: var(--foreground); padding: 6px; border-radius: 6px;
+  margin-left: auto; flex-shrink: 0;
+  transition: background 0.12s;
+}
+.nav-hamburger:hover { background: var(--muted); }
+.nav-hamburger svg { display: block; }
+
+/* Mobile nav drawer */
+.mobile-nav {
+  display: none;
+  position: fixed; inset: 0; z-index: 100;
+}
+.mobile-nav.open { display: block; }
+.mobile-nav-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.mobile-nav-sheet {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: min(280px, 80vw);
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex; flex-direction: column;
+  padding: 0;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+}
+.mobile-nav.open .mobile-nav-sheet { transform: translateX(0); }
+.mobile-nav-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-nav-title { font-size: 14px; font-weight: 700; color: var(--ids-ink-900); }
+.mobile-nav-close {
+  margin-left: auto; background: none; border: none;
+  cursor: pointer; color: var(--muted-foreground);
+  padding: 4px; border-radius: 6px; font-size: 18px; line-height: 1;
+  transition: background 0.12s, color 0.12s;
+}
+.mobile-nav-close:hover { background: var(--muted); color: var(--foreground); }
+.mobile-nav-links { padding: 12px 10px; flex: 1; overflow-y: auto; }
+.mobile-nav-link {
+  display: block; width: 100%;
+  background: none; border: none; cursor: pointer;
+  text-align: left; font-family: inherit;
+  padding: 11px 14px; border-radius: calc(var(--radius) - 2px);
+  font-size: 14px; font-weight: 500; color: var(--muted-foreground);
+  transition: background 0.12s, color 0.12s;
+}
+.mobile-nav-link:hover  { background: var(--muted); color: var(--foreground); }
+.mobile-nav-link.active { background: var(--accent); color: var(--primary); font-weight: 600; }
+.mobile-nav-footer {
+  padding: 12px 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Responsive breakpoints ── */
+
+/* Tablet — 900px */
+@media (max-width: 900px) {
+  .page-content { padding: 36px 24px 48px; }
+  .header { padding: 0 20px; }
+  .header-inner { gap: 20px; height: 60px; }
+  .intro-card { padding: 30px 28px; }
+  .intro-card h2 { font-size: 20px; }
+  .rm-track { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .flow { gap: 6px; }
+}
+
+/* Mobile — 640px: hamburger nav kicks in */
+@media (max-width: 640px) {
+  /* Header: hide desktop tabs, show hamburger */
+  .nav-tabs    { display: none; }
+  .theme-toggle { display: none; }  /* move toggle into sheet */
+  .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+
+  .header { padding: 0 16px; }
+  .header-inner { height: 56px; gap: 12px; }
+  .header-logo { width: 28px; height: 28px; font-size: 13px; }
+  .header-brand { font-size: 13.5px; gap: 9px; }
+
+  /* Page */
+  .page-content { padding: 24px 16px 48px; }
+
+  /* Hero */
+  .intro-card { padding: 24px 20px; margin-bottom: 24px; }
+  .intro-card h2 { font-size: 18px; margin-bottom: 8px; }
+  .intro-card p  { font-size: 13.5px; }
+
+  /* Page header */
+  .page-header { margin-bottom: 24px; padding-bottom: 18px; }
+  .page-header h1 { font-size: 20px; }
+  .page-header p  { font-size: 13.5px; }
+
+  /* Sections */
+  .section-label { margin: 28px 0 12px; }
+
+  /* Cards */
+  .card { padding: 18px 16px; margin-bottom: 14px; }
+  .card-title { font-size: 13.5px; }
+
+  /* Grids already 1-col below 640 */
+
+  /* Tables — horizontal scroll */
+  .card[style*="padding:0"] { overflow-x: auto; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+  table.shad th { padding: 10px 12px; font-size: 10.5px; }
+  table.shad td { padding: 11px 12px; font-size: 13px; }
+
+  /* Stat grid */
+  .stat-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat-box { padding: 16px 10px; }
+  .stat-num { font-size: 24px; }
+  .stat-label { font-size: 11px; }
+
+  /* Flow steps */
+  .flow { gap: 4px; }
+  .flow-step { min-width: 90px; padding: 10px 10px; }
+  .flow-desc { font-size: 11.5px; }
+  .flow-loc  { font-size: 10px; }
+  .flow-arrow { font-size: 16px; }
+
+  /* Roadmap */
+  .rm-track { grid-template-columns: 1fr; gap: 10px; }
+  .rm-phase { padding: 16px; }
+
+  /* Quotes */
+  .quote { padding: 12px 14px; font-size: 13px; }
+
+  /* Access rows */
+  .access-row { flex-wrap: wrap; gap: 10px; }
+  .access-row .badge { margin-top: 4px; }
+
+  /* Principle cards */
+  .prin-card { padding: 16px; }
+
+  /* Feat cards */
+  .feat-card { padding: 16px 16px 16px 14px; }
+
+  /* Person cards */
+  .person-card { padding: 16px; }
+
+  /* Typography scale-down */
+  h3 { font-size: 14px; margin: 18px 0 10px; }
+  li  { font-size: 13px; }
+  p   { font-size: 13px; }
+  .alert { padding: 13px 14px; font-size: 13px; }
+  .code-block { padding: 16px; font-size: 11.5px; }
+
+  /* Badges in header rows */
+  .badge { padding: 3px 9px; font-size: 11px; }
+}
+
+/* Very small — 375px */
+@media (max-width: 375px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .intro-card { padding: 20px 16px; }
+  .intro-card h2 { font-size: 16px; }
+  .page-content { padding: 20px 14px 40px; }
+  .header { padding: 0 14px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">i</div>
+      <span>AI Workbench</span>
+      <span class="header-sep">·</span>
+      <span style="font-weight:400;color:var(--muted-foreground)">Onboarding</span>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('overview',this)">Overview</button>
+      <button class="nav-tab" onclick="showTab('workflow',this)">Agent Workflow</button>
+      <button class="nav-tab" onclick="showTab('vision',this)">Design Vision</button>
+      <button class="nav-tab" onclick="showTab('research',this)">User Research</button>
+      <button class="nav-tab" onclick="showTab('roadmap',this)">Roadmap</button>
+      <button class="nav-tab" onclick="showTab('team',this)">Team &amp; Links</button>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-toggle-icon" id="themeIcon">☀️</span>
+      <span id="themeLabel">Light</span>
+    </button>
+    <!-- Hamburger (mobile only) -->
+    <button class="nav-hamburger" id="hamburger" onclick="openMobileNav()" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-backdrop" onclick="closeMobileNav()"></div>
+  <div class="mobile-nav-sheet">
+    <div class="mobile-nav-header">
+      <div class="header-logo" style="width:26px;height:26px;font-size:13px;border-radius:6px">i</div>
+      <span class="mobile-nav-title">AI Workbench</span>
+      <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+    </div>
+    <div class="mobile-nav-links">
+      <button class="mobile-nav-link active" onclick="mobileTab('overview',this)">📋 Overview</button>
+      <button class="mobile-nav-link" onclick="mobileTab('workflow',this)">⚡ Agent Workflow</button>
+      <button class="mobile-nav-link" onclick="mobileTab('vision',this)">🎯 Design Vision</button>
+      <button class="mobile-nav-link" onclick="mobileTab('research',this)">📊 User Research</button>
+      <button class="mobile-nav-link" onclick="mobileTab('roadmap',this)">🗺️ Roadmap</button>
+      <button class="mobile-nav-link" onclick="mobileTab('team',this)">👥 Team &amp; Links</button>
+    </div>
+    <div class="mobile-nav-footer">
+      <button class="theme-toggle" style="width:100%;justify-content:center" onclick="toggleTheme()">
+        <span class="theme-toggle-icon" id="themeIconMobile">☀️</span>
+        <span id="themeLabelMobile">Light mode</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ TAB 1 · OVERVIEW ══════════ -->
+<div id="tab-overview" class="panel active">
+<div class="page-content">
+
+  <div class="intro-card">
+    <h2>AI Workbench (AIW) — Onboarding</h2>
+    <p>Intuit's internal developer platform for AI and ML development. Lives inside Dev Portal. Your entry point for building, testing, and shipping AI agents at Intuit. This brief covers everything — from current state to where the platform is heading and who's driving it.</p>
+  </div>
+
+  <div class="section-label">What is AI Workbench?</div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-title">🤖 GenAI / Agent Development</div>
+      <p>The primary development surface for building LLM-powered agents. Model Discovery, Skills Registry, Prompt Registry, and Langfuse eval integration all live here. Evolving toward local-IDE-first workflows.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🔬 MDLC — Classical ML</div>
+      <p>Machine Learning Development Life Cycle tooling. Experiments, AutoML, Endpoints, Batch Inference, Model Registry, and Pipelines. Currently project-scoped; migrating to asset-scoped routing (see Roadmap).</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Model Discovery</div>
+      <p>Live leaderboard for LLM comparison and selection. Browse available models, compare performance, and understand which LXS models are available for your use case. Currently sparsely populated but the foundational piece.</p>
+    </div>
+  </div>
+
+  <div class="section-label">Where AIW fits in the Intuit stack</div>
+  <div class="card">
+    <div class="g2">
+      <div>
+        <h4>Part of Dev Portal (DevP)</h4>
+        <p>AI Workbench lives inside <code style="background:var(--muted);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:11.5px">devportal.intuit.com</code> as a sub-platform. AIW is the specialized workspace for AI/ML work within that ecosystem.</p>
+        <h4 style="margin-top:14px">The stack</h4>
+        <div style="font-size:13px;color:var(--muted-foreground);line-height:2.1">
+          <div>🏢 <strong style="color:var(--foreground)">DevPortal</strong> — Service registry, team, asset management</div>
+          <div style="padding-left:18px">↳ 🤖 <strong style="color:var(--foreground)">AI Workbench</strong> — AI/ML development workspace</div>
+          <div style="padding-left:36px">↳ 🧠 <strong style="color:var(--foreground)">GenOS</strong> — GenAI platform (underlying service)</div>
+          <div style="padding-left:36px">↳ ⚡ <strong style="color:var(--foreground)">LXS</strong> — LLM Execution Service</div>
+          <div style="padding-left:36px">↳ 📊 <strong style="color:var(--foreground)">Langfuse</strong> — Tracing &amp; eval</div>
+        </div>
+      </div>
+      <div>
+        <h4>What AIW directly manages</h4>
+        <ul style="color:var(--muted-foreground);font-size:13px">
+          <li>Model Discovery leaderboard</li>
+          <li>GenAI use case onboarding + LXS config</li>
+          <li>Skills Registry (reusable agent skills)</li>
+          <li>Prompt Registry (versioned prompts)</li>
+          <li>MDLC project workflow (experiments, AutoML, etc.)</li>
+          <li>Langfuse integration for tracing</li>
+          <li>AI Hub (in design — replaces scattered Confluence docs)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">The fragmented landscape today</div>
+  <div class="card">
+    <p style="color:var(--muted-foreground);font-size:13px;margin-bottom:0">A developer building their first agent must currently navigate all of these:</p>
+    <div class="tool-grid">
+      <span class="tool-pill">Databricks</span><span class="tool-pill">SageMaker</span>
+      <span class="tool-pill">Cursor / VSCode</span><span class="tool-pill">Dev Portal</span>
+      <span class="tool-pill">AI Workbench</span><span class="tool-pill">Langfuse</span>
+      <span class="tool-pill">Postman</span><span class="tool-pill">Confluence</span>
+      <span class="tool-pill">Slack (tribal knowledge)</span><span class="tool-pill">8+ DevPortal docs</span>
+      <span class="tool-pill">Community docs</span>
+    </div>
+    <div class="separator"></div>
+    <div class="alert alert-error" style="margin-bottom:0">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-content"><strong>To build a first agent</strong>, a developer must touch <strong>8+ documents</strong> just to set up their local environment, then 2 more pages for their first LLM call, then 2 more for tracing &amp; eval. Building an agent UI? No clear path exists.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Key terminology</div>
+  <div class="table-wrap">
+    <table class="shad">
+      <thead><tr><th>Term</th><th>What it means</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AIW</strong></td><td>AI Workbench — this platform</td><td>ai-workbench.app.intuit.com</td></tr>
+        <tr><td><strong>DevP / DevPortal</strong></td><td>Broader internal platform. AIW lives inside DevP.</td><td>devportal.intuit.com</td></tr>
+        <tr><td><strong>GenOS</strong></td><td>Intuit's GenAI platform — underlying agent capabilities</td><td>Inside AIW + DevPortal</td></tr>
+        <tr><td><strong>MDLC</strong></td><td>Machine Learning Development Life Cycle — classical ML workflows</td><td>AIW (projects view)</td></tr>
+        <tr><td><strong>MCP</strong></td><td>Model Context Protocol — connects AI agents to tools and data</td><td>IDE (Cursor / Claude Code)</td></tr>
+        <tr><td><strong>codegen CLI</strong></td><td>Intuit dev CLI. <code>codegen mcp install data-discovery-mcp:latest</code></td><td>Terminal / IDE</td></tr>
+        <tr><td><strong>LXS</strong></td><td>LLM Execution Service — Intuit's managed model serving layer</td><td>Internal API</td></tr>
+        <tr><td><strong>DDE</strong></td><td>Data Discovery &amp; Exploration — team providing data MCPs</td><td>IDE + dde-mcp-server.api.intuit.com</td></tr>
+        <tr><td><strong>IDPS</strong></td><td>Identity Provider Service — auth/secrets agents must be onboarded to</td><td>DevPortal + agent config</td></tr>
+        <tr><td><strong>Langfuse</strong></td><td>Tracing &amp; eval platform. View agent execution traces here.</td><td>External SaaS (Intuit-hosted)</td></tr>
+        <tr><td><strong>RAI</strong></td><td>Responsible AI — compliance review for AI products. Often cited as slow.</td><td>Internal process</td></tr>
+        <tr><td><strong>Skills Registry</strong></td><td>Catalog of reusable agent skills. Searchable via natural language.</td><td>Internal API</td></tr>
+        <tr><td><strong>Prompt Registry</strong></td><td>Versioned store for agent prompts. Register all prompts from day one.</td><td>Internal API</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Strategic context: why AIW needs an overhaul (CJ, Jan 2026)</div>
+  <div class="card">
+    <p>CJ (senior leadership) identified 5 areas requiring serious overhaul: <em>"This needs a lot more serious commitment and co-ordination. We need to do a lot more user research. All PMs need a common developer experience mindset. This will be at least a 2-year plan."</em></p>
+    <div class="g3" style="margin-top:14px">
+      <div class="feat-card"><h4>🤖 Agent Development</h4><p>Move toward local IDE with platform hooks. Improve velocity with coding assistants.</p></div>
+      <div class="feat-card"><h4>🗄️ Data / Context Ingestion</h4><p>Centralize RAG, labels, eval datasets, CDC attributes, agent memory.</p></div>
+      <div class="feat-card"><h4>🔍 Discovery</h4><p>Tool &amp; agent catalogs with well-defined, highly functional entries.</p></div>
+      <div class="feat-card"><h4>⚡ Agent Optimization</h4><p>Help users optimize prompts, run faster tests, switch models quickly.</p></div>
+      <div class="feat-card"><h4>📊 Eval &amp; Monitoring</h4><p>Continuous evals, drift detection, alerts. Use logs/traces as enriched metadata.</p></div>
+    </div>
+    <div class="alert alert-warning" style="margin-top:12px;margin-bottom:0">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-content"><strong>Two open questions from CJ:</strong> (1) Is this the right strategic direction for PDX in terms of build vs. buy? (2) This is at least a 2-year plan — are we staffed to build this outside of current commitments?</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ TAB 2 · AGENT WORKFLOW ══════════ -->
+<div id="tab-workflow" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>The Agent Development Workflow</h1>
+    <p>Every touchpoint a developer navigates from idea to first LLM call — and the exact friction points at each step. Sources: <a href="https://docs.google.com/document/d/1VbvbowjpElG3Eh-OV7LKss9PaDHgjRe_4CwukkqCeD8/edit" target="_blank">Design Vision doc ↗</a> · <a href="https://www.figma.com/board/t4YlTrkOHpGGkCCeVJZzvQ" target="_blank">FigJam: PDX Connect-The-Dots ↗</a></p>
+  </div>
+
+  <div class="alert alert-error">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-content"><strong>The core problem</strong> — quoted directly from the Design Vision doc (Dec 2025): "To develop an agent, you have to touch <strong>8 documents</strong> just to get the local environment set up and the agent service running. To make the first LLM call, you need to visit 2 more pages — or a community-driven doc — to configure the right headers. Then 2 more for tracing &amp; eval. To create a UI for the agent? Who knows!"</div>
+  </div>
+
+  <div class="section-label">The developer journey — step by step</div>
+  <div class="card">
+    <div class="flow">
+      <div class="flow-step hl"><div class="flow-num">Step 1</div><div class="flow-desc">Learn about AI at Intuit</div><div class="flow-loc">📍 Confluence / Slack / AIW</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step hl"><div class="flow-num">Step 2</div><div class="flow-desc">Discover Models</div><div class="flow-loc">📍 AIW — Model Discovery</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step warn"><div class="flow-num">Step 3</div><div class="flow-desc">Register Service</div><div class="flow-loc">📍 Dev Portal</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step warn"><div class="flow-num">Step 4</div><div class="flow-desc">Set Up Local Env</div><div class="flow-loc">📍 8 documents</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step warn"><div class="flow-num">Step 5</div><div class="flow-desc">Configure IDPS &amp; Auth</div><div class="flow-loc">📍 Manual copy-paste</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step warn"><div class="flow-num">Step 6</div><div class="flow-desc">Configure Headers</div><div class="flow-loc">📍 Community doc / Slack</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step hl"><div class="flow-num">Step 7</div><div class="flow-desc">First LLM Call 🎉</div><div class="flow-loc">📍 IDE</div></div>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted-foreground);margin-top:10px;margin-bottom:0">🔵 = AIW touchpoint &nbsp;&nbsp; 🟠 = fragmented / high-friction step</p>
+  </div>
+
+  <div class="section-label">The actual 8 documents</div>
+  <div class="card">
+    <ol>
+      <li><a href="https://devportal.intuit.com/app/dp/capability/CAP-2297/capabilityDocs/main/docs/agents/agent_starter_kit.md" target="_blank">Agent Starter Kit docs</a> — DevPortal</li>
+      <li><a href="https://devportal.intuit.com/app/dp/capability/CAP-2297/capabilityDocs/main/docs/usecases/genos-registry/register-use-case.md" target="_blank">Register Use Case docs</a> — DevPortal</li>
+      <li><a href="https://github.intuit.com/data-mlplatform/python-agent-starter-kit" target="_blank">Python Agent Starter Kit</a> — GitHub</li>
+      <li><a href="https://stackoverflow.intuit.com/questions/26572/26573#26573" target="_blank">StackOverflow Intuit Q&amp;A</a> — Internal SO</li>
+      <li><a href="https://python-poetry.org/docs/#installation" target="_blank">Python Poetry installation</a> — External docs</li>
+      <li><a href="https://devportal.intuit.com/app/dp/resource/5768002816048966459/overview" target="_blank">DevPortal resource page</a> — DevPortal</li>
+      <li><a href="https://devportal.intuit.com/app/dp/capability/CAP-2297/capabilityDocs/main/docs/agents/idps_onboarding.md" target="_blank">IDPS onboarding docs</a> — DevPortal</li>
+      <li><a href="https://devportal.intuit.com/app/dp/capability/1337/capabilityDocs/main/docs/rancher-desktop/install-rancher-desktop.md" target="_blank">Rancher Desktop installation</a> — DevPortal</li>
+    </ol>
+    <p style="margin-top:11px;font-size:13px;color:var(--muted-foreground)">Then: 2 more DevPortal pages for the first LLM call + a community doc just to configure the right headers.</p>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">More friction after first LLM call</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <div class="feat-card orange"><h4>📊 Tracing &amp; Eval Setup</h4><p>2 more AIW pages. Then navigate to Langfuse — a completely separate tool — to view results.</p></div>
+        <div class="feat-card orange"><h4>🖥️ Building an Agent UI</h4><p>Completely unclear and undocumented. Literally "Who knows!" from the Design Vision doc.</p></div>
+        <div class="feat-card orange"><h4>🔐 IDPS Config</h4><p>"Setting up IDPS requires copying various values that the system already knows." Pure toil.</p></div>
+        <div class="feat-card orange"><h4>📞 Local Testing</h4><p>"Calling the service locally requires copying values that the system already knows." Same problem.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Real friction from Slack (#dde-agentic-discovery-exploration-users)</div>
+      <div class="card" style="padding:0;margin-top:10px;overflow:hidden">
+        <table class="shad">
+          <thead><tr><th>Issue</th><th>Root cause</th></tr></thead>
+          <tbody>
+            <tr><td>API key not prompted during install — searches fail silently</td><td>Installer gap</td></tr>
+            <tr><td>Wrong proxy routing — works in Cursor, breaks in Claude Code</td><td>Config mismatch</td></tr>
+            <tr><td>Port 8050 error — "reach out to admin"</td><td>No self-serve fix</td></tr>
+            <tr><td>No pagination in searchTables — 100-result hard cap</td><td>API limitation</td></tr>
+            <tr><td>Claude Desktop incompatibility with Streamable HTTP</td><td>Transport gap</td></tr>
+            <tr><td>No approver info on access request — must go to DDE UI manually</td><td>API response gap</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-warning" style="margin-bottom:0;margin-top:10px">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content"><strong>Pattern:</strong> Silent setup failures with no recovery path. Users don't know where to look.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Why only 26% of GenAI use cases have done evaluations</div>
+  <div class="card">
+    <p>From the Design Vision doc: users feel the evaluation process doesn't add value to their work. Teams run evals to check a box in the RAI process, not because the process is genuinely helpful. This is a UX and onboarding problem, not a capability gap.</p>
+    <div class="alert alert-info" style="margin-bottom:0">
+      <span class="alert-icon">💡</span>
+      <div class="alert-content">The plugin-first approach (see Roadmap) addresses this by embedding a fast eval loop inside the IDE — pulling Langfuse traces and surfacing results without the developer ever leaving their coding environment.</div>
+    </div>
+  </div>
+
+  <div class="section-label">The frontend integration gap — GenUX / Intuit Agent Chat</div>
+  <div class="alert alert-error">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-content"><strong>Median time to first working agent through GenUX: ~3 days.</strong> That's measured from first Slack post in <code style="background:rgba(0,0,0,.08);border-radius:3px;padding:1px 5px;font-size:12px">#ask-genux-agent-chat</code> to first successful agent response — and it skews toward developers who got stuck. Teams that figured it out silently aren't captured. Source: <a href="https://docs.google.com/document/d/1COM1HoTFomgxPzgcMItu5qRDPDM3PyoB3QONKkV17Rk/edit" target="_blank">GenUX DevExp Product Brief</a> (Bola Akinmeji, Apr 2026).</div>
+  </div>
+  <div class="card">
+    <div class="card-title">The 5 pain categories — from ~50 support threads</div>
+    <div class="table-wrap">
+      <table class="shad">
+        <thead><tr><th>Category</th><th>% of threads</th><th>Root cause</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Auth / access errors (401/403)</strong></td><td><strong>~30%</strong></td><td>Missing UPI onboarding, experienceId mismatches, stale agent-registry entries, config.json 403 from uxfabric CDN</td><td>1–7 day block per developer. Typical: 2–4 days.</td></tr>
+          <tr><td><strong>Widget config confusion</strong></td><td>~15%</td><td>Developers don't know what props are available, what's configurable, what requires platform changes</td><td>Feature requests surface as bug reports. Teams build workarounds for things already possible.</td></tr>
+          <tr><td><strong>Invalid response (422/500)</strong></td><td>~12%</td><td>Response payload shape mismatch, missing interactionGroupId, FRF structure malformed</td><td>"Works via direct API, fails through GenUX" — middleware contract is opaque. Needs Splunk + TID.</td></tr>
+          <tr><td><strong>FRF / rendering issues</strong></td><td>~12%</td><td>HTML in responses causing errors, hyperlinks breaking streaming, markdown regressions</td><td>Developers can't find working FRF examples. Storybook perceived as incomplete.</td></tr>
+          <tr><td><strong>Environment / deployment</strong></td><td>~10%</td><td>Version mismatches between e2e and prod, browser compatibility gaps</td><td>"Something broke in e2e" — developers can't distinguish platform issue from their own bug.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Real developer journeys from #ask-genux-agent-chat</div>
+      <div class="quote">"Used a fresh GenUX plugin + Python Agent Starter Kit. Hit 500s, then 422s, then policy/onboarding errors in sequence. 21 replies to resolve. Fresh-generated assets from both paved roads produced sequential errors at integration boundaries."<cite>— David Matz, Feb 26</cite></div>
+      <div class="quote">"Chat panel not set up properly despite connecting all required plugins and downstream services. Still getting help as of April 8."<cite>— Sonali Sengupta · 33 replies · 12+ days (ongoing)</cite></div>
+      <div class="quote">"Used paved-road-generated code. Immediately hit 422 errors."<cite>— Aniket Mhatre · 10 replies · ~8 days</cite></div>
+    </div>
+    <div class="card">
+      <div class="card-title">What V1 frontend paved road fixes (and doesn't)</div>
+      <div class="alert alert-success" style="margin-bottom:12px">
+        <span class="alert-icon">✓</span>
+        <div class="alert-content"><strong>V1 plugin-cli (in review, ~Apr 2026)</strong> — generates a complete, production-ready AppFabric web plugin with agent-chat-panel pre-wired, streaming + JSON-RPC enabled, IDS theming configured. Takes 5 inputs: Experience ID, agent name, asset name, welcome message, starter prompts.</div>
+      </div>
+      <div class="alert alert-error" style="margin-bottom:0">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content"><strong>V1 does NOT fix:</strong> Auth/onboarding (still manual with no runtime validation — 30% of all threads), response contract mismatch between ASK backend + GenUX frontend, FRF examples, environment-aware config. <strong>The backend and frontend paved roads still don't connect.</strong></div>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-default">
+    <span class="alert-icon">💬</span>
+    <div class="alert-content"><strong>Key support channels to know:</strong> <code style="background:rgba(0,0,0,.08);border-radius:3px;padding:1px 5px;font-size:12px">#ask-genux-agent-chat</code> (primary GenUX support — ~50 threads in 6 weeks) · <code style="background:rgba(0,0,0,.08);border-radius:3px;padding:1px 5px;font-size:12px">#genos-support</code> · <code style="background:rgba(0,0,0,.08);border-radius:3px;padding:1px 5px;font-size:12px">#claude-code-cli-early-adopters</code> · <code style="background:rgba(0,0,0,.08);border-radius:3px;padding:1px 5px;font-size:12px">#codeassist-support</code></div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ TAB 3 · DESIGN VISION ══════════ -->
+<div id="tab-vision" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>The AI Development Design Vision</h1>
+    <p>Sooji Son &amp; Elmer KimNii · Dec 5, 2025 · <a href="https://docs.google.com/document/d/1VbvbowjpElG3Eh-OV7LKss9PaDHgjRe_4CwukkqCeD8/edit" target="_blank">Full doc ↗</a></p>
+  </div>
+
+  <div class="alert alert-teal">
+    <span class="alert-icon">⭐</span>
+    <div class="alert-content"><strong>The core proposition</strong> — Don't build a monolithic "AI IDE." Instead, build a <strong>guided, AI-assisted developer experience</strong> that connects existing tools, documentation, and workflows into a coherent step-by-step journey. <em>Orchestrate and guide, don't replace.</em></div>
+  </div>
+
+  <div class="section-label">Why NOT "just build an AI IDE"?</div>
+  <div class="card">
+    <div class="g2">
+      <div>
+        <h3>The argument against a single IDE</h3>
+        <ul>
+          <li>Each platform (Databricks, SageMaker, Langfuse) is deeply specialized — no IDE can match that depth</li>
+          <li>Developers already have a working ecosystem. <em>These are already their dev environment.</em></li>
+          <li>What users need is a <strong>cohesive experience across environments</strong>, not a new environment that replaces them</li>
+        </ul>
+      </div>
+      <div>
+        <h3>What to build instead</h3>
+        <ul>
+          <li>Step-by-step onboarding flows connecting existing tools and APIs</li>
+          <li>An AI assistant integrated with Intuit's docs corpus to answer "how do I…" with Intuit-specific context</li>
+          <li>Contextual guidance that adapts based on the user's current task or tool</li>
+          <li>Example workflows that auto-generate starter notebooks and API calls</li>
+          <li>A lightweight desktop agent providing contextual suggestions (long-term)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">The 3 big ideas</div>
+  <div class="g3">
+    <div class="card"><div class="card-title">1 — Query Knowledge</div><p>Leverage agents to search, chat, and start tasks &amp; workflows. Ask "how do I…" and get an answer with Intuit-specific context.</p></div>
+    <div class="card"><div class="card-title">2 — Learn Through AI Hub</div><p>A structured knowledge repository with models, patterns, guides, and examples. The single source of truth for AI development at Intuit.</p></div>
+    <div class="card"><div class="card-title">3 — Workflow-Centered Design</div><p>Center the experience on <em>workflows and tasks</em>, not on assets or features. Reduce context-switching and cognitive overhead.</p></div>
+  </div>
+
+  <div class="section-label">The 4-stage architecture: HOME → LEARN → EXPERIMENT → MEASURE</div>
+  <div class="g4">
+    <div class="feat-card"><h4>🏠 HOME</h4><p>Example projects &amp; agents. Browse guided experiences by job-to-be-done. Quick-start paths. Browse models, prompts, RAG knowledge bases.</p></div>
+    <div class="feat-card green"><h4>📚 LEARN</h4><p>For any guided experience: get a preview, video, and execution plan. Structured onboarding paths per JTBD. Searchable, AI-friendly documentation.</p></div>
+    <div class="feat-card purple"><h4>🧪 EXPERIMENT</h4><p>Automatic setup — no manual copy-paste. Preconfigured env, service tokens, variables, Databricks integration. RAI guardrails built in.</p></div>
+    <div class="feat-card teal"><h4>📊 MEASURE</h4><p>Evaluation (Langfuse integration). Create datasets, performance dashboards. Proactive recommendations: "Your agent is hallucinating on X."</p></div>
+  </div>
+
+  <div class="section-label">Design principles (6)</div>
+  <div class="g2">
+    <div>
+      <div class="prin-card"><div class="prin-title">🚫 Do Not Migrate</div><div class="prin-desc">Don't force users onto a new platform. Build bridges to where they already are.</div></div>
+      <div class="prin-card"><div class="prin-title">🛣️ Opinionated With Options</div><div class="prin-desc">Default to guided best practices, paved paths, and legal/security guardrails. Allow advanced options on demand.</div></div>
+      <div class="prin-card"><div class="prin-title">✨ Elegant Yet Functional</div><div class="prin-desc">Present the most important information first. Provide sources and details to build confidence — only when needed.</div></div>
+    </div>
+    <div>
+      <div class="prin-card"><div class="prin-title">⌨️ Type &gt; Click</div><div class="prin-desc">Prefer keyboard-driven interaction (tab, type, hotkeys, fuzzy search) over endless dropdowns and modals.</div></div>
+      <div class="prin-card"><div class="prin-title">👥 Single &amp; Multiplayer</div><div class="prin-desc">Empower individuals as end-to-end builders. Also provide options to invite others for legal review and output evaluation.</div></div>
+      <div class="prin-card"><div class="prin-title">🔄 Forgiving</div><div class="prin-desc">Experimentation is cheap, reversible, and safe. Preview changes, revert to previous states easily.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Competitive landscape — inspiration sources</div>
+  <div class="g3">
+    <div class="feat-card"><h4>🔬 LangSmith</h4><p>Tracing, eval, and debugging for LLM apps. Sets the bar for what a great eval experience looks like.</p></div>
+    <div class="feat-card"><h4>🎯 Galileo</h4><p>LLM evaluation and observability. Referenced alongside LangSmith as best-in-class.</p></div>
+    <div class="feat-card"><h4>☁️ SageMaker Bedrock</h4><p>AWS managed AI service. Reference for model discovery and managed infrastructure UX.</p></div>
+    <div class="feat-card"><h4>🌊 Dify.ai</h4><p>Open-source LLM app dev platform. Simple, visual, accessible — a key UX reference.</p></div>
+    <div class="feat-card"><h4>🔷 Vertex AI</h4><p>Google's AI platform. Referenced for experiment tracking and model management UX.</p></div>
+    <div class="feat-card"><h4>🤖 Cursor</h4><p>AI-native code editor. The bar Intuit developers compare everything to. The tool they're already in.</p></div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ TAB 4 · USER RESEARCH ══════════ -->
+<div id="tab-research" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>User Research Findings — Dec 2025 → Jan 2026</h1>
+    <p>Sooji Son, Melani Armstrong, Claire Zheng · <a href="https://docs.google.com/document/d/1Go73uWCRwH0MWvXsWGQC6_9rrhJLrK76Jalm_tNkDy0/edit" target="_blank">AIW Research Learning Plan ↗</a></p>
+  </div>
+
+  <div class="section-label">By the numbers</div>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-num">1,474</div><div class="stat-label">Total users surveyed</div></div>
+    <div class="stat-box"><div class="stat-num">58</div><div class="stat-label">Survey responses</div></div>
+    <div class="stat-box"><div class="stat-num">57%</div><div class="stat-label">Burst + Lapsed segments</div></div>
+    <div class="stat-box"><div class="stat-num">26%</div><div class="stat-label">GenAI use cases with evals</div></div>
+    <div class="stat-box"><div class="stat-num">8+</div><div class="stat-label">Docs to set up agent env</div></div>
+    <div class="stat-box"><div class="stat-num">2–6 wk</div><div class="stat-label">Time to first running agent</div></div>
+  </div>
+
+  <div class="section-label">The 5 user segments</div>
+  <div class="g3">
+    <div class="feat-card"><h4>⚡ Power Users (N=77)</h4><p>High breadth AND high frequency. ≥5 core features + ≥5 sessions in 30 days. AIW's most valuable users — and even they report friction.</p></div>
+    <div class="feat-card green"><h4>🔁 Veteran Users (N=275)</h4><p>Meaningful, repeated usage. ≥3 features + ≥3 sessions. They work around the friction but are at risk of sliding into lapsed.</p></div>
+    <div class="feat-card orange"><h4>💥 Burst Users (N=405)</h4><p>Sampled heavily but didn't return. ≥3 features but ≤1 session. Tried AIW once, couldn't find value fast enough, moved on.</p></div>
+    <div class="feat-card red"><h4>💤 Lapsed Users (N=717)</h4><p>Previously active, haven't come back. The largest segment. Many just "forgot about it."</p></div>
+    <div class="feat-card purple" style="grid-column:span 2"><h4>👀 Should-Use-But-Don't</h4><p>Developers/technical roles with zero recent AIW usage. The untapped audience — would benefit from AIW but have never engaged. Key target for the Day 0 plugin.</p></div>
+  </div>
+  <div class="alert alert-info">
+    <span class="alert-icon">💡</span>
+    <div class="alert-content"><strong>Key finding:</strong> Non-adoption is NOT driven by non-technical users. The majority of burst and lapsed users are hands-on engineers. The challenges are <strong>value clarity and getting-started friction</strong>.</div>
+  </div>
+
+  <div class="section-label">Why users dropped off — 3 categories</div>
+  <div class="card">
+    <div class="prin-card" style="border-color:var(--ids-red-600)">
+      <div class="prin-title">❶ Unclear value proposition — #1 driver (10 mentions)</div>
+      <div class="prin-desc">"Product didn't meet my needs / missing features / didn't see value" — all describe the same underlying sentiment: the value proposition was not clear or strong enough, fast enough. This is NOT a feature gap — it's a communication and discoverability problem.</div>
+    </div>
+    <div class="prin-card" style="border-color:var(--ids-orange-600)">
+      <div class="prin-title">❷ Hard to understand / get started — #2 driver (4 mentions, burst users)</div>
+      <div class="prin-desc">Users dropped off before reaching value because the learning curve was too steep. Without an easy way to learn, external tools with better docs became more attractive. "Most internal tools are hard to adopt because we can't use external AI to help figure out how to use them."</div>
+    </div>
+    <div class="prin-card" style="border-color:var(--ids-blue-400)">
+      <div class="prin-title">❸ No longer needed / workflow changed — #3 driver (7 mentions, lapsed)</div>
+      <div class="prin-desc">AIW isn't sticky enough to survive role or workflow changes. Also 2 mentions of "I forgot about it" — AIW isn't embedded in any core workflow and lacks re-entry hooks.</div>
+    </div>
+  </div>
+
+  <div class="section-label">What users are actually saying</div>
+  <div class="card">
+    <div class="quote">"What do you want me to use it for? I don't understand outside of setting up prompts. Is there something specific you want it to be used for regularly?"<cite>— Burst/Lapsed user</cite></div>
+    <div class="quote">"Most internal tools are hard to adopt because we can't use external AI to help us figure out how to use them. The tools change constantly, which is fine, but the wiki pages never keep up. While I can learn any external library or tool quickly, I don't have that option for internal stuff."<cite>— Burst user (Vladimir Vainer)</cite></div>
+    <div class="quote">"If I cannot use AI to learn how to use it, most probably I'll try to find another tool outside of Intuit's solution."<cite>— Burst user</cite></div>
+    <div class="quote">"It is REALLY difficult to create a RAG database and to get AI agents into production. Current documentation has cost our teams weeks of wasted time."<cite>— Power/Veteran user</cite></div>
+    <div class="quote">"Make it easier to understand and onboard for non-coders. Analysts have a need and desire to leverage LLM tools but we are frankly confused on where and how to start. If there is a 'paved path' it seems to only be paved for engineers."<cite>— Power/Veteran user (analyst)</cite></div>
+    <div class="quote">"Had some struggle when I started using it but now I am able to figure out pretty much everything by myself since I have got some practice on it."<cite>— Power user (tribal knowledge workaround)</cite></div>
+  </div>
+
+  <div class="section-label">Key research conclusions</div>
+  <div class="alert alert-error">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-content"><strong>The learning curve is too high for a self-serve tool.</strong> Users are NOT asking for more features, NOT primarily complaining about bugs. They couldn't quickly understand <em>why this tool mattered for their work</em>, and it took too much effort to figure out on their own.</div>
+  </div>
+  <div class="alert alert-success">
+    <span class="alert-icon">✓</span>
+    <div class="alert-content"><strong>There is no huge feature gap — it's a discoverability and clarity problem.</strong> "The problem we hear is that it isn't a feature gap. It's a problem with discoverability and clarity of purpose." The fix is better onboarding and clearer value communication, not more features.</div>
+  </div>
+  <div class="card">
+    <h3>Research interview principles (for future studies)</h3>
+    <div class="g2">
+      <div><p><strong>Don't ask:</strong></p><ul><li>"Why aren't users using Feature X?"</li><li>"Why is the number dropping?"</li><li>"Why aren't you using our product?"</li></ul></div>
+      <div><p><strong>Ask instead:</strong></p><ul><li>"How are you currently accomplishing the jobs to be done?"</li><li>"What tools and workflows are you actually using day to day?"</li><li>"Walk me through how you currently get [job] done."</li></ul></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ TAB 5 · ROADMAP ══════════ -->
+<div id="tab-roadmap" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Platform Features &amp; Roadmap</h1>
+    <p>Four parallel initiatives transforming AI Workbench from a fragmented starting point into an embedded, guided experience that meets developers where they already work.</p>
+  </div>
+
+  <div class="section-label">Initiative overview</div>
+  <div class="rm-track">
+    <div class="rm-phase">
+      <span class="rm-badge live">● LIVE</span>
+      <div class="rm-name">Model Discovery</div>
+      <div class="rm-timing">Active now</div>
+      <div class="rm-item">LLM leaderboard in AIW</div>
+      <div class="rm-item">Model comparison view</div>
+      <div class="rm-item">Currently sparsely populated</div>
+    </div>
+    <div class="rm-phase">
+      <span class="rm-badge design">● IN DESIGN</span>
+      <div class="rm-name">AI Hub</div>
+      <div class="rm-timing">Next up</div>
+      <div class="rm-item">Full model catalog</div>
+      <div class="rm-item">Agent patterns library</div>
+      <div class="rm-item">MCP / tool directory</div>
+      <div class="rm-item">Onboarding paths by persona</div>
+    </div>
+    <div class="rm-phase">
+      <span class="rm-badge dev">● IN DEV</span>
+      <div class="rm-name">Day 0 Plugin</div>
+      <div class="rm-timing">Q3 POC → Q4 build</div>
+      <div class="rm-item">Plugin-first agent setup</div>
+      <div class="rm-item">POC demo complete</div>
+      <div class="rm-item">2–6 weeks → hours target</div>
+      <div class="rm-item">5 FMH testers identified</div>
+    </div>
+    <div class="rm-phase">
+      <span class="rm-badge dev">● IN PROGRESS</span>
+      <div class="rm-name">MDLC Asset Scoping</div>
+      <div class="rm-timing">Engineering spike active</div>
+      <div class="rm-item">Asset-scoped routing</div>
+      <div class="rm-item">Eng spec drafted (Apr 2026)</div>
+      <div class="rm-item">DevPortal integration prep</div>
+      <div class="rm-item">AutoML PoC as first phase</div>
+    </div>
+  </div>
+
+  <div class="section-label">Agent Development for the Day 0 Experience (Plugin-First)</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="badge badge-default">● POC Complete</span>
+      <span style="font-size:12px;color:var(--muted-foreground)">Melani Armstrong + Sooji Son · Apr 14, 2026</span>
+      <a href="https://docs.google.com/document/d/1e5nghs5hxSiJQPlkCoZFaJkjmyqEljpgcbHjnMepuQ0/edit" target="_blank" style="font-size:12px">Full PRD ↗</a>
+      <a href="https://drive.google.com/file/d/1bnE5fcMBKb78aUARNIqAziQA88GDilQo/view?usp=sharing" target="_blank" style="font-size:12px">🎬 Target state demo ↗</a>
+    </div>
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div class="alert-content"><strong>The approach:</strong> Rather than building a new surface, we bring the agent development workflow directly into AI coding tools (Claude / Cursor). A developer says "I want to build an agent today," and Claude orchestrates the entire setup on their behalf using Intuit's existing infrastructure.</div>
+    </div>
+
+    <h3>Why plugin-first</h3>
+    <div class="g4">
+      <div class="feat-card"><h4>Zero new surfaces</h4><p>Builders work in Claude via their terminal. No new UI to learn or maintain.</p></div>
+      <div class="feat-card"><h4>Meet builders where they are</h4><p>Already in Claude or Cursor. Plugin works with whichever they prefer.</p></div>
+      <div class="feat-card"><h4>Compounds over time</h4><p>Every improvement to the AI model makes the plugin more powerful for free.</p></div>
+      <div class="feat-card"><h4>LLM &amp; agent agnostic</h4><p>Orchestrates setup but doesn't constrain model or framework. Any LXS model works.</p></div>
+    </div>
+
+    <h3>The 8 builder requirements</h3>
+    <ol>
+      <li><strong>Trigger agent setup from AI coding assistant</strong> — intent detected via natural language, prerequisites installed automatically, no manual navigation to DevPortal or AIW required.</li>
+      <li><strong>Create or connect an AI experience without leaving the coding environment</strong> — DevPortal registration, LXS onboarding, Langfuse onboarding, and IDPS secrets all configured automatically.</li>
+      <li><strong>Discover and install skills using natural language</strong> — search Skills Registry by description or Skill ID. Installed and wired in automatically.</li>
+      <li><strong>Add a prompt by generating one or loading from the registry</strong> — Option A: describe agent's goal → assistant generates, publishes as v1.0, configures. Option B: provide Prompt ID → loads via Prompts SDK. Both registered and versioned from day one.</li>
+      <li><strong>Run and test locally without manual auth or Postman setup</strong> — runs with a single command. IDPS, prompt loading, and LXS connectivity confirmed by assistant. All runs logged to Langfuse.</li>
+      <li><strong>Run a quick eval from Langfuse traces during active development</strong> — select time window and metrics; assistant pulls traces, runs lightweight tests, surfaces results in context.</li>
+      <li><strong>Run a full eval against a golden dataset</strong> — provide a Google Sheet link; assistant pulls dataset, runs all tests, logs to Langfuse. Exportable for domain expert review.</li>
+      <li><strong>Commit work and open a PR from within the assistant</strong> — assistant stages all files, pushes to Git, opens a PR. No manual Git commands required.</li>
+    </ol>
+
+    <h3>5 plugin design principles</h3>
+    <div class="g2">
+      <div class="prin-card"><div class="prin-title">1. Plugin-first, not a new surface</div><div class="prin-desc">The workflow lives inside existing AI coding environments. Not building a new UI to compete with tools builders already trust.</div></div>
+      <div class="prin-card"><div class="prin-title">2. LLM &amp; agent agnostic</div><div class="prin-desc">Orchestrates setup but doesn't constrain the agent's model or framework.</div></div>
+      <div class="prin-card" style="border-color:var(--ids-red-600)"><div class="prin-title">3. Zero manual infrastructure steps</div><div class="prin-desc">If a builder has to leave their coding environment to complete setup, <strong>that is a bug, not a workflow.</strong></div></div>
+      <div class="prin-card" style="border-color:var(--ids-green-600)"><div class="prin-title">4. Every artifact registered from day one</div><div class="prin-desc">Prompts, skills, and agents are tracked in their respective registries from the moment they're created.</div></div>
+      <div class="prin-card" style="border-color:var(--ids-purple-600)"><div class="prin-title">5. Guide, don't gate</div><div class="prin-desc">The assistant surfaces next steps and suggestions but doesn't force a rigid order.</div></div>
+    </div>
+
+    <h3>Success metrics</h3>
+    <div class="card" style="padding:0;margin-top:4px;overflow:hidden">
+      <table class="shad">
+        <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Time from 0 → first running agent</strong></td><td>Reduced from <strong>2–6 weeks → hours</strong></td></tr>
+          <tr><td>Manual infrastructure steps eliminated</td><td>DevPortal registration, IDPS config, auth setup — fully automated</td></tr>
+          <tr><td>POC tested with real builders</td><td>At least 5 builders complete the Day 0 flow end-to-end</td></tr>
+          <tr><td>Qualitative feedback</td><td>Builders report the flow is meaningfully easier than today</td></tr>
+          <tr><td>Prompt registry coverage</td><td>100% of prompts created via plugin are registered from creation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Technical dependencies</h3>
+    <div class="card" style="padding:0;margin-top:4px;overflow:hidden">
+      <table class="shad">
+        <thead><tr><th>Dependency</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td>DevPortal API</td><td>Must support programmatic service registration</td></tr>
+          <tr><td>LXS (LLM Execution Service) API</td><td>Must support programmatic onboarding</td></tr>
+          <tr><td>Langfuse API</td><td>Must support automatic onboarding and trace logging</td></tr>
+          <tr><td>Skills Registry API</td><td>Must support natural language or keyword search</td></tr>
+          <tr><td>Prompt Registry API</td><td>Must support lookup and publish by ID and version via Prompts SDK</td></tr>
+          <tr><td>Agent Starter Kit</td><td>Must be maintained and stable enough for the plugin to clone and configure</td></tr>
+          <tr><td>IDPS secrets automation</td><td>Requires service account permissions for auto-configuration</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Roadmap &amp; FMH early testers</h3>
+    <div class="g3">
+      <div class="feat-card green"><h4>Q3 — POC Outcomes</h4><p>Validate API readiness. Identify dependencies. Determine which IDE to target for Q4 build.</p></div>
+      <div class="feat-card"><h4>Q4 — Resourcing &amp; Build</h4><p>Full-team resourcing. Build against a specific IDE target. Scope what ships in Q4.</p></div>
+      <div class="feat-card purple"><h4>FMH Early Testers</h4><p>Shyam Narayan Singh · Pallavi Angraje · Sona Samad · Eli Rata · Aryeh Radle</p></div>
+    </div>
+  </div>
+
+  <div class="section-label">3X AI-Native Builder Initiative — DevAssist Plugin Registry</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="badge badge-default">● In Progress</span>
+      <span style="font-size:12px;color:var(--muted-foreground)">Monica Miyasato · PDX CAB DevExperiences, Mar 2026</span>
+      <a href="https://docs.google.com/presentation/d/1RYImS-f_YKXFJKj8M_DXASpnj9T9Pt6zbxh2E38cvjo/edit" target="_blank" style="font-size:12px">Full deck ↗</a>
+    </div>
+    <div class="alert alert-info">
+      <span class="alert-icon">🚀</span>
+      <div class="alert-content"><strong>90-Day Execution Plan — Q3FY26 target:</strong> 3X developer coding velocity. The DevAssist Plugin Registry is the distribution layer — install any capability plugin with a single CLI command, no manual wiring.</div>
+    </div>
+
+    <h3>DevAssist Plugin Registry — install command</h3>
+    <div class="card" style="background:var(--ids-ink-900);color:#E2E4EB;font-family:monospace;font-size:13px;padding:16px 20px;margin-top:4px;border-radius:var(--radius);border:none">
+      npx @dev-platformexps/devassist-plugin-manager@latest add &lt;plugin-name&gt;
+    </div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-top:8px">Multi-agent, multi-scope distribution. Plugins install across Claude Code, Cursor, or any supported AI coding assistant without manual configuration.</p>
+
+    <h3>Capability plugins shipping Q3FY26</h3>
+    <div class="g2">
+      <div class="feat-card blue">
+        <h4>🔧 Intuit Capability Plugin Creator</h4>
+        <p>Generate and publish a new plugin from five natural-language inputs. Eliminates the manual GenUX plugin wiring that currently takes days.</p>
+      </div>
+      <div class="feat-card green">
+        <h4>🤖 Build Skills for Agents</h4>
+        <p>Pre-built integrations: CI/CD pipelines, GitHub, JIRA, Jenkins, Splunk, IDPS. Skills install from the registry — no custom scaffolding required.</p>
+      </div>
+      <div class="feat-card">
+        <h4>🔍 Local Code Review</h4>
+        <p>Run <code style="background:var(--muted);padding:1px 5px;border-radius:4px">/local-review</code> from within the AI coding assistant. PR Agent performs inline review without leaving the IDE context.</p>
+      </div>
+      <div class="feat-card purple">
+        <h4>📋 Plugin-CLI (V1 Frontend Paved Road)</h4>
+        <p>Replaces manual GenUX plugin wiring. 5-input generation flow. PR open ~Apr 2026 — not yet shipped but directly addresses the frontend integration gap.</p>
+      </div>
+    </div>
+
+    <h3>Why this matters for AIW</h3>
+    <div class="card" style="padding:0;margin-top:4px;overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="shad">
+        <thead><tr><th>Today</th><th>With Plugin Registry</th></tr></thead>
+        <tbody>
+          <tr><td>Manual GenUX plugin wiring · 2–6 weeks to first agent</td><td>Single CLI install · hours to first running agent</td></tr>
+          <tr><td>Each team hand-rolls CI/CD, GitHub, and JIRA integrations</td><td>Shared skill plugins installed from registry</td></tr>
+          <tr><td>Frontend auth and widget config account for 45% of support threads</td><td>Plugin-CLI automates config — no copy-paste setup</td></tr>
+          <tr><td>Capability distribution is ad-hoc and undiscoverable</td><td>Searchable registry with a single install command</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-label">MDLC Asset-Scoped Routing — Platform Alignment</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="badge badge-secondary">● Engineering Spike Active</span>
+      <span style="font-size:12px;color:var(--muted-foreground)">Sooji Son · Eng Spec: Apr 15, 2026</span>
+      <a href="https://docs.google.com/document/d/12cucH9cogvOJ_4VxF6R2_Zgg4I6ttI0YkHnN678nBIA/edit" target="_blank" style="font-size:12px">Full doc ↗</a>
+    </div>
+
+    <h3>The problem: two incompatible navigation models</h3>
+    <div class="table-wrap">
+      <table class="shad">
+        <thead><tr><th>Feature</th><th>MDLC (old)</th><th>GenAI (new)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Navigation flow</strong></td><td>Project → MDLC Overview</td><td>Project → Asset List → Asset Detail</td></tr>
+          <tr><td><strong>Assets per page</strong></td><td>Each tab renders ALL assets</td><td>One asset rendered per page</td></tr>
+          <tr><td><strong>Isolation</strong></td><td>Via manual filter dropdown</td><td>Via dedicated route</td></tr>
+          <tr><td><strong>Deep linking</strong></td><td>Not supported</td><td>✅ Supported</td></tr>
+          <tr><td><strong>Scalability</strong></td><td>Degrades as asset count grows</td><td>Stable</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Target routing pattern</h3>
+    <div class="code-block">
+/wb/projects/:projectId/<strong>model/:assetId</strong>/experiments<br>
+/wb/projects/:projectId/<strong>model/:assetId</strong>/automl<br>
+/wb/projects/:projectId/<strong>model/:assetId</strong>/model-registry<br>
+/wb/projects/:projectId/<strong>model/:assetId</strong>/endpoints<br>
+<span class="comment">// Project-level resources stay at project scope:</span><br>
+/wb/projects/:projectId/notebooks &nbsp; /wb/projects/:projectId/pipelines
+    </div>
+
+    <h3>Implementation phases</h3>
+    <div class="table-wrap">
+      <table class="shad">
+        <thead><tr><th>Phase</th><th>Work</th><th>Risk</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-secondary">Phase 1</span></td><td>Extend AutoML to asset-scoped routing as PoC — already uses <code>/:projectId/automl/:modelAssetId/runs</code>. Low-risk, reversible.</td><td>Low</td></tr>
+          <tr><td><span class="badge badge-secondary">Phase 2</span></td><td>Create <code>ModelAssetDetailLayout.jsx</code> mirroring <code>UseCaseDetailLayout</code>. Provides <code>ModelAssetDetailContext</code> to child pages.</td><td>Low</td></tr>
+          <tr><td><span class="badge badge-secondary">Phase 3</span></td><td>Add new asset-scoped routes in <code>ProjectIndex/index.jsx</code>. Run old + new routes in parallel for back-compat.</td><td>Medium</td></tr>
+          <tr><td><span class="badge badge-secondary">Phase 4</span></td><td>Update ~6–8 MDLC page components to consume context instead of local state.</td><td>Medium</td></tr>
+          <tr><td><span class="badge badge-warning">Wildcard</span></td><td>External widgets (<code>ai-lens-web/experiments</code>, <code>ai-ps-plugin/automl</code>) — verify single-asset scope handling.</td><td>Unknown</td></tr>
+          <tr><td><span class="badge badge-warning">External dep</span></td><td>New asset-level sidebar requires coordination with <code>web-shell-core</code> package owners.</td><td>Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-teal" style="margin-bottom:0;margin-top:12px">
+      <span class="alert-icon">💡</span>
+      <div class="alert-content"><strong>Strategic endgame:</strong> Once MDLC uses asset-scoped routing, AIW can be cleanly embedded inside DevPortal's asset view. A developer looking at their ML model in DevPortal could open the full MDLC workspace without ever leaving DevPortal.</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ TAB 6 · TEAM & LINKS ══════════ -->
+<div id="tab-team" class="panel">
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Team, Links &amp; Recommended Reading</h1>
+    <p>Who to know, where everything lives, and the recommended order for getting up to speed.</p>
+  </div>
+
+  <div class="section-label">Core team — PDX AI Foundation</div>
+  <div class="g3">
+    <div class="person-card"><div class="person-name">Sooji Son</div><div class="person-role">Design Lead</div><div class="person-ctx">AI Dev Design Vision, MDLC Asset Scoping, Research Learning Plan, Day 0 plugin design.</div></div>
+    <div class="person-card"><div class="person-name">Elmer KimNii</div><div class="person-role">Design</div><div class="person-ctx">AI Dev Workflow doc co-author, guided workflow concept originator.</div></div>
+    <div class="person-card"><div class="person-name">Melani Armstrong</div><div class="person-role">PM</div><div class="person-ctx">Day 0 plugin PRD lead. AIW Research Learning Plan co-author.</div></div>
+    <div class="person-card"><div class="person-name">Claire Zheng</div><div class="person-role">PM / Research</div><div class="person-ctx">AIW Research Learning Plan co-author and study lead.</div></div>
+    <div class="person-card"><div class="person-name">Suneet Nandwani</div><div class="person-role">PM (AI)</div><div class="person-ctx">AI product management.</div></div>
+    <div class="person-card"><div class="person-name">Tingwei Huang</div><div class="person-role">PM (AI)</div><div class="person-ctx">AI product management.</div></div>
+    <div class="person-card"><div class="person-name">Srinivas Dharmasanam</div><div class="person-role">PD Initiative Driver</div><div class="person-ctx">Product direction for Day 0 plugin initiative.</div></div>
+    <div class="person-card"><div class="person-name">Tapasvi Moturu / Merrin Kurian</div><div class="person-role">Architecture</div><div class="person-ctx">AI architecture for the platform.</div></div>
+    <div class="person-card"><div class="person-name">Shaswati Mukherjee</div><div class="person-role">Eng · DDE</div><div class="person-ctx">Owner of data-discovery-mcp and dde-access-mcp. Key contact in #dde-agentic-discovery-exploration-users.</div></div>
+    <div class="person-card"><div class="person-name">Justin Marr</div><div class="person-role">Design (AI)</div><div class="person-ctx">AI experience design.</div></div>
+    <div class="person-card"><div class="person-name">Chitrang Jain</div><div class="person-role">PD (AI)</div><div class="person-ctx">AI product direction.</div></div>
+  </div>
+
+  <div class="section-label">All links — access verification</div>
+  <div class="card">
+    <div class="access-row">
+      <div class="access-icon">📊</div>
+      <div class="access-desc"><strong>FigJam — PDX Connect the Dots (Agent Workflow Diagram)</strong><span><a href="https://www.figma.com/board/t4YlTrkOHpGGkCCeVJZzvQ/PDX-Connect-The-Dots?node-id=181-488" target="_blank">figma.com ↗</a></span></div>
+      <span class="badge badge-warning">⏱ Timed out (Figma auth)</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📊</div>
+      <div class="access-desc"><strong>FigJam — GenAI + MDLC Development Journey</strong><span><a href="https://www.figma.com/board/H7DEeTCHvYJFFjbGBndpGQ/GenAI---MDLC-Development-Journey?node-id=536-945" target="_blank">figma.com ↗</a></span></div>
+      <span class="badge badge-warning">⏱ Requires Figma login</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📄</div>
+      <div class="access-desc"><strong>AI Development Design Vision (Sooji Son + Elmer KimNii, Dec 2025)</strong><span><a href="https://docs.google.com/document/d/1VbvbowjpElG3Eh-OV7LKss9PaDHgjRe_4CwukkqCeD8/edit" target="_blank">docs.google.com ↗</a></span></div>
+      <span class="badge badge-success">✅ Read via Drive API</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📄</div>
+      <div class="access-desc"><strong>AIW Research Learning Plan (Sooji Son, Melani Armstrong, Claire Zheng)</strong><span><a href="https://docs.google.com/document/d/1Go73uWCRwH0MWvXsWGQC6_9rrhJLrK76Jalm_tNkDy0/edit" target="_blank">docs.google.com ↗</a></span></div>
+      <span class="badge badge-success">✅ Read via Drive API</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📄</div>
+      <div class="access-desc"><strong>Agent Development for the Day 0 Experience (Melani Armstrong + Sooji Son, Apr 2026)</strong><span><a href="https://docs.google.com/document/d/1e5nghs5hxSiJQPlkCoZFaJkjmyqEljpgcbHjnMepuQ0/edit" target="_blank">docs.google.com ↗</a></span></div>
+      <span class="badge badge-success">✅ Read via Drive API</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📄</div>
+      <div class="access-desc"><strong>MDLC Asset-Scoped Routing Proposal + Eng Spec (Sooji Son, Mar–Apr 2026)</strong><span><a href="https://docs.google.com/document/d/12cucH9cogvOJ_4VxF6R2_Zgg4I6ttI0YkHnN678nBIA/edit" target="_blank">docs.google.com ↗</a></span></div>
+      <span class="badge badge-success">✅ Read via Drive API</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🎬</div>
+      <div class="access-desc"><strong>Day 0 Plugin — Target State Demo Video</strong><span><a href="https://drive.google.com/file/d/1bnE5fcMBKb78aUARNIqAziQA88GDilQo/view?usp=sharing" target="_blank">drive.google.com ↗</a></span></div>
+      <span class="badge badge-success">✅ Google Drive</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">🏆</div>
+      <div class="access-desc"><strong>AI Workbench — Model Discovery Leaderboard</strong><span><a href="https://ai-workbench.app.intuit.com/wb/model-discovery/leaderboard" target="_blank">ai-workbench.app.intuit.com ↗</a></span></div>
+      <span class="badge badge-warning">🔐 Requires Intuit SSO</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc"><strong>Slack — #dde-agentic-discovery-exploration-users</strong><span><a href="https://intuit.enterprise.slack.com/archives/C09GCJUPE3B" target="_blank">C09GCJUPE3B ↗</a> — Real user friction plays out here daily</span></div>
+      <span class="badge badge-success">✅ Read successfully</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📄</div>
+      <div class="access-desc"><strong>GenUX DevExp Product Brief (Bola Akinmeji, Apr 2026)</strong><span><a href="https://docs.google.com/document/d/1COM1HoTFomgxPzgcMItu5qRDPDM3PyoB3QONKkV17Rk/edit" target="_blank">docs.google.com ↗</a> — Frontend integration pain data; quantified 5 pain categories from ~50 support threads</span></div>
+      <span class="badge badge-success">✅ Read via Enterprise Search</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">📊</div>
+      <div class="access-desc"><strong>PDX CAB DevExperiences (Monica Miyasato, Mar 2026)</strong><span><a href="https://docs.google.com/presentation/d/1RYImS-f_YKXFJKj8M_DXASpnj9T9Pt6zbxh2E38cvjo/edit" target="_blank">docs.google.com ↗</a> — 3X AI-Native Builder Initiative, DevAssist Plugin Registry, 90-Day Plan</span></div>
+      <span class="badge badge-success">✅ Read via Enterprise Search</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc"><strong>Slack — #ask-genux-agent-chat</strong><span>GenUX / Intuit Agent Chat frontend integration support</span></div>
+      <span class="badge badge-default">📌 Recommended</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc"><strong>Slack — #claude-code-cli-early-adopters</strong><span>Claude Code CLI early adopters community; Day 0 plugin closely related</span></div>
+      <span class="badge badge-default">📌 Recommended</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc"><strong>Slack — #codeassist-support</strong><span>CodeAssist / DevAssist support channel</span></div>
+      <span class="badge badge-default">📌 Recommended</span>
+    </div>
+    <div class="access-row">
+      <div class="access-icon">💬</div>
+      <div class="access-desc"><strong>Slack — #genos-support</strong><span>GenOS / agent runtime support</span></div>
+      <span class="badge badge-default">📌 Recommended</span>
+    </div>
+  </div>
+
+  <div class="section-label">Recommended reading order</div>
+  <div class="g2">
+    <div>
+      <div class="prin-card"><div class="prin-title">1. FigJam diagrams</div><div class="prin-desc">Start with PDX Connect-the-Dots + GenAI/MDLC Development Journey. Opens the cognitive map of every touchpoint.</div></div>
+      <div class="prin-card"><div class="prin-title">2. AI Development Design Vision doc</div><div class="prin-desc">Understand the <em>why</em> and strategic direction — the 4-stage architecture, 6 principles, and the argument against "just build an AI IDE."</div></div>
+      <div class="prin-card"><div class="prin-title">3. Research doc — tabs 3 &amp; 4 (friction)</div><div class="prin-desc">Know exactly where users hit walls inside AIW. Highest-signal pages in the research doc.</div></div>
+      <div class="prin-card"><div class="prin-title">4. Research doc — AI Hub tab</div><div class="prin-desc">See how the friction maps to the proposed solution. The bridge between problem and product.</div></div>
+    </div>
+    <div>
+      <div class="prin-card"><div class="prin-title">5. AIW Research Learning Plan</div><div class="prin-desc">Full survey methodology, user segments, and real user quotes. You'll know exactly who AIW's users are and what they want.</div></div>
+      <div class="prin-card"><div class="prin-title">6. Day 0 Plugin PRD</div><div class="prin-desc">The near-term delivery vehicle. Read the 8 builder requirements and 5 principles carefully — these will guide near-term decisions.</div></div>
+      <div class="prin-card"><div class="prin-title">7. Watch the Day 0 demo video</div><div class="prin-desc">The POC is already built. Watching it is the fastest way to understand what "guided workflow in the IDE" actually looks like.</div></div>
+      <div class="prin-card"><div class="prin-title">8. MDLC Asset Scoping doc + Eng Spec</div><div class="prin-desc">Platform architecture refactor and DevPortal integration strategy. Important context for the technical direction.</div></div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Sources:</strong> AI Development Design Vision (Sooji Son + Elmer KimNii, Dec 2025) · AIW Research Learning Plan (Sooji Son, Melani Armstrong, Claire Zheng, Dec 2025–Jan 2026) · Agent Development for the Day 0 Experience (Melani Armstrong + Sooji Son, Apr 2026) · MDLC Asset-Scoped Routing Proposal + Eng Spec (Sooji Son, Mar–Apr 2026) · GenUX DevExp Product Brief (Bola Akinmeji, Apr 2026) · PDX CAB DevExperiences / 3X AI-Native Builder Initiative (Monica Miyasato, Mar 2026) · Slack #dde-agentic-discovery-exploration-users · Google Docs read via Google Drive API · Internal docs via Intuit Enterprise Search<br>
+    <strong>Compiled:</strong> April 2026
+  </div>
+
+</div>
+</div>
+
+</main>
+
+<script>
+// ── Tab switching (desktop) ──
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  // Keep mobile nav in sync
+  document.querySelectorAll('.mobile-nav-link').forEach(b => b.classList.remove('active'));
+  const mobileMatch = [...document.querySelectorAll('.mobile-nav-link')]
+    .find(b => b.getAttribute('onclick')?.includes("'" + id + "'"));
+  if (mobileMatch) mobileMatch.classList.add('active');
+}
+
+// ── Mobile nav ──
+function openMobileNav() {
+  document.getElementById('mobileNav').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function mobileTab(id, btn) {
+  // Switch panel
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  // Sync desktop tabs
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  const desktopMatch = [...document.querySelectorAll('.nav-tab')]
+    .find(b => b.getAttribute('onclick')?.includes("'" + id + "'"));
+  if (desktopMatch) desktopMatch.classList.add('active');
+  // Sync mobile links
+  document.querySelectorAll('.mobile-nav-link').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  closeMobileNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Close drawer on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileNav();
+});
+
+// ── Dark / Light mode ──
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  const icon  = dark ? '☀️' : '🌙';
+  const label = dark ? 'Light' : 'Dark';
+  document.getElementById('themeIcon').textContent       = icon;
+  document.getElementById('themeLabel').textContent      = label;
+  document.getElementById('themeIconMobile').textContent = icon;
+  document.getElementById('themeLabelMobile').textContent = dark ? 'Light mode' : 'Dark mode';
+  localStorage.setItem('aiw-theme', dark ? 'dark' : 'light');
+}
+function toggleTheme() {
+  applyTheme(!document.documentElement.classList.contains('dark'));
+}
+
+// Default: dark mode
+(function() {
+  const saved = localStorage.getItem('aiw-theme');
+  applyTheme(saved ? saved === 'dark' : true);
+})();
+</script>
+</body>
+</html>

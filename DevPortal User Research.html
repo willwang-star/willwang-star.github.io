@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevPortal · User Feedback Research Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ── */
+:root {
+  --background: #FAFBFC; --foreground: #1A2332; --card: #FFFFFF;
+  --border: #E2E8F0; --muted: #F4F6F9; --muted-foreground: #64748B;
+  --primary: #0077C5; --accent: rgba(0,119,197,.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06); --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+  --radius: 12px; --font: 'Inter', system-ui, sans-serif;
+  --cat-search: #0077C5; --cat-docs: #7C3AED; --cat-onboard: #B45309;
+  --cat-ai: #0D8C8C; --cat-reliability: #DC2626; --cat-positive: #108000;
+}
+html.dark {
+  --background: #0F1117; --foreground: #E2E4EB; --card: #171B27;
+  --border: #2A2F3F; --muted: #1E2333; --muted-foreground: #8B92A9;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 20px rgba(0,0,0,.4);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--background); color: var(--foreground); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Header ── */
+.header {
+  background: rgba(15,17,23,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  padding: 0 32px;
+}
+html:not(.dark) .header { background: rgba(255,255,255,.92); }
+.header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+.header-brand { font-size: 14px; font-weight: 700; color: var(--foreground); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.header-brand .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+.header-meta { font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; gap: 16px; }
+.theme-btn { background: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--foreground); cursor: pointer; font-family: var(--font); }
+
+/* ── Hero ── */
+.hero { max-width: 1100px; margin: 0 auto; padding: 56px 32px 40px; }
+.hero-tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; }
+.hero-title { font-size: 36px; font-weight: 800; letter-spacing: -.02em; color: var(--foreground); margin-bottom: 12px; line-height: 1.15; }
+.hero-sub { font-size: 16px; color: var(--muted-foreground); max-width: 640px; line-height: 1.65; margin-bottom: 32px; }
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: var(--shadow-sm); }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; margin-bottom: 4px; }
+.stat-desc { font-size: 12px; color: var(--muted-foreground); line-height: 1.5; }
+
+/* ── Method bar ── */
+.method-bar { background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 32px; }
+.method-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
+.method-inner strong { color: var(--foreground); font-weight: 600; }
+.source-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 9999px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: var(--foreground); }
+
+/* ── Content ── */
+.content { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+
+/* ── Category section ── */
+.cat-section { margin-bottom: 48px; }
+.cat-header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.cat-icon { font-size: 18px; }
+.cat-title { font-size: 20px; font-weight: 700; color: var(--foreground); }
+.cat-count { font-size: 12px; font-weight: 600; color: var(--muted-foreground); background: var(--muted); border-radius: 9999px; padding: 2px 10px; }
+.cat-desc { font-size: 13px; color: var(--muted-foreground); margin-bottom: 20px; line-height: 1.65; border-left: 3px solid var(--border); padding-left: 12px; }
+
+/* ── Finding card ── */
+.finding { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.finding-accent { height: 3px; }
+.finding-body { padding: 20px 22px; }
+.finding-quote { font-size: 14px; font-style: italic; color: var(--foreground); line-height: 1.75; margin-bottom: 14px; position: relative; }
+.finding-quote::before { content: '\201C'; font-size: 40px; color: var(--primary); opacity: .25; position: absolute; left: -8px; top: -12px; line-height: 1; font-style: normal; font-weight: 800; }
+.finding-quote-text { padding-left: 8px; }
+.finding-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
+.meta-pill { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 9999px; border: 1px solid var(--border); color: var(--muted-foreground); background: var(--muted); }
+.meta-pill.channel { color: var(--primary); border-color: rgba(0,119,197,.2); background: rgba(0,119,197,.06); }
+.meta-pill.name { color: var(--foreground); }
+.finding-synthesis { font-size: 12px; color: var(--muted-foreground); background: var(--muted); border-radius: 8px; padding: 10px 12px; line-height: 1.65; }
+.finding-synthesis strong { color: var(--foreground); }
+.resolved { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; margin-left: 4px; }
+.resolved.yes { background: rgba(16,128,0,.1); color: #108000; }
+.resolved.no { background: rgba(220,38,38,.1); color: #dc2626; }
+.resolved.partial { background: rgba(180,83,9,.1); color: #b45309; }
+
+/* ── Divider ── */
+.section-divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+/* ── Summary synthesis ── */
+.synthesis-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 32px; box-shadow: var(--shadow-sm); }
+.synthesis-title { font-size: 15px; font-weight: 700; color: var(--foreground); margin-bottom: 14px; }
+.synthesis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.synthesis-item { font-size: 13px; color: var(--foreground); line-height: 1.65; display: flex; gap: 8px; }
+.synthesis-item .icon { flex-shrink: 0; }
+
+/* ── Theme bar ── */
+.theme-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+.theme-badge { font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 9999px; border: 1px solid; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .hero-title { font-size: 24px; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .synthesis-grid { grid-template-columns: 1fr; }
+  .header-meta { display: none; }
+  .hero, .content { padding-left: 16px; padding-right: 16px; }
+  .method-bar { padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="dot"></div>
+      DevPortal · User Feedback Research
+    </div>
+    <div class="header-meta">
+      <span>Researched May 2026</span>
+      <span>Slack + Google Drive + Internal Docs</span>
+      <button class="theme-btn" onclick="document.documentElement.classList.toggle('dark')">Toggle Theme</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Research Overview · Internal Sources Only</div>
+  <h1 class="hero-title">What Intuit Developers Actually<br>Say About DevPortal</h1>
+  <p class="hero-sub">Synthesized from #devportal-support, public Slack channels, Google Drive research docs, and platform vision documents. Verbatim quotes wherever possible — no invented feedback.</p>
+
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-num">20+</div>
+      <div class="stat-desc">distinct user voices from Slack threads</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#dc2626">7</div>
+      <div class="stat-desc">separate search/404 failure reports (2024–2026)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#b45309">32–48</div>
+      <div class="stat-desc">/100 satisfaction across all 5 JBTD personas (research)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#108000">~200</div>
+      <div class="stat-desc">devs used one-click project access in its first week</div>
+    </div>
+  </div>
+</div>
+
+<div class="method-bar">
+  <div class="method-inner">
+    <strong>Sources:</strong>
+    <span class="source-pill">💬 #devportal-support</span>
+    <span class="source-pill">💬 #codeassist-support</span>
+    <span class="source-pill">💬 #pdx-launched</span>
+    <span class="source-pill">💬 #gateway-support</span>
+    <span class="source-pill">💬 #3x-ai-native-builder-team</span>
+    <span class="source-pill">💬 #cmty-asterias + others</span>
+    <span class="source-pill">📄 Platform Vision Doc (Bhavana Gajjala)</span>
+    <span class="source-pill">📄 Unified DevPortal Project Plan</span>
+    <span class="source-pill">📄 Developer Personas (Muyi Tao)</span>
+    <span style="margin-left:4px">· Timeframe: 2024–May 2026 · Method: Keyword + semantic Slack search, Drive full-text search, verbatim extraction</span>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- TOP THEMES OVERVIEW -->
+  <div class="synthesis-box">
+    <div class="synthesis-title">Overall Signal: What the data says at a glance</div>
+    <div class="synthesis-grid">
+      <div class="synthesis-item"><span class="icon">🔴</span><span><strong>Search is the most-reported failure.</strong> 7 separate users, different channels, spanning 2 years — all reporting the same problem: search returns 404s, ranks irrelevant results, or stops working entirely for weeks at a time.</span></div>
+      <div class="synthesis-item"><span class="icon">🔴</span><span><strong>Documentation rot is systemic.</strong> Docs go stale, changes don't propagate to Autura, UI controls disappear without notice. Users read the docs and still get blocked.</span></div>
+      <div class="synthesis-item"><span class="icon">🟡</span><span><strong>Onboarding is manual and opaque.</strong> Users hit disabled buttons, wait on DMs to admins, and get sent to support channels for instructions that should be in the flow itself.</span></div>
+      <div class="synthesis-item"><span class="icon">🟡</span><span><strong>AI agents can't use DevPortal.</strong> As teams adopt Claude/Cursor, DevPortal becomes a ceiling — agents "fail horribly" and the MCP is alpha-only with no docs support.</span></div>
+      <div class="synthesis-item"><span class="icon">🟡</span><span><strong>The portal breaks during incidents.</strong> Engineers reach for DevPortal exactly when stakes are highest — and find it erroring, credentials missing, or links broken.</span></div>
+      <div class="synthesis-item"><span class="icon">🟢</span><span><strong>Self-serve features get real traction.</strong> When DevPortal removes a manual step (GWS integration, one-click project access), adoption is fast and praise is genuine.</span></div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 1: SEARCH & DISCOVERY -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">🔍</span>
+      <span class="cat-title">Search & Discovery</span>
+      <span class="cat-count">7 reports · 2024–2026</span>
+    </div>
+    <div class="cat-desc">The single most-reported failure. Broken search, stale index links returning 404, confusing result ordering, and months of unfixed bugs. Directly impacts the #1 blocker developers cite: the "broken first mile."</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-search)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Is devportal search broken. Try this: 1. Search for "etag" or "resource caching" 2. Click on the first result — Autura documentation — "Resource Caching - Governance and Standards" 3. Takes you to a 404 page. … Right, that is 404. But who will fix it?</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Arun Avanathan</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">May 2024</span>
+          <span class="resolved partial">Partial fix — alternate link provided</span>
+        </div>
+        <div class="finding-synthesis"><strong>Pattern:</strong> Search indexes a URL that becomes invalid. The result still appears in search, but navigating to it fails. No automated link-rot detection exists to catch these before users report them.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-search)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Since last few weeks the devportal search for documentation is broken. Could you please have a look?</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Anunay Amar</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Nov 2025</span>
+          <span class="resolved yes">Resolved — duplicate GitHub repo removed</span>
+        </div>
+        <div class="finding-synthesis"><strong>Root cause (auto-documented in Stack Overflow Q&A):</strong> Two GitHub repos were linked to the documentation asset, causing a conflict in the search index. Fix: remove the repo without documentation. <strong>Key signal:</strong> "last few weeks" — the breakage went undetected for an extended period before a user reported it.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-search)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">We are not able to search specific topics on devportal autura documentation. This is causing problems for our customers. Can you please fix this? Example: When I try to search "Retry letter topic &amp; Dead letter topics" it shows no result although it exists...</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Vinay Bhat</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Sep 2024</span>
+          <span class="resolved no">Bug filed PRTL-12452 · no resolution confirmed</span>
+        </div>
+        <div class="finding-synthesis"><strong>Impact radius:</strong> "problems for our customers" — this wasn't a single developer blocked; it was a team blocked from helping external partners. Search failures have a downstream customer impact.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-search)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">I'm having trouble accessing any documentation regarding Codegen CLI or the MCP service on DevPortal — I keep getting redirected to a 404. I'm attempting to troubleshoot installing an existing MCP, which continuously prompts me for my GitHub user/pass instead of using my valid GitHub SSH key/personal access token. However, I can't even begin troubleshooting as any and all documentation links in this channel are inaccessible.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Akshay Kamal</span>
+          <span class="meta-pill channel">#codeassist-support</span>
+          <span class="meta-pill">Sep 2025</span>
+          <span class="resolved no">No resolution found</span>
+        </div>
+        <div class="finding-synthesis"><strong>Double failure:</strong> Not only is search broken, but the support channel's own pinned links were also 404. This means the failure propagated from search → shared support resources → user completely blocked with no fallback.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-search)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">How does the search work in devportal specifically around autura documentation? What dictates order of the results that shows up? For example if I search for "IKS AIR" — I get this set of results. If I type an exact match "IKS AIR overview" it still shows up as the second result.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Malina Fong</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Jul 2025</span>
+          <span class="resolved no">Ticket SPS-22500 · no resolution confirmed</span>
+        </div>
+        <div class="finding-synthesis"><strong>Ranking opacity:</strong> Even when search technically works, the ranking logic is opaque — exact-match queries don't surface the exact-match result first. Users lose trust in search and fall back to Slack/SME.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 2: DOCUMENTATION QUALITY -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">📚</span>
+      <span class="cat-title">Documentation Quality</span>
+      <span class="cat-count">6 reports · multiple channels</span>
+    </div>
+    <div class="cat-desc">Docs go stale without warning. Changes merged to main don't propagate to Autura. UI controls documented in the help pages have since disappeared. Schema docs diverge from actual API behavior. Users read the docs and still get blocked.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-docs)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">In the Dev Portal I see both of these fields on the SalesReceipt object [screenshots]. What documentation can external teams use to reference the correct schema? … Is there any up to date documentation that I can share with the customer?</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Alex Posashenko</span>
+          <span class="meta-pill channel">#sales-platform-help</span>
+          <span class="meta-pill">Dec 2025</span>
+        </div>
+        <div class="finding-synthesis"><strong>External-facing impact:</strong> DevPortal schema docs showed fields the API rejected. An IES customer was blocked. This is documentation rot that crossed the internal→customer boundary — a trust and support cost to the business.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-docs)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">I accessed Opinionated Orchestrations dev portal to review and update the doc. I observed that the "Admin Panel" option which was previously available is no longer visible now. Also the edit option that allows modification of existing documentation is missing.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Vijay Naik Banavath</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Aug 2025</span>
+        </div>
+        <div class="finding-synthesis"><strong>Silent regression:</strong> UI controls disappeared without announcement. Users relied on them for their workflow, discovered the gap only when they tried to act, and had no way to know if it was intentional (RBAC change?) or a bug. No change log or in-product notice.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-docs)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Our latest documentation change doesn't seem to be populating in Autura. The change is merged to main. … It was merged yesterday and descriptor.json looks good.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Matthew Smith (IPS)</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Mar 2026</span>
+          <span class="resolved no">Escalated SPS-27889 · unresolved in thread</span>
+        </div>
+        <div class="finding-synthesis"><strong>Propagation gap:</strong> The GitHub → Autura documentation pipeline is not reliable. Teams publishing docs have no confirmation signal that their changes are visible. The "it's merged" ≠ "it's live" gap creates invisible documentation debt.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-docs)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">I have gone through the documentation but still need confirmation on whether bypassing Deprecation is allowed in this scenario. The Dev Portal is blocking the lifecycle change with a "Criteria Not Met" message… Since this asset is no longer required, I want to check: Can we directly archive this asset without completing the missing Deprecation criteria?</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Dharma Veera Sairam Mudigonda</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Mar 2026</span>
+          <span class="resolved yes">Resolved — manually archived by DevPortal team</span>
+        </div>
+        <div class="finding-synthesis"><strong>Docs describe happy path, not edge cases:</strong> User read the documentation. It didn't answer their question. They were blocked and required manual intervention by the DevPortal team to proceed. Documentation covers the standard lifecycle but not exception handling.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 3: ONBOARDING & ACCESS -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">🚪</span>
+      <span class="cat-title">Onboarding &amp; Access Flows</span>
+      <span class="cat-count">6 reports · multiple channels</span>
+    </div>
+    <div class="cat-desc">Buttons are disabled with no explanation. Getting project access means DMing an admin and waiting. The onboarding flow sends users to support channels for instructions that should be in the flow itself. Automation promised in docs doesn't always fire.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-onboard)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">How I can onboard to this service? Currently devportal onboarding flow is blocking me… I cannot click button as it is disabled for preprod and prod.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Dmitry Izumskiy</span>
+          <span class="meta-pill channel">#gateway-support</span>
+          <span class="meta-pill">Feb 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Silent blocking:</strong> A disabled button with no tooltip, no explanation, and no next step. The user had to leave DevPortal, find the right Slack channel, and ask a human what the button was waiting for. The flow provides no self-serve recovery path.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-onboard)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">onboarding for this work has been painful and manual — requiring developers to: set up service accounts and manage IAM permissions / navigate disconnected tools and multi-team approvals / open tickets and wait days (or over a week) to gain access / work without any paved-road guidance or automation. This led to slower velocity, security concerns from key-based access, and inconsistent developer experiences across teams.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Preeti Krishnan (describing the before-state)</span>
+          <span class="meta-pill channel">#pdx-launched</span>
+          <span class="meta-pill">Jul 2025</span>
+          <span class="resolved yes">Resolved by new GWS integration feature</span>
+        </div>
+        <div class="finding-synthesis"><strong>Validated pattern:</strong> This is the DevPortal team's own acknowledgment of the onboarding experience they were shipping against. The pain was real enough that it justified building a whole new self-serve integration path. The same pattern likely exists in other onboarding flows not yet redesigned.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-onboard)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">joining a project meant DM'ing the Admin/Dev Manager, waiting, and hoping someone found the right project and the role and your user name. We'd received multiple requests if there were ways to expedite this since it slowed down onboarding and short-term collaborations (think GED, team changes, SRE Mission teams) and also created extra noise for folks who'd moved on.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Praneet Singh (describing the before-state)</span>
+          <span class="meta-pill channel">#pdx-launched</span>
+          <span class="meta-pill">Sep 2025</span>
+          <span class="resolved yes">Resolved by one-click project access feature</span>
+        </div>
+        <div class="finding-synthesis"><strong>Manual admin dependency:</strong> Project access required a human intermediary for every request. This created a pattern of informal Slack DMs, approval delays, and no self-service path. Same pattern is likely present in other permission and access flows across DevPortal.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-onboard)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Could you also add this instruction to devportal onboarding experience, as current onboarding flow points to this support channel.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Dmitry Izumskiy</span>
+          <span class="meta-pill channel">#identity-support</span>
+          <span class="meta-pill">Feb 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>The onboarding-to-support pipeline:</strong> The DevPortal onboarding flow literally directs users to a separate Slack support channel for instructions. A user who completed the journey then had to tell the identity team to add those instructions to the product. The flow generates its own support load.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-onboard)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">My team/org has little to no experience in Intuit Github or DevPortal, so I've been working to document the process as best as possible… Based on the documentation, I would expect the project members in DevPortal to be automatically added as github org members with the associated org. This has not happened — are we missing a step or is there a delay in provisioning?… It does not seem the members in our DevPortal project have been added to the github org, team, or repo we connected to our DevPortal project.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Jessica Rudd (Mailchimp engineer)</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Mar 2025</span>
+          <span class="resolved no">Still broken at thread end</span>
+        </div>
+        <div class="finding-synthesis"><strong>Automation that doesn't automate:</strong> The GitHub JIT provisioning was documented as automatic but didn't fire. The user followed the docs step-by-step, the system appeared to accept the input, and then nothing happened. Silent failures with no feedback loop are among the most damaging UX patterns.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 4: AI & AGENT TOOLING -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">🤖</span>
+      <span class="cat-title">AI &amp; Agent Tooling</span>
+      <span class="cat-count">4 reports · 2026</span>
+    </div>
+    <div class="cat-desc">As teams adopt AI-native workflows (Claude, Cursor, DevAssist), DevPortal becomes a ceiling. Agents can't navigate it, the MCP is alpha-only with no docs support, and the one function developers most want — infrastructure queries — times out.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-ai)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Does anyone have skills or mcp for devportal that work? Ideally for creating a fullstack web app with access to db, authentication, env vars. All agents fail horribly so far at understanding how to work with devportal.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Fyodor Ivanischev</span>
+          <span class="meta-pill channel">#3x-ai-native-builder-team</span>
+          <span class="meta-pill">Apr 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>The AI-native gap:</strong> This is from a team specifically building AI-native apps — the most forward-leaning developers at Intuit. If they can't use AI to navigate DevPortal, the portal is invisible in the AI-first workflow. "Fail horribly" is not ambiguous — agents have no reliable surface to work against.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-ai)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">There is a Devportal MCP in alpha (I believe) but it's more to get metadata vs making config changes.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Jimil Patel</span>
+          <span class="meta-pill channel">#3x-ai-native-builder-team</span>
+          <span class="meta-pill">Apr 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Alpha-stage, read-only:</strong> The DevPortal MCP exists but is in alpha and cannot make configuration changes — only read metadata. Developers trying to use Claude to scaffold or configure a DevPortal project have no agentic path. The gap between what's needed and what's available is wide.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-ai)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">The devportal mcp is installed and up, but one query giving 504 error — get_asset_infrastructure. Is it a known issue? … Still 504 stream timeout. The MCP server reconnected but the upstream Asterias GraphQL call is still timing out. This is server-side — nothing to do from here except wait and retry.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Sarthak Garg</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Apr 2026</span>
+          <span class="resolved no">Open at thread end</span>
+        </div>
+        <div class="finding-synthesis"><strong>The most useful MCP call doesn't work:</strong> <code>get_asset_infrastructure</code> — the query that would let agents understand a service's deployed state — times out for all assets. The MCP exists but its most valuable capability is broken. Users trying to use AI for incident response or infrastructure analysis are completely blocked.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-ai)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Is there a MCP for dev-portal documentation? We want our Claude agent to refer app fabric documentation and read web app/plugin configuration.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Rajesh Kumar Gaur</span>
+          <span class="meta-pill channel">#devportal-support</span>
+          <span class="meta-pill">Mar 2026</span>
+          <span class="resolved no">No MCP for documentation exists</span>
+        </div>
+        <div class="finding-synthesis"><strong>Missing capability:</strong> Teams building Claude agents want to ground them in DevPortal/AppFabric docs. No MCP for documentation exists. They were redirected to the project assets page — not a viable alternative for agentic workflows. This gap will grow as more teams adopt AI-assisted development.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY 5: RELIABILITY -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">🔧</span>
+      <span class="cat-title">Reliability &amp; Incident Impact</span>
+      <span class="cat-count">5 reports · multiple channels</span>
+    </div>
+    <div class="cat-desc">DevPortal is a high-stakes tool — developers reach for it during incidents, when credentials matter, and when things are already on fire. Reports of the portal itself erroring, credentials missing, and OAuth failures compound existing incident severity.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-reliability)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">I'm getting errors on devportal so trying to figure out where to look… I keep getting an error when I try to go to doc-builder-ui in devportal.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Perri Lapidus</span>
+          <span class="meta-pill channel">#mc-crm-alerts (active incident channel)</span>
+          <span class="meta-pill">Apr 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Portal down during incident:</strong> An on-call engineer tried to use DevPortal to look up service information during a live incident — and found the portal itself was erroring. This is the worst possible timing for a UX failure. Engineers had to find another path while managing an active incident.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-reliability)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">I guess something is wrong in the dev portal credentials here as the credentials are missing. Maybe we need to check with #devportal-support team.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Rahul Taya</span>
+          <span class="meta-pill channel">#inc2196318 (incident channel)</span>
+          <span class="meta-pill">Feb 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Missing credential data during incident triage:</strong> Engineers investigating an incident discovered that credentials expected to be in DevPortal were absent. DevPortal becoming an unreliable source of truth in incident response is a material risk — teams start working around it rather than through it.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-reliability)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Tbh I didn't realize anybody actually used the devportal one.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Ameen Radwan</span>
+          <span class="meta-pill channel">#tmp-mc-change-automation</span>
+          <span class="meta-pill">Feb 2026</span>
+          <span style="font-size:11px;color:var(--muted-foreground);padding:2px 9px;border-radius:9999px;border:1px solid var(--border);background:var(--muted)">(re: DevPortal's Intuit Assist)</span>
+        </div>
+        <div class="finding-synthesis"><strong>Low perceived adoption:</strong> A developer on an automation team expressed genuine surprise that anyone used DevPortal's built-in AI assistant. This is a signal of low visibility and awareness — features that exist are not discoverable enough to register with active users.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-reliability)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">It seems like my repo is not actually attached to a DevPortal project even though I tried multiple times previously to do so. I don't see an asset ID in the about section of the repo in Github. … Previously when I created PRs it would ask me to pick an asset. But it doesn't do that anymore.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Mike Willson</span>
+          <span class="meta-pill channel">#cmty-github</span>
+          <span class="meta-pill">Mar 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Silent state corruption:</strong> The GitHub-to-DevPortal repo attachment appeared to succeed but didn't persist. A previously-working feature (asset picker on PR creation) silently stopped working. No error, no notification — the user only discovered it when they noticed the asset ID was absent.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- CATEGORY 6: POSITIVE SIGNALS -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">✅</span>
+      <span class="cat-title">What's Working — Positive Signals</span>
+      <span class="cat-count">3 findings · 2025</span>
+    </div>
+    <div class="cat-desc">Positive feedback emerges when DevPortal removes a previously-manual step and delivers visible, immediate developer value. The pattern is consistent: self-serve + paved road + no waiting = genuine praise.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-positive)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Fully self-serve onboarding via DevPortal. Keyless authentication using Workload Identity Federation (WIF). Tightly integrated with your DevPortal serverless app assets for visibility and manageability. No more IAM deep-dives or support tickets. Faster start with secure, paved-road workflows.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Preeti Krishnan (launch announcement)</span>
+          <span class="meta-pill channel">#pdx-launched</span>
+          <span class="meta-pill">Jul 2025</span>
+          <span class="resolved yes">Shipped</span>
+        </div>
+        <div class="finding-synthesis"><strong>The formula that works:</strong> Self-serve (no humans in the path) + paved road (opinionated, not open-ended) + visible outcome (asset appears in DevPortal immediately) = the experience developers want. This is a proof point that DevPortal can deliver strong experiences when scope is tight and the happy path is fully owned.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-positive)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">We've shipped a self-serve way to enable folks to join/leave projects — no more manual follow-ups with Dev Managers/Admin to update your access. In the last week alone, our closed beta saw ~200 developers leveraging it.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Praneet Singh (launch announcement)</span>
+          <span class="meta-pill channel">#pdx-launched</span>
+          <span class="meta-pill">Sep 2025</span>
+          <span class="resolved yes">Shipped · ~200 devs in first week</span>
+        </div>
+        <div class="finding-synthesis"><strong>Demand was latent and real:</strong> 200 developers used a feature in its first week of closed beta. They didn't need to be convinced — they had been waiting for this. Latent demand at this scale suggests there are other manual steps in DevPortal with the same suppressed usage waiting to be unlocked.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:var(--cat-positive)"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">Did you use the Intuit Assist in devportal or your local slack one? … devportal. … I have found the slack one is just weird sometimes.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Daniel Khodaparast</span>
+          <span class="meta-pill channel">#tmp-mc-change-automation</span>
+          <span class="meta-pill">Feb 2026</span>
+        </div>
+        <div class="finding-synthesis"><strong>Contextual AI works better than ambient AI:</strong> One developer chose DevPortal's Intuit Assist over the Slack-based alternative because it felt more reliable. This suggests context-grounded AI (an assistant that knows the DevPortal domain) has value — but needs much more visibility to be adopted broadly, given the same thread showed another developer didn't even know it existed.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- INTERNAL TEAM PERSPECTIVE -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <span class="cat-icon">🏢</span>
+      <span class="cat-title">Internal Team Perspective</span>
+      <span class="cat-count">From platform vision docs · 2025–2026</span>
+    </div>
+    <div class="cat-desc">The DevPortal team's own framing of the problem — from internal design and engineering documents. These align closely with user reports from Slack, validating that the team understands the pain even where fixes are still in progress.</div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:#6366F1"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">The current Devportal experience is a collection of disparate developer tools rather than a unified ecosystem. This leads to a "siloed innovation portal." Different portals (AI-Workbench, IXP, Data portal) operate independently, creating disjointed experiences. Developers suffer from a "disconnect between code and customer" and "unclear accountability." Notifications are currently buried, unorganized, and lack actionability, forcing users to switch contexts to Slack to manage alerts.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Bhavana Reddy Gajjala</span>
+          <span class="meta-pill channel">Target State: Experience Layer in DevPortal (internal doc)</span>
+          <span class="meta-pill">2025</span>
+        </div>
+        <div class="finding-synthesis"><strong>Internal validation:</strong> The platform vision documents name the same failures users report in Slack — fragmentation, context switching, buried notifications. This alignment between internal diagnosis and user-reported symptoms suggests the problem is well-understood. The gap is in execution speed and the Silver phase delivery.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-accent" style="background:#6366F1"></div>
+      <div class="finding-body">
+        <div class="finding-quote"><div class="finding-quote-text">The existing Devportal environment suffers from a fundamental flaw: it is merely a collection of disparate developer tools rather than a cohesive, unified developer ecosystem. Developers waste significant time searching for relevant APIs, URLs, datasets, or tooling because there is no central, unified directory or search mechanism that spans all the separate portals. The absence of a consolidated view means developers cannot monitor their projects, usage metrics, or governance adherence from a single dashboard, forcing them to toggle between multiple interfaces.</div></div>
+        <div class="finding-meta">
+          <span class="meta-pill name">Rishav Mittal</span>
+          <span class="meta-pill channel">Unified DevPortal Experience Architecture (internal doc)</span>
+          <span class="meta-pill">2025</span>
+        </div>
+        <div class="finding-synthesis"><strong>"No central search mechanism"</strong> — precisely what 7 user reports confirm from the outside. The engineering team's diagnosis matches the user experience data, strengthening the case for search as the highest-leverage Silver investment.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- DESIGN IMPLICATIONS -->
+  <div class="synthesis-box">
+    <div class="synthesis-title">📐 Design Implications — What This Means for Silver</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-search)">1. Search is non-negotiable for Silver.</strong> It's the most-reported failure and the most-cited blocker in persona research (61%). A functional, trustworthy global search — not just present, but accurate and fast — is the single highest-leverage delivery.
+      </div>
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-docs)">2. Documentation needs a publish-confirmation loop.</strong> Users can't tell if their docs are live. Build a visible signal — a "published" state, a timestamp, a diff view — so teams stop flooding #devportal-support with "is this showing up?" tickets.
+      </div>
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-onboard)">3. Every disabled button needs a reason and a next step.</strong> "Disabled" with no tooltip is a dead end. The GWS and one-click access examples show what works: remove the human intermediary, and adoption follows instantly (~200 devs in a week).
+      </div>
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-ai)">4. AI-readiness is a first-class Silver concern.</strong> The DevPortal MCP must graduate from alpha. Documentation needs to be MCP-accessible. The AI Newcomer persona (32/100 satisfaction) is the fastest-growing developer segment — and they're currently bouncing off the platform entirely.
+      </div>
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-reliability)">5. Incident-time reliability is a trust issue, not just a reliability issue.</strong> If DevPortal fails when engineers need it most, they stop trusting it as a source of truth and route around it permanently. Silent state corruption (credentials missing, repos not attached) is the hardest pattern to recover trust from.
+      </div>
+      <div style="background:var(--muted);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong style="color:var(--cat-positive)">6. The formula for positive feedback is consistent.</strong> Self-serve + paved road + immediate visible outcome + no human in the critical path = genuine adoption and praise. Replicate this pattern across the highest-friction onboarding flows in Silver.
+      </div>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY NOTE -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;font-size:12px;color:var(--muted-foreground);line-height:1.7">
+    <strong style="color:var(--foreground);display:block;margin-bottom:6px">Methodology &amp; Limitations</strong>
+    Sources searched: public Slack channels via keyword + semantic search (queries: "devportal feedback difficult frustrating", "dev portal documentation confusing missing broken", "devportal search broken 404", "devportal love great easy to use", "devportal onboarding slow painful confusing") plus Google Drive full-text search for DevPortal feedback and research documents. Timeframe: 2024–May 2026. <strong style="color:var(--foreground)">Limitations:</strong> Private DMs and private channels not included. Positive feedback is likely underrepresented — developers rarely post unprompted praise publicly. The #devportal-support channel is by definition a complaint surface; positive experiences are not routed there. Survey/NPS data for DevPortal specifically was not found in accessible sources. All quotes are verbatim from original Slack messages or documents.
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var saved = localStorage.getItem('research-theme');
+  if (saved === 'light') document.documentElement.classList.remove('dark');
+  else document.documentElement.classList.add('dark');
+})();
+document.querySelector('.theme-btn').addEventListener('click', function() {
+  var isDark = document.documentElement.classList.contains('dark');
+  localStorage.setItem('research-theme', isDark ? 'light' : 'dark');
+});
+</script>
+</body>
+</html>

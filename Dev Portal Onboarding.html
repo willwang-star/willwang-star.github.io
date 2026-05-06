@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev Portal — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ids-blue-700: #004F8B; --ids-blue-600: #006199; --ids-blue-500: #0077C5;
+  --ids-blue-400: #47A0D9; --ids-blue-100: #D9EDF7; --ids-blue-50:  #EBF5FB;
+  --ids-ink-900:  #1A1A1A; --ids-ink-700:  #393A3D; --ids-ink-500:  #6B6C72;
+  --ids-ink-300:  #9EA0A5; --ids-ink-100:  #D4D7DC;
+  --ids-surface-white: #FFFFFF; --ids-surface-page: #F7F8FA;
+  --ids-green-600: #0A7A00; --ids-green-100: #E3F5E1;
+  --ids-red-600:   #C00711; --ids-red-100:   #FDECEA;
+  --ids-orange-600:#C84B00; --ids-orange-100:#FEF0E6;
+  --ids-yellow-600:#9A6700; --ids-yellow-100:#FEF9EC;
+  --ids-purple-600:#5C3A9B; --ids-purple-100:#EDE9F8;
+  --ids-teal-600:  #007A72; --ids-teal-100:  #E0F5F4;
+  --background:           var(--ids-surface-page);
+  --foreground:           var(--ids-ink-700);
+  --card:                 var(--ids-surface-white);
+  --primary:              var(--ids-blue-500);
+  --primary-foreground:   #FFFFFF;
+  --secondary:            var(--ids-blue-50);
+  --secondary-foreground: var(--ids-blue-700);
+  --muted:                #F0F2F5;
+  --muted-foreground:     var(--ids-ink-500);
+  --accent:               var(--ids-blue-50);
+  --accent-foreground:    var(--ids-blue-700);
+  --border:               #E5E7EB;
+  --ring:                 var(--ids-blue-500);
+  --radius:               0.75rem;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+}
+html.dark {
+  --background:           #0F1117;
+  --foreground:           #E2E4EB;
+  --card:                 #171B27;
+  --primary:              #47A0D9;
+  --primary-foreground:   #0F1117;
+  --secondary:            #1A2744;
+  --secondary-foreground: #89C4F4;
+  --muted:                #1C2030;
+  --muted-foreground:     #7A7F96;
+  --accent:               #1A2744;
+  --accent-foreground:    #89C4F4;
+  --border:               #252A3C;
+  --ring:                 #47A0D9;
+  --ids-blue-50:          #111E36; --ids-blue-100:  #1A2F50;
+  --ids-blue-400:         #3A8FCC; --ids-blue-500:  #47A0D9;
+  --ids-blue-700:         #89C4F4;
+  --ids-ink-900:          #F0F2F7; --ids-ink-700:   #E2E4EB;
+  --ids-ink-500:          #7A7F96; --ids-ink-300:   #4A4F65;
+  --ids-ink-100:          #252A3C;
+  --ids-green-100:  #0E2B14; --ids-green-600: #4CAF50;
+  --ids-red-100:    #2B0E10; --ids-red-600:   #F47A7E;
+  --ids-orange-100: #2B1708; --ids-orange-600:#F0935A;
+  --ids-yellow-100: #2B220A; --ids-yellow-600:#D4A338;
+  --ids-purple-100: #1C1538; --ids-purple-600:#9B7DE0;
+  --ids-teal-100:   #0A2422; --ids-teal-600:  #3EB8B0;
+  --ids-surface-white: #171B27; --ids-surface-page: #0F1117;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.25);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.20);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.40), 0 1px 3px rgba(0,0,0,.25);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background); color: var(--foreground);
+  font-size: 14px; line-height: 1.65; min-height: 100vh;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.005em;
+}
+
+/* ── Header ── */
+.header {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50; padding: 0 32px;
+}
+html.dark .header { background: rgba(15,17,23,.88); }
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 36px; height: 68px;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 600; font-size: 14.5px; color: var(--foreground); flex-shrink: 0;
+}
+.header-logo {
+  width: 32px; height: 32px; background: var(--primary);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 800; font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0,119,197,.35);
+}
+.header-sep { color: var(--ids-ink-300); font-weight: 300; margin: 0 -6px; }
+
+/* ── Nav tabs ── */
+.nav-tabs { display: flex; align-items: center; gap: 1px; flex: 1; overflow-x: auto; }
+.nav-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 7px 16px; font-size: 13.5px; font-weight: 500;
+  color: var(--muted-foreground); border-radius: calc(var(--radius) - 2px);
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap; font-family: inherit; line-height: 1.4;
+}
+.nav-tab:hover  { background: var(--muted); color: var(--foreground); }
+.nav-tab.active { background: var(--accent); color: var(--primary); font-weight: 600; }
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  margin-left: auto; flex-shrink: 0;
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: 9999px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 500;
+  color: var(--muted-foreground); font-family: inherit;
+  transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.theme-toggle:hover { background: var(--accent); color: var(--primary); border-color: var(--ids-blue-100); }
+.theme-toggle-icon { font-size: 14px; line-height: 1; }
+
+/* ── Layout ── */
+.page-content { max-width: 1280px; margin: 0 auto; padding: 48px 32px 64px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.page-header { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; color: var(--ids-ink-900); }
+.page-header p { font-size: 14.5px; color: var(--muted-foreground); line-height: 1.6; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ids-ink-300); margin: 40px 0 16px;
+}
+.section-label:first-child { margin-top: 0; }
+.separator { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* ── Card ── */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  padding: 28px; margin-bottom: 20px; transition: box-shadow 0.18s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-title { font-size: 14.5px; font-weight: 600; margin-bottom: 14px; color: var(--ids-ink-900); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center; border-radius: 9999px;
+  padding: 3px 11px; font-size: 11.5px; font-weight: 600;
+  line-height: 1.4; border: 1px solid transparent;
+}
+.badge-default   { background: var(--primary); color: #fff; }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-outline   { background: transparent; color: var(--foreground); border-color: var(--border); }
+.badge-success   { background: var(--ids-green-100); color: var(--ids-green-600); }
+.badge-warning   { background: var(--ids-yellow-100); color: var(--ids-yellow-600); }
+.badge-error     { background: var(--ids-red-100); color: var(--ids-red-600); }
+.badge-purple    { background: var(--ids-purple-100); color: var(--ids-purple-600); }
+.badge-done      { background: var(--ids-green-100); color: var(--ids-green-600); }
+.badge-active    { background: var(--ids-blue-100); color: var(--ids-blue-600); }
+.badge-pending   { background: var(--muted); color: var(--muted-foreground); border: 1px solid var(--border); }
+.badge-high      { background: var(--ids-red-100); color: var(--ids-red-600); }
+.badge-med       { background: var(--ids-orange-100); color: var(--ids-orange-600); }
+.badge-low       { background: var(--ids-green-100); color: var(--ids-green-600); }
+
+/* ── Alert ── */
+.alert {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; display: flex; gap: 13px;
+  align-items: flex-start; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;
+}
+.alert-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+.alert-content { flex: 1; }
+.alert-content strong { font-weight: 600; }
+.alert-info    { background: var(--ids-blue-50);    border-color: var(--ids-blue-100);  color: var(--ids-blue-700); }
+.alert-success { background: var(--ids-green-100);  border-color: #b7e4b3;              color: var(--ids-green-600); }
+.alert-warning { background: var(--ids-yellow-100); border-color: #f0d98a;              color: var(--ids-yellow-600); }
+.alert-error   { background: var(--ids-red-100);    border-color: #f5bbbf;              color: var(--ids-red-600); }
+.alert-teal    { background: var(--ids-teal-100);   border-color: #99d6d2;              color: var(--ids-teal-600); }
+
+/* ── Grids ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+.g5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+@media(max-width:960px) { .g3,.g4 { grid-template-columns:1fr 1fr; } .g5 { grid-template-columns:1fr 1fr 1fr; } }
+@media(max-width:640px) { .g2,.g3,.g4,.g5 { grid-template-columns:1fr; } }
+
+/* ── Table ── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+table.shad, .integ-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.shad thead tr, .integ-table thead tr { border-bottom: 1px solid var(--border); }
+table.shad th, .integ-table th {
+  padding: 12px 18px; text-align: left; font-weight: 600;
+  color: var(--muted-foreground); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .06em;
+  background: var(--muted);
+}
+table.shad td, .integ-table td {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  vertical-align: middle; line-height: 1.6; color: var(--foreground);
+}
+table.shad tbody tr:last-child td, .integ-table tbody tr:last-child td { border-bottom: none; }
+table.shad tbody tr:hover td, .integ-table tr:hover td { background: var(--muted); }
+
+/* ── Stat grid ── */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(145px,1fr)); gap: 14px; margin-bottom: 24px; }
+.stat-box {
+  text-align: center; padding: 22px 18px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--card);
+  box-shadow: var(--shadow-xs); transition: box-shadow 0.18s, transform 0.18s;
+}
+.stat-box:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.stat-num   { font-size: 30px; font-weight: 800; color: var(--primary); letter-spacing: -.04em; line-height: 1; }
+.stat-desc, .stat-label { font-size: 12px; color: var(--muted-foreground); margin-top: 7px; line-height: 1.4; }
+
+/* ── Person card ── */
+.person-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.18s; margin-bottom: 0;
+}
+.person-card:hover { box-shadow: var(--shadow-md); }
+.person-card.buddy { border-color: var(--primary); background: var(--accent); }
+.person-name { font-weight: 700; font-size: 14px; color: var(--ids-ink-900); }
+.person-role { font-size: 12px; color: var(--primary); font-weight: 600; margin: 5px 0 8px; }
+.person-ctx  { font-size: 12.5px; color: var(--muted-foreground); line-height: 1.55; }
+
+/* ── Principle card ── */
+.prin-card {
+  border: 1px solid var(--border); border-left: 4px solid var(--primary);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 14px;
+  background: var(--card); box-shadow: var(--shadow-xs);
+}
+.prin-card.mindset { border-left-color: var(--ids-purple-600); }
+.prin-title { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; color: var(--ids-ink-900); }
+.prin-quote { font-size: 13px; color: var(--ids-purple-600); font-style: italic; margin-bottom: 8px; }
+.prin-desc  { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+.prin-application {
+  font-size: 13px; color: var(--ids-blue-700); background: var(--accent);
+  border-radius: calc(var(--radius) - 2px); padding: 10px 14px;
+  margin-top: 12px; line-height: 1.6;
+}
+.prin-application strong { font-weight: 700; }
+
+/* ── Quote ── */
+.quote {
+  border-left: 4px solid var(--primary); padding: 14px 18px; margin-bottom: 14px;
+  background: var(--accent); border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13.5px; font-style: italic; line-height: 1.7; color: var(--ids-ink-700);
+}
+html.dark .quote { background: #111827; }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: var(--muted-foreground); font-weight: 600; }
+
+/* ── Tool pills ── */
+.tool-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tool-pill {
+  background: var(--ids-red-100); border: 1px solid #f5c6c6;
+  border-radius: 6px; padding: 4px 12px;
+  font-size: 12.5px; font-weight: 600; color: var(--ids-red-600);
+}
+
+/* ── Intro hero card ── */
+.intro-card {
+  background: linear-gradient(135deg, var(--ids-blue-700) 0%, var(--ids-blue-500) 100%);
+  color: white; border-radius: var(--radius);
+  padding: 40px 44px; margin-bottom: 36px;
+  box-shadow: 0 8px 32px rgba(0,77,139,.22), 0 2px 8px rgba(0,77,139,.12);
+  position: relative; overflow: hidden;
+}
+html.dark .intro-card {
+  background: linear-gradient(135deg, #003366 0%, #004F8B 60%, #1a6fa8 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+}
+.intro-card::before {
+  content: ''; position: absolute; top: -60px; right: -40px;
+  width: 220px; height: 220px; background: rgba(255,255,255,.06);
+  border-radius: 50%; pointer-events: none;
+}
+.intro-card h2 { font-size: 22px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 10px; line-height: 1.2; }
+.intro-card p  { font-size: 14.5px; color: rgba(255,255,255,.82); line-height: 1.7; margin: 0; max-width: 680px; }
+
+/* ── Footnote ── */
+.footnote { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 48px; font-size: 12px; color: var(--muted-foreground); line-height: 1.8; }
+
+/* ── Typography ── */
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ol, ul { padding-left: 22px; }
+li { margin-bottom: 7px; line-height: 1.65; font-size: 13.5px; }
+h3 { font-size: 15px; font-weight: 700; margin: 22px 0 12px; color: var(--ids-ink-900); letter-spacing: -.015em; }
+h4 { font-size: 13.5px; font-weight: 700; margin: 0 0 6px; color: var(--ids-ink-900); }
+p  { font-size: 13.5px; line-height: 1.7; margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+code { background: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 11.5px; font-family: 'SF Mono','Fira Code',monospace; }
+
+/* ══════════════════════════════════════
+   IDS COMPATIBILITY SHIMS
+══════════════════════════════════════ */
+.ids-page { max-width: 1280px; margin: 0 auto; padding: 48px 32px 64px; }
+
+.ids-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  padding: 28px; margin-bottom: 20px; transition: box-shadow 0.18s;
+}
+.ids-card:hover { box-shadow: var(--shadow-md); }
+.ids-card-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 14px;
+}
+.ids-page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; color: var(--ids-ink-900); }
+.ids-page-subtitle { font-size: 14.5px; color: var(--muted-foreground); margin-bottom: 28px; line-height: 1.65; max-width: 900px; }
+.ids-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ids-ink-300);
+  margin: 40px 0 16px;
+}
+.ids-footnote { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 48px; font-size: 12px; color: var(--muted-foreground); line-height: 1.8; }
+.ids-footnote strong { color: var(--foreground); }
+
+/* IDS Notice → Alert style */
+.ids-notice {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; display: flex; gap: 13px;
+  align-items: flex-start; margin-bottom: 18px; font-size: 13.5px; line-height: 1.6;
+}
+.ids-notice-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+.ids-notice > div { flex: 1; }
+.ids-notice strong { font-weight: 600; }
+.ids-notice-warning { background: var(--ids-yellow-100); border-color: #f0d98a; color: var(--ids-yellow-600); }
+.ids-notice-info    { background: var(--ids-blue-50);    border-color: var(--ids-blue-100); color: var(--ids-blue-700); }
+.ids-notice-success { background: var(--ids-green-100);  border-color: #b7e4b3;              color: var(--ids-green-600); }
+
+/* IDS Chip → Badge style */
+.ids-chip {
+  display: inline-flex; align-items: center; border-radius: 9999px;
+  padding: 3px 11px; font-size: 11.5px; font-weight: 600;
+  line-height: 1.4; border: 1px solid transparent; margin: 2px;
+}
+.ids-chip-error   { background: var(--ids-red-100);    color: var(--ids-red-600); }
+.ids-chip-success { background: var(--ids-green-100);  color: var(--ids-green-600); }
+.ids-chip-info    { background: var(--ids-blue-100);   color: var(--ids-blue-700); }
+.ids-chip-warning { background: var(--ids-yellow-100); color: var(--ids-yellow-600); }
+.ids-chip-neutral { background: var(--muted); color: var(--muted-foreground); border-color: var(--border); }
+.ids-chip-purple  { background: var(--ids-purple-100); color: var(--ids-purple-600); }
+
+/* ══════════════════════════════════════
+   DEVPORTAL-SPECIFIC COMPONENTS
+══════════════════════════════════════ */
+
+/* Pain rows */
+.pain-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.pain-row:last-child { border-bottom: none; }
+.pain-label { font-weight: 700; font-size: 13.5px; color: var(--ids-ink-900); margin-bottom: 3px; }
+.pain-desc  { font-size: 13px; color: var(--muted-foreground); line-height: 1.55; }
+
+/* Persona cards */
+.persona-card {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 16px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s; box-shadow: var(--shadow-xs);
+}
+.persona-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+.persona-card.sel   { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,119,197,.15); }
+.persona-icon    { font-size: 26px; margin-bottom: 8px; }
+.persona-name    { font-weight: 700; font-size: 14px; color: var(--ids-ink-900); }
+.persona-tagline { font-size: 12.5px; color: var(--muted-foreground); margin-top: 3px; line-height: 1.4; }
+
+/* Persona detail */
+.persona-detail {
+  background: var(--accent); border: 1px solid var(--ids-blue-100);
+  border-radius: var(--radius); padding: 20px; margin-top: 16px; display: none;
+}
+.persona-detail.active { display: block; }
+.pd-section { margin-bottom: 16px; }
+.pd-section h4 {
+  font-size: 11px; font-weight: 700; color: var(--primary);
+  text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px;
+}
+.pd-item { font-size: 13.5px; color: var(--foreground); padding: 3px 0 3px 16px; position: relative; line-height: 1.6; }
+.pd-item::before { content: '›'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+.pd-pain { font-size: 13px; color: var(--ids-red-600); padding: 4px 0 4px 22px; position: relative; line-height: 1.55; }
+.pd-pain::before { content: '⚡'; position: absolute; left: 0; font-size: 11px; top: 5px; }
+
+/* Journey step */
+.j-step {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow-xs);
+}
+.j-num  { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .05px; margin-bottom: 4px; }
+.j-desc { font-size: 12.5px; color: var(--foreground); line-height: 1.5; }
+.j-step.incident { border-left: 3px solid var(--ids-red-600); }
+.j-step.incident .j-num { color: var(--ids-red-600); }
+
+/* IA Diagram */
+.ia-root-node {
+  background: var(--primary); color: #fff; text-align: center;
+  padding: 12px 24px; border-radius: var(--radius); font-weight: 700;
+  font-size: 18px; margin-bottom: 6px; box-shadow: var(--shadow-sm);
+}
+.ia-connector { width: 2px; height: 18px; background: var(--border); margin: 0 auto; }
+.ia-nav-row { display: flex; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.ia-nav-node {
+  flex: 1; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px 8px; text-align: center;
+  cursor: pointer; transition: all .15s; box-shadow: var(--shadow-xs); min-width: 100px;
+}
+.ia-nav-node:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+.ia-nav-node.sel   { border-color: var(--primary); background: var(--accent); box-shadow: 0 0 0 3px rgba(0,119,197,.12); }
+.ia-nav-label { font-size: 13px; font-weight: 700; color: var(--ids-ink-900); }
+.ia-nav-sub   { font-size: 11.5px; color: var(--muted-foreground); margin-top: 3px; }
+.ia-global-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.ia-global-item {
+  flex: 1; background: var(--muted); border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px); padding: 8px;
+  text-align: center; font-size: 12px; color: var(--muted-foreground); font-weight: 600; min-width: 80px;
+}
+.ia-detail-panel {
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin-top: 12px; display: none;
+}
+.ia-detail-panel.active { display: block; }
+.ia-detail-title { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.ia-detail-desc  { font-size: 13.5px; color: var(--muted-foreground); margin-bottom: 16px; line-height: 1.65; }
+.ia-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.ia-item {
+  background: var(--card); border: 1px solid var(--ids-blue-100);
+  border-radius: calc(var(--radius) - 2px); padding: 5px 14px;
+  font-size: 13px; color: var(--ids-blue-600); font-weight: 500;
+}
+
+/* Domain cards */
+.domain-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.domain-title { font-size: 13px; font-weight: 700; color: var(--ids-purple-600); margin-bottom: 8px; }
+.domain-body  { font-size: 13px; color: var(--muted-foreground); line-height: 1.55; }
+
+/* Arch cards */
+.arch-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 8px; }
+.arch-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.arch-body  { font-size: 13px; color: var(--muted-foreground); line-height: 1.65; }
+
+/* Roadmap — circular style */
+.rm-track {
+  display: flex; gap: 0; margin: 24px 0; position: relative;
+}
+.rm-track::before {
+  content: ''; position: absolute;
+  top: 28px; left: 80px; right: 80px; height: 4px;
+  background: linear-gradient(to right, #b45309, var(--ids-blue-500), var(--ids-green-600));
+  z-index: 0;
+}
+.rm-phase  { flex: 1; text-align: center; position: relative; z-index: 1; }
+.rm-circle {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px; font-size: 11px; font-weight: 800; color: #fff;
+  flex-direction: column; line-height: 1.3; box-shadow: var(--shadow-sm);
+}
+.rm-bronze { background: #b45309; }
+.rm-silver { background: var(--ids-blue-500); }
+.rm-gold   { background: var(--ids-green-600); }
+.rm-label  { font-size: 14px; font-weight: 700; color: var(--ids-ink-900); }
+.rm-timing { font-size: 12px; color: var(--muted-foreground); margin-bottom: 8px; }
+.rm-body   {
+  text-align: left; background: var(--card); border-radius: var(--radius);
+  padding: 12px; border: 1px solid var(--border); margin-top: 8px; box-shadow: var(--shadow-xs);
+}
+.rm-item { font-size: 12.5px; color: var(--muted-foreground); padding: 3px 0 3px 18px; position: relative; line-height: 1.5; }
+.rm-item::before { content: '✓'; position: absolute; left: 0; color: var(--ids-green-600); font-size: 11px; top: 4px; }
+
+/* Lego cards */
+.lego-card  { border-radius: var(--radius); padding: 20px; border: 1px solid; }
+.lego-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+.lego-body  { font-size: 13.5px; line-height: 1.7; color: var(--foreground); }
+
+/* Big quote */
+.big-quote      { text-align: center; padding: 24px 40px; }
+.big-quote-text { font-size: 22px; font-weight: 700; color: var(--primary); font-style: italic; margin-bottom: 8px; line-height: 1.35; }
+.big-quote-sub  { font-size: 13.5px; color: var(--muted-foreground); line-height: 1.65; }
+
+/* From → To */
+.from-to       { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 16px; align-items: start; }
+.from-to-arrow { display: flex; align-items: center; justify-content: center; font-size: 24px; padding-top: 30px; color: var(--ids-ink-300); }
+
+/* ══════════════════════════════════════
+   HAMBURGER / MOBILE NAV
+══════════════════════════════════════ */
+.nav-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  color: var(--foreground); padding: 6px; border-radius: 6px;
+  margin-left: auto; flex-shrink: 0; transition: background 0.12s;
+}
+.nav-hamburger:hover { background: var(--muted); }
+.nav-hamburger svg { display: block; }
+.mobile-nav { display: none; position: fixed; inset: 0; z-index: 100; }
+.mobile-nav.open { display: block; }
+.mobile-nav-backdrop {
+  position: absolute; inset: 0; background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.mobile-nav-sheet {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: min(280px, 80vw); background: var(--card);
+  border-right: 1px solid var(--border); box-shadow: var(--shadow-md);
+  display: flex; flex-direction: column;
+  transform: translateX(-100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+}
+.mobile-nav.open .mobile-nav-sheet { transform: translateX(0); }
+.mobile-nav-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+}
+.mobile-nav-title { font-size: 14px; font-weight: 700; color: var(--ids-ink-900); }
+.mobile-nav-close {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  color: var(--muted-foreground); padding: 4px; border-radius: 6px;
+  font-size: 18px; line-height: 1; transition: background 0.12s;
+}
+.mobile-nav-close:hover { background: var(--muted); color: var(--foreground); }
+.mobile-nav-links { padding: 12px 10px; flex: 1; overflow-y: auto; }
+.mobile-nav-link {
+  display: block; width: 100%; background: none; border: none; cursor: pointer;
+  text-align: left; font-family: inherit;
+  padding: 11px 14px; border-radius: calc(var(--radius) - 2px);
+  font-size: 14px; font-weight: 500; color: var(--muted-foreground);
+  transition: background 0.12s, color 0.12s;
+}
+.mobile-nav-link:hover  { background: var(--muted); color: var(--foreground); }
+.mobile-nav-link.active { background: var(--accent); color: var(--primary); font-weight: 600; }
+.mobile-nav-footer { padding: 12px 16px 20px; border-top: 1px solid var(--border); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .page-content, .ids-page { padding: 36px 24px 48px; }
+  .header { padding: 0 20px; }
+  .header-inner { gap: 20px; height: 60px; }
+  .intro-card { padding: 30px 28px; }
+  .intro-card h2 { font-size: 20px; }
+  .rm-track::before { left: 40px; right: 40px; }
+}
+@media (max-width: 640px) {
+  .nav-tabs    { display: none; }
+  .theme-toggle { display: none; }
+  .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+  .header { padding: 0 16px; }
+  .header-inner { height: 56px; gap: 12px; }
+  .header-logo { width: 28px; height: 28px; font-size: 13px; }
+  .header-brand { font-size: 13.5px; gap: 9px; }
+  .page-content, .ids-page { padding: 24px 16px 48px; }
+  .intro-card { padding: 24px 20px; margin-bottom: 24px; }
+  .intro-card h2 { font-size: 18px; }
+  .page-header { margin-bottom: 24px; padding-bottom: 18px; }
+  .page-header h1 { font-size: 20px; }
+  .ids-page-title { font-size: 20px; }
+  .ids-card { padding: 18px 16px; }
+  .card { padding: 18px 16px; margin-bottom: 14px; }
+  .prin-card { padding: 16px; }
+  .person-card { padding: 16px; }
+  .rm-track { flex-direction: column; gap: 16px; }
+  .rm-track::before { display: none; }
+  .rm-phase { text-align: left; display: flex; gap: 16px; align-items: flex-start; }
+  .rm-circle { flex-shrink: 0; margin: 0; }
+  .from-to { grid-template-columns: 1fr; }
+  .from-to-arrow { padding-top: 0; font-size: 20px; }
+  .big-quote { padding: 16px 20px; }
+  .big-quote-text { font-size: 18px; }
+  .ia-nav-row { gap: 6px; }
+  .ia-nav-node { min-width: 80px; padding: 10px 6px; }
+  h3 { font-size: 14px; }
+  li, p { font-size: 13px; }
+  .ids-notice { padding: 13px 14px; font-size: 13px; }
+  .badge { padding: 3px 9px; font-size: 11px; }
+}
+@media (max-width: 375px) {
+  .page-content, .ids-page { padding: 20px 14px 40px; }
+  .header { padding: 0 14px; }
+  .intro-card { padding: 20px 16px; }
+  .intro-card h2 { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">i</div>
+      <span>Dev Portal</span>
+      <span class="header-sep">·</span>
+      <span style="font-weight:400;color:var(--muted-foreground)">Onboarding</span>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('problems',this)">The Problem</button>
+      <button class="nav-tab" onclick="showTab('personas',this)">Personas &amp; Pain</button>
+      <button class="nav-tab" onclick="showTab('ia',this)">IA Vision</button>
+      <button class="nav-tab" onclick="showTab('roadmap',this)">Roadmap</button>
+      <button class="nav-tab" onclick="showTab('principles',this)">Principles</button>
+      <button class="nav-tab" onclick="showTab('team',this)">Team</button>
+      <button class="nav-tab" onclick="showTab('workshop',this)" style="border-left:2px solid var(--primary);margin-left:4px;color:var(--primary)">⚡ Workshop Prep</button>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-toggle-icon" id="themeIcon">☀️</span>
+      <span id="themeLabel">Light</span>
+    </button>
+    <button class="nav-hamburger" id="hamburger" onclick="openMobileNav()" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ══ MOBILE NAV DRAWER ══ -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-backdrop" onclick="closeMobileNav()"></div>
+  <div class="mobile-nav-sheet">
+    <div class="mobile-nav-header">
+      <div class="header-logo" style="width:26px;height:26px;font-size:13px;border-radius:6px">i</div>
+      <span class="mobile-nav-title">Dev Portal</span>
+      <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+    </div>
+    <div class="mobile-nav-links">
+      <button class="mobile-nav-link active" onclick="mobileTab('problems',this)">🔥 The Problem</button>
+      <button class="mobile-nav-link" onclick="mobileTab('personas',this)">👤 Personas &amp; Pain</button>
+      <button class="mobile-nav-link" onclick="mobileTab('ia',this)">🏗️ IA Vision</button>
+      <button class="mobile-nav-link" onclick="mobileTab('roadmap',this)">🗺️ Roadmap</button>
+      <button class="mobile-nav-link" onclick="mobileTab('principles',this)">🧭 Principles</button>
+      <button class="mobile-nav-link" onclick="mobileTab('team',this)">👥 Team</button>
+      <button class="mobile-nav-link" onclick="mobileTab('workshop',this)" style="color:var(--primary);font-weight:600">⚡ Workshop Prep</button>
+    </div>
+    <div class="mobile-nav-footer">
+      <button class="theme-toggle" style="width:100%;justify-content:center" onclick="toggleTheme()">
+        <span class="theme-toggle-icon" id="themeIconMobile">☀️</span>
+        <span id="themeLabelMobile">Light mode</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ PANEL 1 · THE PROBLEM ══════════ -->
+<div id="tab-problems" class="panel active">
+<div class="ids-page">
+
+  <div class="intro-card">
+    <h2>The Core Problem: Tool Sprawl &amp; Fragmentation</h2>
+    <p>Builders must hop across 10+ scattered, unfamiliar tools to complete a single PDLC task. This is the central problem the Unified Development Portal is solving.</p>
+  </div>
+
+  <div class="g2">
+    <div class="ids-card">
+      <div class="ids-card-title">The fragmented ecosystem today</div>
+      <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:12px">Each is a separate tool, separate URL, separate mental model — all siloed:</p>
+      <div class="tool-grid">
+        <div class="tool-pill">DevPortal</div><div class="tool-pill">AI Workbench (GenStudio)</div>
+        <div class="tool-pill">Data Discovery (DDE)</div><div class="tool-pill">IXP (Experiments)</div>
+        <div class="tool-pill">Autura</div><div class="tool-pill">IDX Studio</div>
+        <div class="tool-pill">Databricks</div><div class="tool-pill">Starburst</div>
+        <div class="tool-pill">Splunk</div><div class="tool-pill">Wavefront</div>
+        <div class="tool-pill">ADAPT Sandbox</div><div class="tool-pill">DACM</div>
+        <div class="tool-pill">ADU Portal</div><div class="tool-pill">ServiceNow</div>
+        <div class="tool-pill">Data Map Studio</div><div class="tool-pill">Jenkins / Argo</div>
+        <div class="tool-pill">JIRA</div><div class="tool-pill">PagerDuty</div>
+        <div class="tool-pill">Postman / Dash</div><div class="tool-pill">+ many more…</div>
+      </div>
+      <div class="ids-notice ids-notice-warning" style="margin-top:12px;margin-bottom:0">
+        <span class="ids-notice-icon">⚠️</span>
+        <div><strong>Key stats:</strong> AI Agent onboarding alone requires 8+ separate documents. Testing consumes 60–70% of developer time. P1 incident triage averages 1.5 hrs per investigation.</div>
+      </div>
+    </div>
+
+    <div class="ids-card">
+      <div class="ids-card-title">What builders actually say</div>
+      <div class="pain-row"><div><div class="pain-label">Contributors / Platform Owners</div><div class="pain-desc">"I want to utilize DevPortal to serve my users but I do not know how." "I want to showcase my platform's new features but don't know where."</div></div></div>
+      <div class="pain-row"><div><div class="pain-label">Creators &amp; Consumers</div><div class="pain-desc">"I want to leverage DevPortal for day-to-day dev but can't find things." "I want to know what my platform provides but don't know how to access it."</div></div></div>
+      <div class="pain-row"><div><div class="pain-label">All Builders</div><div class="pain-desc"><em>"The paved roads have to evolve. They are no longer paved."</em></div></div></div>
+      <div class="pain-row"><div><div class="pain-label">GED Customer Validation — 6 developers tested</div><div class="pain-desc">"It should be one unified experience — we don't have to switch." — Arik G.<br>"I like having a consolidated single place where you can build it how you want." — Customer</div></div></div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">FROM → TO: The strategic transformation</div>
+    <div class="from-to">
+      <div>
+        <div style="font-weight:700;font-size:11px;color:var(--ids-red-600);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Current State</div>
+        <div class="ids-chip ids-chip-error">Disconnected end-to-end workflows</div>
+        <div class="ids-chip ids-chip-error">Tool sprawl</div>
+        <div class="ids-chip ids-chip-error">Lack of self-serve capability maturity</div>
+        <div class="ids-chip ids-chip-error">Serving only a handful of personas</div>
+        <div class="ids-chip ids-chip-error">Lack of governance</div>
+        <div class="ids-chip ids-chip-error">No visibility across work</div>
+        <div class="ids-chip ids-chip-error">No product/business insights for builders</div>
+        <div class="ids-chip ids-chip-error">Restricted IA not meeting personas</div>
+        <div class="ids-chip ids-chip-error">Fragmented access management per portal</div>
+        <div class="ids-chip ids-chip-error">Duplicate investment in shared concerns</div>
+      </div>
+      <div class="from-to-arrow">→</div>
+      <div>
+        <div style="font-weight:700;font-size:11px;color:var(--ids-green-600);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Target State</div>
+        <div class="ids-chip ids-chip-success">Single connected hub for end-to-end development</div>
+        <div class="ids-chip ids-chip-success">Connected, integrated workflows within one platform</div>
+        <div class="ids-chip ids-chip-success">Mature self-serve capabilities</div>
+        <div class="ids-chip ids-chip-success">Persona-agnostic — serves ALL builders in PDLC</div>
+        <div class="ids-chip ids-chip-success">Central governance across all tools</div>
+        <div class="ids-chip ids-chip-success">Full visibility to all builders on customer impact</div>
+        <div class="ids-chip ids-chip-success">Persona-based IA with flexible + common elements</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">5 consequences of fragmentation — downstream impact</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:12px;line-height:1.65">From the Platform Vision doc (Rishav Mittal). Downstream systemic effects — each maps to a design principle you'll be solving for.</p>
+    <div class="g2">
+      <div>
+        <div class="pain-row"><div><div class="pain-label">1 · Inconsistent UX</div><div class="pain-desc">Different design patterns, auth flows, and IA across each portal. IDS tokens not universally adopted — compounding cognitive load with every cross-tool workflow.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">2 · Duplication of Effort</div><div class="pain-desc">Search, login, auditing, and notifications are independently rebuilt in each portal. Maintenance overhead compounds at scale as each vertical evolves separately.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">3 · Hindrance to Cross-Domain Innovation</div><div class="pain-desc">Combining AI Workbench + DDE + IXP in a single workflow has no native integration path. Everything is bespoke, slowing the pace and scope of innovation.</div></div></div>
+      </div>
+      <div>
+        <div class="pain-row"><div><div class="pain-label">4 · Inefficient Discovery</div><div class="pain-desc">No unified search spanning all portals. Developers hunt for APIs, datasets, and tooling across separate systems — "The Treasure Hunt" is step #1 in almost every persona journey.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">5 · No Single Pane of Glass</div><div class="pain-desc">No consolidated view of projects, metrics, or compliance. Developers toggle between 10+ interfaces for a complete picture. Accountability is fragmented — no single ownership view.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">8 core systemic problems — fresh-eyes checklist</div>
+    <div class="g2">
+      <div>
+        <div class="pain-row"><div><div class="pain-label">Context Switching Tax</div><div class="pain-desc">Moving DevPortal → AIW → DDE → IXP → Databricks for a single workflow. Each tool has its own mental model. Average workflow spans 3–5 tools.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Discovery Friction</div><div class="pain-desc">Docs scattered across Confluence, Slack, Autura, DevPortal. "The Treasure Hunt" is step #1 in almost every JTBD workflow across all personas.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Access &amp; Approval Latency</div><div class="pain-desc">FY23 SLA: 5-day wait for data access. Manual credential/permission flows via DACM stall momentum for every new project.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Fragmented Access Management</div><div class="pain-desc">Each portal manages its own permissions independently. No unified layer for granting, auditing, or revoking access — creating compliance risk and operational overhead.</div></div></div>
+      </div>
+      <div>
+        <div class="pain-row"><div><div class="pain-label">UX Inconsistency</div><div class="pain-desc">Same pages (homepage, search, create) built differently across tools. IDS tokens not adopted everywhere. 10+ component unification opportunities found in audit.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">No Unified Monitoring</div><div class="pain-desc">10+ dashboards to answer "Are we compliant?" Splunk, Wavefront, Data Pulse, ServiceNow all siloed. 1.5 hrs avg per P1 investigation.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">No Customer Impact Visibility</div><div class="pain-desc">Builders can't trace a microservice → customer-facing feature → business outcome. "Show the why behind the what" is aspirational, not yet real.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Duplicate Effort on Shared Concerns</div><div class="pain-desc">Each portal independently builds search, login, auditing, and notifications. A unified platform should solve these once and share across all tools.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-footnote">
+    <strong>Context:</strong> DevPortal sits at L1 in Intuit's City Map under "Developer Experiences" within the PDX org. It's the front door to all platform capabilities (IKS, UX Fabric, AI Workbench, DDE, IXP, etc.) — design decisions ripple across the entire Intuit development ecosystem. | <strong>Platform model:</strong> DevPortal is contribution-based — Security, Observability, and Paved Roads teams build their own features within the portal. The design team governs the cohesive experience across all contributions.
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PANEL 2 · PERSONAS ══════════ -->
+<div id="tab-personas" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>JTBD-Based Personas: Who You're Designing For</h1>
+    <p>Defined by the <em>job they are trying to get done</em>, not by job title. Same person, different task → different persona. Click any card to expand their full journey and pain points.</p>
+  </div>
+
+  <div class="ids-notice ids-notice-info" style="margin-bottom:16px">
+    <span class="ids-notice-icon">💡</span>
+    <div><strong>Coverage note (from team feedback):</strong> The original JTBD framework focused primarily on individual contributors. Three additional personas — Product Manager, Engineering Manager, and Technical Leader — play significant roles in the software development lifecycle and are now included below.</div>
+  </div>
+
+  <div style="font-size:12px;color:var(--muted-foreground);margin-bottom:8px;font-weight:600;letter-spacing:.4px;text-transform:uppercase">JBTD Primary Personas — with research-validated satisfaction scores</div>
+  <div class="g4" style="margin-bottom:8px">
+    <div class="persona-card" onclick="selP('consumer',this)"><div class="persona-icon">🔌</div><div class="persona-name">The Service Builder</div><div class="persona-tagline">SWE integrating a new capability</div><div style="margin-top:8px;font-size:11px;font-weight:700;color:#b45309">Satisfaction: 48/100</div></div>
+    <div class="persona-card" onclick="selP('dataeng',this)"><div class="persona-icon">⚙️</div><div class="persona-name">The Data Pipeline Builder</div><div class="persona-tagline">Data Engineer building &amp; scaling pipelines</div><div style="margin-top:8px;font-size:11px;font-weight:700;color:#b45309">Satisfaction: 42/100</div></div>
+    <div class="persona-card" onclick="selP('specialist',this)"><div class="persona-icon">🧠</div><div class="persona-name">The AI Specialist</div><div class="persona-tagline">Data Scientist / ML Engineer experimenting with models</div><div style="margin-top:8px;font-size:11px;font-weight:700;color:#dc2626">Satisfaction: 38/100</div></div>
+    <div class="persona-card" onclick="selP('ainewcomer',this)"><div class="persona-icon">🚀</div><div class="persona-name">The AI Newcomer</div><div class="persona-tagline">SWE transitioning to building AI features</div><div style="margin-top:8px;font-size:11px;font-weight:700;color:#dc2626">Satisfaction: 32/100 ← lowest</div></div>
+    <div class="persona-card" onclick="selP('impl',this)"><div class="persona-icon">🔗</div><div class="persona-name">The Integration Engineer</div><div class="persona-tagline">Integrating new financial data providers</div><div style="margin-top:8px;font-size:11px;font-weight:700;color:#dc2626">Satisfaction: 35/100</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted-foreground);margin-top:16px;margin-bottom:8px;font-weight:600;letter-spacing:.4px;text-transform:uppercase">Cross-domain archetypes &amp; additional personas</div>
+  <div class="g4" style="margin-bottom:16px">
+    <div class="persona-card" onclick="selP('producer',this)"><div class="persona-icon">🏭</div><div class="persona-name">The Producer</div><div class="persona-tagline">Building &amp; publishing reusable assets / AI agents</div></div>
+    <div class="persona-card" onclick="selP('maintainer',this)"><div class="persona-icon">🚨</div><div class="persona-name">The Maintainer</div><div class="persona-tagline">On-call SRE resolving P1 incidents fast</div></div>
+    <div class="persona-card" onclick="selP('analyst',this)"><div class="persona-icon">📊</div><div class="persona-name">The Analyst</div><div class="persona-tagline">Exploring complex metrics via conversational AI</div></div>
+    <div class="persona-card" onclick="selP('steward',this)"><div class="persona-icon">🛡️</div><div class="persona-name">The Steward</div><div class="persona-tagline">Auditing data maturity &amp; compliance</div></div>
+    <div class="persona-card" onclick="selP('pm',this)" style="border-color:var(--ids-purple-100)"><div class="persona-icon">📋</div><div class="persona-name">Product Manager</div><div class="persona-tagline">Steering product direction &amp; customer outcomes</div></div>
+    <div class="persona-card" onclick="selP('engmgr',this)" style="border-color:var(--ids-purple-100)"><div class="persona-icon">👔</div><div class="persona-name">Eng. Manager</div><div class="persona-tagline">Managing team health, delivery &amp; quality</div></div>
+    <div class="persona-card" onclick="selP('leader',this)" style="border-color:var(--ids-purple-100)"><div class="persona-icon">🎯</div><div class="persona-name">Tech Leader / Exec</div><div class="persona-tagline">Aligning engineering investment to business value</div></div>
+  </div>
+
+  <div id="pd-consumer" class="persona-detail">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--foreground)">The Service Builder · DevX · <span style="color:#b45309">Satisfaction 48/100</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Architect 🔴</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-weight:600">Code 🟢</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Build 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Test 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Release 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-weight:600">Deploy 🟢</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Monitor 🔴</span>
+      </div>
+    </div>
+    <div class="pd-section"><h4>Goal Statement</h4><div class="pd-item">"I am a software developer on a product team building and maintaining microservices. I'm trying to write, test, and iterate on service code quickly so I can ship features. But I spend more time searching for the right tools and documentation than actually coding — 61% of us cite discovery as the hardest phase."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Discover</div><div class="j-desc">Search DevPortal &amp; Slack for the right API or service; set up Cloud Workspace</div></div>
+      <div class="j-step"><div class="j-num">2 · Setup</div><div class="j-desc">Configure environment with required dependencies; connect to downstream services</div></div>
+      <div class="j-step"><div class="j-num">3 · Build</div><div class="j-desc">Write service code in IntelliJ / VS Code; commit and open PR on GitHub</div></div>
+      <div class="j-step"><div class="j-num">4 · Test</div><div class="j-desc">Run unit + integration tests locally; debug via logs, Postman, Fiddler</div></div>
+      <div class="j-step"><div class="j-num">5 · Deploy</div><div class="j-desc">Trigger CI/CD via Argo; deploy to staging, validate, promote to production</div></div>
+    </div>
+    <div class="pd-section"><h4>Key Pain Points <span style="font-weight:400;font-size:12px;color:var(--muted-foreground)">(validated metrics)</span></h4>
+      <div class="pd-pain">Discovery is a treasure hunt — 61% cite it as the hardest phase; 47% struggle with analysis after finding a tool</div>
+      <div class="pd-pain">50% drop-off at Cloud Workspace connection step — half abandon setup entirely</div>
+      <div class="pd-pain">Tribal knowledge bottlenecks: experienced engineers become blockers for undocumented services</div>
+      <div class="pd-pain">Fragmented tooling (IDE + GitHub + Argo + Observability) creates cognitive overload and config errors</div>
+    </div>
+    <div class="pd-section"><h4>Sprint Priority</h4><div class="pd-item">Fix discovery — it blocks everything downstream. A unified entry point has the highest leverage since 61% cite it as hardest. Cloud Workspaces configuration complexity creates tech debt that compounds.</div></div>
+    <div style="margin-top:12px"><span class="ids-chip ids-chip-neutral">Tools: DevPortal · GitHub · Cloud Workspaces · Argo · Observability · Slack · Jira · Postman</span></div>
+  </div>
+
+  <div id="pd-producer" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I build a new AI Agent, I want to codify it into a reusable template so every downstream consumer follows best practices for security and performance."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Discover</div><div class="j-desc">Search Slack, Wiki, Autura for AI Starter Kits + provider Paved Roads</div></div>
+      <div class="j-step"><div class="j-num">2 · Register</div><div class="j-desc">Create AI Agent asset in DevPortal; request PrivateAuth+ API access</div></div>
+      <div class="j-step"><div class="j-num">3 · Build</div><div class="j-desc">Author agent logic in GenStudio; integrate provider data formats + traffic policies</div></div>
+      <div class="j-step"><div class="j-num">4 · Test</div><div class="j-desc">Run sandbox simulations via ADAPT; circuit breaker tests</div></div>
+      <div class="j-step"><div class="j-num">5 · Monitor</div><div class="j-desc">Monitor health via Golden Signals in Splunk / Wavefront</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Scattered Resources: Docs outdated, spread across too many places</div>
+      <div class="pd-pain">Onboarding Latency: ~25 mins to onboard a new asset; manual access is slow and confusing</div>
+      <div class="pd-pain">"The Maze": Local agent setup requires navigating 8 different documents</div>
+      <div class="pd-pain">Testing Toil: Testing consumes 60–70% of developer time; platform rigidity causes friction</div>
+      <div class="pd-pain">Tool Sprawl: Multiple dashboards needed to find a single signal; missing lineage reduces trust</div>
+    </div>
+  </div>
+
+  <div id="pd-maintainer" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When an incident occurs, I want to know immediately if it's Us vs. Them so I can route the ticket correctly and minimize MTTR."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step incident"><div class="j-num">1 · Detect</div><div class="j-desc">Alert in Slack; acknowledge Husky bot; join incident Zoom bridge (PagerDuty)</div></div>
+      <div class="j-step incident"><div class="j-num">2 · Investigate</div><div class="j-desc">Splunk logs: internal code or provider failure? DevPortal Ecosystem View</div></div>
+      <div class="j-step incident"><div class="j-num">3 · Mitigate</div><div class="j-desc">Rollback release OR engage provider via IDX Studio + Feature Flags</div></div>
+      <div class="j-step incident"><div class="j-num">4 · Resolve</div><div class="j-desc">Monitor Golden Signals until healthy; ServiceNow stable state</div></div>
+      <div class="j-step incident"><div class="j-num">5 · Learn</div><div class="j-desc">Write RCA in GDocs; share with team in Confluence + JIRA</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Alert Fatigue: Woken up by redundant, non-actionable alerts</div>
+      <div class="pd-pain">Tool Sprawl: Multiple dashboards/logs to find one relevant signal</div>
+      <div class="pd-pain">Analysis Paralysis: Stuck in deep diagnosis instead of fast mitigation (rollback)</div>
+      <div class="pd-pain">Data Trust: Discrepancies between DevPortal and ServiceNow change data erode trust</div>
+      <div class="pd-pain">Siloed Knowledge: Re-solving problems other teams already solved — RCAs disconnected</div>
+    </div>
+  </div>
+
+  <div id="pd-analyst" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I explore complex churn or engagement metrics, I want conversational, agent-mediated analysis so I can deliver explainable insights in minutes instead of weeks."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Discover</div><div class="j-desc">Search DDE / Data Map using natural language to find governed datasets</div></div>
+      <div class="j-step"><div class="j-num">2 · Describe</div><div class="j-desc">Describe business problem in a Team Agent Space (e.g. "Why is churn up?")</div></div>
+      <div class="j-step"><div class="j-num">3 · Execute</div><div class="j-desc">AI agents collaborate to prepare cohorts + run revenue scenarios via MCP</div></div>
+      <div class="j-step"><div class="j-num">4 · Verify</div><div class="j-desc">Trace column-level lineage; review AI logic "traces" for accuracy</div></div>
+      <div class="j-step"><div class="j-num">5 · Synthesize</div><div class="j-desc">Configure dashboards via agentic workflows; share policy-checked insights</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Noise in Search: Precision issues and fragmented documentation lookups</div>
+      <div class="pd-pain">Technical Barriers: Non-technical analysts find SQL generation slow and inaccessible</div>
+      <div class="pd-pain">"Gravel Path": While engineers have paved roads, analysts feel left behind</div>
+      <div class="pd-pain">Missing Context: 1.5 hr investigation time due to missing column-level lineage</div>
+      <div class="pd-pain">Siloed Reporting: Fragmented data health views → reactive troubleshooting</div>
+    </div>
+    <div style="margin-top:12px"><span class="ids-chip ids-chip-neutral">Tools: DDE · Data Map · AI Workbench · GenStudio · Team Agent Spaces · Lineage Tool · QuickSight · Tableau</span></div>
+  </div>
+
+  <div id="pd-dataeng" class="persona-detail">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--foreground)">The Data Pipeline Builder · Data &amp; Analytics · <span style="color:#b45309">Satisfaction 42/100</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-weight:600">Produce 🟢</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Discover 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Derive 🔴</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Consume 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Validate 🔴</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Move 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Observe 🔴</span>
+      </div>
+    </div>
+    <div class="pd-section"><h4>Goal Statement</h4><div class="pd-item">"I am a data engineer responsible for building transformation pipelines that feed products, campaigns, and AI models. Manual testing consumes 60–70% of my time and deployments take 30–60 minutes — because there's no automated validation layer in ADAPT."</div></div>
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I scale a pipeline for a new AI use case, I want federated ingestion and schema-on-read so I can handle complex data at scale without manual ETL bottlenecks."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Plan</div><div class="j-desc">Define schema in Data Map Studio; request infra via Mission Control Plane</div></div>
+      <div class="j-step"><div class="j-num">2 · Ingest</div><div class="j-desc">Ingest data from OLTP/S3 using UIP Batch or Streaming Materializers</div></div>
+      <div class="j-step"><div class="j-num">3 · Transform</div><div class="j-desc">Build config-driven transformations using Spark logic in Simplan</div></div>
+      <div class="j-step"><div class="j-num">4 · Validate</div><div class="j-desc">Onboard asset to DTS to reach 4-star maturity; ADAPT Sandbox</div></div>
+      <div class="j-step"><div class="j-num">5 · Monitor</div><div class="j-desc">Aggregate Golden Signals + compliance traces in a unified health dashboard</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Coordination Overhead: High manual effort to align teams for standard integrations</div>
+      <div class="pd-pain">Infrastructure Maintenance: High costs for idle clusters or unused pipelines</div>
+      <div class="pd-pain">Complexity Scale: Excessive expertise required just to operate Flink streaming</div>
+      <div class="pd-pain">DQ Latency: Data Quality checks too slow to detect or fail critical issues</div>
+      <div class="pd-pain">Fragmented View: Siloed tools → reactive troubleshooting, no proactive detection</div>
+    </div>
+  </div>
+
+  <div id="pd-steward" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I audit my team's assets, I want a single dashboard of Health Scores so I can prioritize technical debt and prevent compliance breaches."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Audit</div><div class="j-desc">Check health signals and star ratings across assets in a central dashboard</div></div>
+      <div class="j-step"><div class="j-num">2 · Gap ID</div><div class="j-desc">Identify 1–2 star assets; locate missing metadata or quality checks</div></div>
+      <div class="j-step"><div class="j-num">3 · Enforce</div><div class="j-desc">Define and apply ADU tags and legal policies to the data</div></div>
+      <div class="j-step"><div class="j-num">4 · Remediate</div><div class="j-desc">Coordinate with Producers to standardize data and fix issues via widgets</div></div>
+      <div class="j-step"><div class="j-num">5 · Verify</div><div class="j-desc">Monitor Nebula compliance; calculate final Data Maturity Scores</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Fragmented Visibility: 10 different dashboards to answer "Are we compliant?"</div>
+      <div class="pd-pain">Feedback Gaps: Owners don't receive automated feedback on metadata gaps</div>
+      <div class="pd-pain">Dual Dependency: Managing metadata across DMR and DDE creates friction and confusion</div>
+      <div class="pd-pain">Coordination Overhead: High manual effort to align multiple teams</div>
+      <div class="pd-pain">High MTTD: Mean Time to Detect issues too high due to siloed monitoring tools</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div>This persona directly informs why Compliance must be a <strong>first-class surface</strong> in the V1 IA — not buried in Settings.</div></div>
+  </div>
+
+  <div id="pd-specialist" class="persona-detail">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--foreground)">The AI Specialist · AI Platform · <span style="color:#dc2626">Satisfaction 38/100</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Discover 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Experiment 🔴</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Build &amp; Iterate 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Govern 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Monitor 🔴 (Blind)</span>
+      </div>
+    </div>
+    <div class="pd-section"><h4>Goal Statement</h4><div class="pd-item">"I am a data scientist who trains, tunes, and evaluates models. I'm forced to context-switch across Databricks, SageMaker, local IDEs, and AI Workbench — tools for data, experimentation, and deployment are separate with no automated integration, so I retreat to local Jupyter notebooks."</div></div>
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I move from local prototype to production, I want clean data and a unified pipeline for continuous retraining and observability."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Experiment</div><div class="j-desc">Find existing models in AI Workbench to avoid duplication; Jupyter Notebooks</div></div>
+      <div class="j-step"><div class="j-num">2 · Enrich</div><div class="j-desc">Locate agent-prepared feature sets + embeddings in catalog for RAG</div></div>
+      <div class="j-step"><div class="j-num">3 · Orchestrate</div><div class="j-desc">Define agent control flows, tool definitions, retrieval logic in Team Agent Space</div></div>
+      <div class="j-step"><div class="j-num">4 · Comply</div><div class="j-desc">Pass Responsible AI (RAI) reviews; validate data scope with compliance agents</div></div>
+      <div class="j-step"><div class="j-num">5 · Monitor</div><div class="j-desc">Monitor model drift, latency, costs via unified dashboard</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">AIW Rigidity: Many scientists prefer Jupyter because AI Workbench UX is too rigid</div>
+      <div class="pd-pain">Manual Prep: High manual effort for feature prep; inconsistent data snapshots</div>
+      <div class="pd-pain">Integration Gaps: Manual sync needed between Playground configs and local IDE code</div>
+      <div class="pd-pain">Opaque Policies: Difficulty integrating customer context into GenAI while maintaining governance</div>
+      <div class="pd-pain">Retraining Bottlenecks: Significant delays due to fragmented infrastructure</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div>This persona directly informs why <strong>Playground must be low-friction</strong> and seamlessly connected to Build.</div></div>
+  </div>
+
+  <div id="pd-impl" class="persona-detail">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--foreground)">The Integration Engineer · Provider Integration · <span style="color:#dc2626">Satisfaction 35/100</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Discover 🔴</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Contract 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Integrate 🟡</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Deploy 🔴 (Blocked)</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Operate 🟡</span>
+      </div>
+    </div>
+    <div class="pd-section"><h4>Goal Statement</h4><div class="pd-item">"I am an implementation engineer who builds integrations connecting Intuit products to external financial data providers. Onboarding takes 3–12 weeks and I have to manage 10+ tools just to build a single integration — the tooling is fragmented across IDX Studio, Secure Browsing, Postman, dashboards, and Jira with no unified workflow."</div></div>
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"Integrate data providers through standardized onboarding processes, ensuring data freshness and regulatory compliance."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Plan</div><div class="j-desc">Discovery of provider systems, tools, frameworks to determine technical fit</div></div>
+      <div class="j-step"><div class="j-num">2 · Setup</div><div class="j-desc">Create project using "Paved Road" recipe; generate UserIDs and tokens in IDX Studio</div></div>
+      <div class="j-step"><div class="j-num">3 · Implement</div><div class="j-desc">Integrate mobile SDKs; implement required delegates/handlers for data extraction</div></div>
+      <div class="j-step"><div class="j-num">4 · Debug</div><div class="j-desc">Analyze API logs and error codes to identify config issues (Splunk, Postman)</div></div>
+      <div class="j-step"><div class="j-num">5 · Deploy</div><div class="j-desc">Run E2E and Production tests; exclude edge/error cases from live feed</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">Fragmented Tooling: Dependencies on partners and manual inputs → slow issue resolution</div>
+      <div class="pd-pain">Outdated Docs: Documentation frequently takes developers down the wrong path</div>
+      <div class="pd-pain">Mismatch Flux: Frequent mismatches between API versions and current development stacks</div>
+      <div class="pd-pain">Lengthy Validation: Manual migration processes are slow with high deployment error risk</div>
+    </div>
+    <div style="margin-top:12px"><span class="ids-chip ids-chip-neutral">Tools: IDX Studio · DevPortal · IAM · JIRA · IDE · GitHub · Splunk · Postman · Jenkins · ServiceNow · MODA</span></div>
+  </div>
+
+  <div id="pd-ainewcomer" class="persona-detail">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--foreground)">The AI Newcomer (Transitioner) · AI Platform · <span style="color:#dc2626">Satisfaction 32/100 ← lowest scored persona</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Discover 🔴 (Lost)</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Experiment 🟡 (Tentative)</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Build &amp; Iterate 🔴 (Overwhelmed)</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fefce8;color:#ca8a04;font-weight:600">Govern 🟡 (Anxious)</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#fef2f2;color:#dc2626;font-weight:600">Monitor 🔴 (Blind)</span>
+      </div>
+    </div>
+    <div class="pd-section"><h4>Goal Statement</h4><div class="pd-item">"I am a software engineer asked to build AI-powered features — agents, RAG, prompt chains — but my background is traditional service development. I'm trying to build and ship production-ready AI features using paved paths and clear templates. But the tooling feels like 'cow tools' — clunky interfaces without manuals — and best practices change weekly. AI Workbench was designed for ML specialists, not SWEs who need guided, opinionated workflows."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Browse</div><div class="j-desc">Search GenAI Use Cases in AI Workbench for inspiration and patterns</div></div>
+      <div class="j-step"><div class="j-num">2 · Test</div><div class="j-desc">Experiment with prompts in the Prompt Playground</div></div>
+      <div class="j-step"><div class="j-num">3 · Scaffold</div><div class="j-desc">Follow starter kit docs to scaffold an agent or RAG pipeline; integrate GenOS LLM Gateway</div></div>
+      <div class="j-step"><div class="j-num">4 · Govern</div><div class="j-desc">Manage prompt versions; build eval pipelines; submit for RAI governance review</div></div>
+      <div class="j-step"><div class="j-num">5 · Deploy</div><div class="j-desc">Deploy via DevPortal; monitor with operational dashboards</div></div>
+    </div>
+    <div class="pd-section"><h4>Key Pain Points</h4>
+      <div class="pd-pain">'Cow Tools' UX: Clunky interfaces without manuals — high abandonment at first interaction with AI Workbench</div>
+      <div class="pd-pain">No paved path for SWEs: Specialists have workarounds; transitioners need opinionated templates and guided workflows</div>
+      <div class="pd-pain">Prompt versioning is completely ad hoc: No systematic way to track, compare, or roll back changes</div>
+      <div class="pd-pain">RAI governance is opaque: Manual reviews with unclear criteria create anxiety and delays</div>
+      <div class="pd-pain">High credential drop-off: Platform fails to convert initial curiosity into sustained usage</div>
+    </div>
+    <div class="pd-section"><h4>Sprint Priority &amp; Why This Persona Matters</h4><div class="pd-item">SWE starter kits — this persona represents the <strong>largest growth vector for AI adoption at Intuit</strong>, and they're currently bouncing off the platform. If Transitioners can't succeed, AI adoption stays siloed in specialist teams and doesn't scale across Intuit. This is the key growth persona to design for.</div></div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div>This persona is <strong>not currently represented in the DevPortal IA</strong>. It should directly inform the 'AI for SWEs' learning path, SWE-specific starter kits, and a streamlined RAI submission flow in Silver phase.</div></div>
+  </div>
+
+  <div id="pd-pm" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I need to prioritize the next sprint, I want a clear picture of feature status, engineering capacity, and customer impact so I can make data-driven decisions without pulling reports from 5 different tools."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Plan</div><div class="j-desc">Review roadmap priorities; align with engineering leads on capacity and scope</div></div>
+      <div class="j-step"><div class="j-num">2 · Align</div><div class="j-desc">Coordinate across DevPortal, JIRA, and stakeholders to agree on sprint goals</div></div>
+      <div class="j-step"><div class="j-num">3 · Track</div><div class="j-desc">Monitor feature progress and blockers in flight across multiple engineering teams</div></div>
+      <div class="j-step"><div class="j-num">4 · Review</div><div class="j-desc">Review experiments (IXP), metrics, and customer signals to validate decisions</div></div>
+      <div class="j-step"><div class="j-num">5 · Report</div><div class="j-desc">Synthesize outcome metrics and communicate progress to leadership</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">No Unified Feature View: Feature status scattered across JIRA, DevPortal, ServiceNow — no single source of truth</div>
+      <div class="pd-pain">Manual Reporting: Assembling sprint metrics requires pulling from multiple tools manually each week</div>
+      <div class="pd-pain">Opaque Blockers: Can't see cross-team dependencies or access blockers without pinging engineers directly</div>
+      <div class="pd-pain">No Customer Traceability: Hard to connect a feature decision to measurable customer or business impact in real time</div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div>This persona directly informs why <strong>Teams → Features (PDLC Tracker)</strong> and the <strong>Monitor → Leadership Dashboard</strong> must be first-class surfaces in the V1 IA.</div></div>
+  </div>
+
+  <div id="pd-engmgr" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I run my team's sprint, I want a single view of delivery health, compliance status, and team workload so I can proactively address blockers without chasing data across 10 tools."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Plan</div><div class="j-desc">Review team capacity, assign work, set sprint goals in JIRA + DevPortal</div></div>
+      <div class="j-step"><div class="j-num">2 · Assign</div><div class="j-desc">Ensure paved road and tooling access is in place for the team before sprint starts</div></div>
+      <div class="j-step"><div class="j-num">3 · Track</div><div class="j-desc">Monitor delivery velocity, PR cycle time, build health via Splunk / Jenkins</div></div>
+      <div class="j-step"><div class="j-num">4 · Unblock</div><div class="j-desc">Escalate access issues, dependency blockers, or infra problems in ServiceNow</div></div>
+      <div class="j-step"><div class="j-num">5 · Report</div><div class="j-desc">Compile team delivery and compliance health summary for leadership review</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">No Team Dashboard: Must cobble together delivery metrics from JIRA, Splunk, ServiceNow, and DevPortal separately</div>
+      <div class="pd-pain">Reactive Compliance: Only learns about compliance gaps during audits — no proactive alerts for team-level risks</div>
+      <div class="pd-pain">Slow Engineer Onboarding: Fragmented paved roads and scattered docs mean new engineers take too long to become productive</div>
+      <div class="pd-pain">Invisible Cross-Team Dependencies: Blocking dependencies from other teams only surface after delays occur</div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div>This persona reinforces the case for <strong>Teams → Members + RBAC</strong> and a <strong>team-scoped Compliance view in Monitor</strong> — both critical for Silver phase delivery.</div></div>
+  </div>
+
+  <div id="pd-leader" class="persona-detail">
+    <div class="pd-section"><h4>Job to Be Done</h4><div class="pd-item">"When I present to leadership, I want a live view of org-wide delivery health, engineering ROI, and compliance posture — without asking 10 teams to send me spreadsheets."</div></div>
+    <div class="g5" style="margin-bottom:16px">
+      <div class="j-step"><div class="j-num">1 · Review</div><div class="j-desc">Check delivery health, compliance posture, and velocity across all teams</div></div>
+      <div class="j-step"><div class="j-num">2 · Align</div><div class="j-desc">Ensure engineering priorities map to business goals and customer outcomes</div></div>
+      <div class="j-step"><div class="j-num">3 · Prioritize</div><div class="j-desc">Make investment decisions: new features vs. tech debt vs. compliance remediation</div></div>
+      <div class="j-step"><div class="j-num">4 · Govern</div><div class="j-desc">Ensure standards, security, and Responsible AI (RAI) policies are adhered to org-wide</div></div>
+      <div class="j-step"><div class="j-num">5 · Report</div><div class="j-desc">Present engineering ROI, risk posture, and key outcomes to senior leadership</div></div>
+    </div>
+    <div class="pd-section"><h4>Pain Points</h4>
+      <div class="pd-pain">No Org-Wide Visibility: Engineering investment not tied to customer-facing outcomes — hard to show ROI without manual data assembly</div>
+      <div class="pd-pain">Lagging Risk Signals: Compliance and security posture are assembled manually — issues surface too late to prevent impact</div>
+      <div class="pd-pain">No Unified Tech Debt View: Can't balance new feature velocity against technical debt without team-by-team check-ins</div>
+      <div class="pd-pain">Reporting Overhead: Generating leadership reports requires pulling from Splunk, ServiceNow, JIRA, and DevPortal manually each cycle</div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:12px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div>This persona is the primary driver for the <strong>Leadership Dashboard in Monitor</strong> and for ensuring that <strong>Teams → Metrics</strong> surfaces business-level traceability, not just technical metrics.</div></div>
+  </div>
+
+  <div class="ids-footnote">
+    <strong>JTBD Principle:</strong> These personas are defined by the specific job a user is trying to perform — not by job titles or org charts. A PM running an experiment IS The Consumer in that moment. A designer publishing a component IS The Producer. | <strong>Persona Generator:</strong> persona-generator-liard.vercel.app — a live AI tool the team built that outputs JTBD persona profiles from Intuit-specific domain knowledge.
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PANEL 3 · IA VISION ══════════ -->
+<div id="tab-ia" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>The V1 Unified IA — What You're Building Toward</h1>
+    <p>Click each section to see what lives inside it, the design intent, and open questions. Two-layer architecture: common shell (everyone) + persona-based left menu (adaptive per role, owned by domain experts).</p>
+  </div>
+
+  <div class="ids-notice ids-notice-warning" style="margin-bottom:16px">
+    <span class="ids-notice-icon">⚠️</span>
+    <div><strong>Team feedback:</strong> This IA vision is a solid foundation, but the details within each section still need to be fully fleshed out — particularly around sub-nav structure, content ownership, and how persona-based adaptation works in practice. Treat this as directional, not final. Deep-dive sessions with Muyi, Amit, and the engineering triad are the next step before committing to V1 scope.</div>
+  </div>
+
+  <div class="ids-card" style="margin-bottom:12px">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <span class="ids-chip ids-chip-success">Common Shell</span>
+      <span style="font-size:13px;color:var(--muted-foreground)">Global platform services — same for all personas</span>
+      <span style="margin-left:auto"></span>
+      <span class="ids-chip ids-chip-warning">Persona Menu</span>
+      <span style="font-size:13px;color:var(--muted-foreground)">Adaptive left nav — owned by domain experts, customizable by users</span>
+    </div>
+  </div>
+
+  <div class="ia-root-node">Unified Development Portal</div>
+  <div class="ia-connector"></div>
+  <div class="ia-nav-row">
+    <div class="ia-nav-node sel" onclick="selIA('home',this)"><div class="ia-nav-label">🏠 Home</div><div class="ia-nav-sub">Personalized launchpad</div></div>
+    <div class="ia-nav-node" onclick="selIA('build',this)"><div class="ia-nav-label">🔨 Build</div><div class="ia-nav-sub">End-to-end guided creation</div></div>
+    <div class="ia-nav-node" onclick="selIA('teams',this)"><div class="ia-nav-label">👥 Teams</div><div class="ia-nav-sub">Ownership &amp; governance</div></div>
+    <div class="ia-nav-node" onclick="selIA('products',this)"><div class="ia-nav-label">📦 Products</div><div class="ia-nav-sub">Capability discovery</div></div>
+    <div class="ia-nav-node" onclick="selIA('community',this)"><div class="ia-nav-label">🌐 Community</div><div class="ia-nav-sub">Reuse &amp; collaboration</div></div>
+    <div class="ia-nav-node" onclick="selIA('manage',this)"><div class="ia-nav-label">📁 Manage</div><div class="ia-nav-sub">Everything I own</div></div>
+    <div class="ia-nav-node" onclick="selIA('monitor',this)"><div class="ia-nav-label">📈 Monitor</div><div class="ia-nav-sub">Health &amp; compliance</div></div>
+  </div>
+  <div class="ia-global-row">
+    <div class="ia-global-item">🔍 Global Search</div>
+    <div class="ia-global-item">✦ Intuit Assist</div>
+    <div class="ia-global-item">🔔 Notifications</div>
+    <div class="ia-global-item">📢 Announcements</div>
+    <div class="ia-global-item">👤 Profile</div>
+    <div class="ia-global-item">Support</div>
+  </div>
+
+  <div id="ia-home" class="ia-detail-panel active">
+    <div class="ia-detail-title">Home — The Personalized Launchpad</div>
+    <div class="ia-detail-desc">Home adapts to who you are. Same URL, different experience per persona. Contains widgets users can customize from a library. Includes a Focus Area for time-sensitive work and guidance at every step.</div>
+    <div class="g4" style="margin-bottom:16px">
+      <div class="ids-card" style="margin-bottom:0"><div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px">SWE / Developer</div><div style="font-size:13px;color:var(--muted-foreground)">My projects · Recently worked on · Active builds</div></div>
+      <div class="ids-card" style="margin-bottom:0"><div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px">Data Engineer</div><div style="font-size:13px;color:var(--muted-foreground)">Recently viewed · Browse by sources · My Data pipelines</div></div>
+      <div class="ids-card" style="margin-bottom:0"><div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px">New User</div><div style="font-size:13px;color:var(--muted-foreground)">Getting started · Onboarding guide · Paved roads</div></div>
+      <div class="ids-card" style="margin-bottom:0"><div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px">Power User</div><div style="font-size:13px;color:var(--muted-foreground)">Curated for you · What's new · Focus area tasks</div></div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div><strong>Open question (highest priority):</strong> How does persona detection work? Onboarding survey? Role from Insight/Workday profile? Manual selection? Implicit usage signals? This decision gates the entire Home UX.</div></div>
+  </div>
+
+  <div id="ia-build" class="ia-detail-panel">
+    <div class="ia-detail-title">Build — End-to-End Creation with Guided Intent</div>
+    <div class="ia-detail-desc">Build is not just a "Create" button. It's a guided, intent-driven experience powered by the "Next Best Step" framework — proactively suggesting the next logical action based on the user's current context, role, and project goals. Foundational layer for future AI agents to perform multi-step tasks on behalf of the user.</div>
+    <div class="ia-items">
+      <div class="ia-item">Build end-to-end solutions</div><div class="ia-item">Prompt Playground</div><div class="ia-item">API Explorer</div>
+      <div class="ia-item">Paved Road / Starter Kits</div><div class="ia-item">Best practices surfaced upfront</div>
+      <div class="ia-item">Build Mode Canvas</div><div class="ia-item">Spec file generation</div><div class="ia-item">PDLC Tracker integration</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div><strong>Key tension to resolve:</strong> Is "Build" the same surface as "Create" (sprint Groups 1 &amp; 3) or different? Build implies guided end-to-end; Create implies single-asset authoring. Customer loved the PDLC Tracker: "Helps see if you're covering all bases before releasing." — Steven G.</div></div>
+  </div>
+
+  <div id="ia-teams" class="ia-detail-panel">
+    <div class="ia-detail-title">Teams — Ownership, Governance &amp; Accountability</div>
+    <div class="ia-detail-desc">Every asset, project, and feature should be traceable back to a Delivery Team. Teams provides the governance layer — RBAC, access control, and the connection from technical assets to customer-facing features and business impact.</div>
+    <div class="ia-items">
+      <div class="ia-item">Overview (team summary + activity)</div><div class="ia-item">Features (PDLC tracker)</div><div class="ia-item">Projects</div>
+      <div class="ia-item">Metrics (team performance)</div><div class="ia-item">Members + RBAC</div><div class="ia-item">Enhanced access control</div>
+      <div class="ia-item">Who has access to what</div><div class="ia-item">Asset → customer feature mapping</div><div class="ia-item">Reusable user groups</div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div><strong>Customer quote:</strong> "This makes sense, especially if you have a feature with many different parts — multiple services, front ends, dependencies. This helps organize it." — Shinray K.</div></div>
+  </div>
+
+  <div id="ia-products" class="ia-detail-panel">
+    <div class="ia-detail-title">Products — Guided Capability Discovery Journey</div>
+    <div class="ia-detail-desc">Products is not a flat catalog. It's a progressive journey: <strong>Learn the capability → Explore Use Cases → Build.</strong> Organized by domain, not by tool name. Standardized Product Landing Pages with onboarding, reference apps, key use cases, APIs, and documented prerequisites.</div>
+    <div class="g4" style="margin-bottom:16px">
+      <div class="domain-card"><div class="domain-title">AI &amp; ML</div><div class="domain-body">LLMs · Agents · RAG · Embeddings · Prompt Library · AI Workbench · GenStudio</div></div>
+      <div class="domain-card"><div class="domain-title">Development</div><div class="domain-body">APIs · App development · Paved Roads · IKS · UX Fabric · IDX Studio</div></div>
+      <div class="domain-card"><div class="domain-title">Data</div><div class="domain-body">Feature Store · Databricks · Starburst · Data Catalog · DDE · Kafka</div></div>
+      <div class="domain-card"><div class="domain-title">Design</div><div class="domain-body">IDS components · UX Fabric · Templates · Design system · Figma</div></div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-bottom:0"><span class="ids-notice-icon">💡</span><div>"To me, marketplace means something that's already out there I can explore." — Arik G. | <strong>Note:</strong> "For products and community I'm not sure — feels like there's overlap." — Steven G. Taxonomy needs user validation.</div></div>
+  </div>
+
+  <div id="ia-community" class="ia-detail-panel">
+    <div class="ia-detail-title">Community — Built by Many, Guided by One</div>
+    <div class="ia-detail-desc">Community turns DevPortal from a centrally-controlled system into an open platform. Builders post needs, get guided recommendations, and discover reusable assets. An incentivized marketplace rewards teams for contributing solutions.</div>
+    <div class="ia-items">
+      <div class="ia-item">Marketplace (publish reusable assets)</div><div class="ia-item">Community Connect (post needs → expert match)</div>
+      <div class="ia-item">Reusable Solutions / Paved Roads</div><div class="ia-item">Learning &amp; tutorials</div>
+      <div class="ia-item">Leaderboard (contribution recognition)</div><div class="ia-item">Forums &amp; collaborative workspaces</div><div class="ia-item">InnerSource contribution model</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div><strong>Open question:</strong> What's the MVP of Community at launch? Without critical mass, Marketplace and Leaderboard feel empty. Recommend seeding with existing Paved Roads and Platform team contributions first. Products/Community boundary also feels fuzzy to users — needs clear differentiation.</div></div>
+  </div>
+
+  <div id="ia-manage" class="ia-detail-panel">
+    <div class="ia-detail-title">Manage — Everything I Own</div>
+    <div class="ia-detail-desc">Manage is an ownership surface, not a directory. Default filter is always "mine." Includes things you created and things assigned to you. Ownership should be obvious and actionable.</div>
+    <div class="ia-items">
+      <div class="ia-item">Resource Docs I own</div><div class="ia-item">Data &amp; software assets</div><div class="ia-item">AI experiences &amp; ML models</div>
+      <div class="ia-item">Experiments I'm running</div><div class="ia-item">Incoming requests (approve/resolve)</div>
+      <div class="ia-item">Outgoing requests (status)</div><div class="ia-item">Artifacts: create, configure, maintain</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div><strong>Open question:</strong> What is the MVP scope of Manage? Sprint Group 1 framed it as "everything I belong to and own" — Group 3 as "what is mine." These have different data model implications. Map against persona needs before committing to a scope.</div></div>
+  </div>
+
+  <div id="ia-monitor" class="ia-detail-panel">
+    <div class="ia-detail-title">Monitor — Health, Compliance &amp; Persona-Aware Insights</div>
+    <div class="ia-detail-desc">Monitor surfaces are different per persona — a leader sees business metrics, an ML engineer sees model drift, a data engineer sees pipeline health. Key sprint direction: "Personalized, not generic."</div>
+    <div class="ia-items">
+      <div class="ia-item">Performance dashboard</div><div class="ia-item">Metric Store</div><div class="ia-item">Test Reports</div>
+      <div class="ia-item">Feature Flags</div><div class="ia-item">Compliance (RAI, Nebula 4-star, ADU)</div>
+      <div class="ia-item">Observability / Golden Signals</div><div class="ia-item">Usage metrics (informational + actionable)</div><div class="ia-item">Leadership Dashboard</div>
+    </div>
+    <div class="ids-notice ids-notice-warning" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">⚠️</span><div><strong>Compliance is first-class here</strong> — not buried in Settings. Must surface: what is compliant, what is not, and what action is needed. | Announcements (platform news) and Notifications (personal alerts) are intentionally separate in the global header — different mental models, don't merge them.</div></div>
+  </div>
+
+  <div class="ids-card" style="margin-top:20px">
+    <div class="ids-card-title">Technical foundation: the federated shell architecture</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">The Platform Vision doc (Bhavana Reddy Gajjala, Rishav Mittal) defines how the IA you're designing is technically realized. DevPortal transitions from a "loose federation of links" into a <strong>Federated Container Architecture</strong>. The Shell is the OS for the engineering lifecycle. Verticals (AI Workbench, IXP, Data Discovery, etc.) evolve from standalone websites into <em>Workbench Modules</em> running inside the governed shell.</p>
+    <div class="g2" style="margin-bottom:16px">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Shell responsibilities (horizontal layer)</div>
+        <div class="arch-card"><div class="arch-title">Global Navigation &amp; Header</div><div class="arch-body">The Shell owns the top nav, global search, Intuit Assist, notifications, announcements, and profile. These render for every persona, on every vertical, consistently. The Shell team (not workbench teams) governs this surface.</div></div>
+        <div class="arch-card"><div class="arch-title">Context SDK — Shared Global State</div><div class="arch-body">The Shell exposes a Context SDK that provides every hosted workbench with unified identity (logged-in user + RBAC), delivery team context, and user preferences. Changing your team in the global header propagates to all loaded workbenches — this is what makes "contextual left nav" technically possible.</div></div>
+        <div class="arch-card"><div class="arch-title">PDLC Tracker &amp; Intent-Based Navigation</div><div class="arch-body">A persistent Shell component that maps whatever tool the user is currently inside to a lifecycle stage (Plan → Code → Build → Deploy → Monitor). Navigation is <em>intent-centric</em>, not tool-centric. This component lives in the Shell, not in the workbenches.</div></div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Workbench integration patterns (vertical teams)</div>
+        <div class="arch-card"><div class="arch-title">Pattern A — Core Widget (top-down)</div><div class="arch-body">Each vertical exposes its entire app as one root widget. DevPortal core loads it via <code>WidgetLoader</code>. AI Workbench POC demonstrated this works — the vertical team owns state, routing, analytics, and logging entirely within their widget. DevPortal just mounts it. Preferred approach.</div></div>
+        <div class="arch-card"><div class="arch-title">Pattern B — Module Federation</div><div class="arch-body">Each vertical exposes a <code>remoteEntry.js</code> bundle via Webpack Module Federation. The Shell dynamically loads these without requiring plugin dependencies in the web app. Successfully tested. Preferred for teams that can't refactor to a single core widget.</div></div>
+        <div class="arch-card"><div class="arch-title">Domain Redirection Strategy</div><div class="arch-body">Users with bookmarks to <em>ai-workbench.app.intuit.com</em> or <em>experimentation.app.intuit.com</em> will be redirected to <em>devportal.intuit.com/app/dp/wb</em>. Two approaches: Gateway Redirection (zero vertical team effort, preferred) or Software-Level Redirection. NetGenie handles gateway redirects.</div></div>
+      </div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-bottom:0"><span class="ids-notice-icon">💡</span><div><strong>Design implication:</strong> Every navigation decision you make has a Shell vs. Workbench ownership question behind it. "Who governs this surface — the shell team or the vertical team?" is a recurring design principle question. The answer determines whether a pattern is standardized once (Shell) or can vary by workbench (Vertical). When in doubt, Shell wins.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PANEL 4 · ROADMAP ══════════ -->
+<div id="tab-roadmap" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>Bronze → Silver → Gold Roadmap</h1>
+    <p>Team philosophy: <em>"Speed over perfection."</em> Deliver staggered experiences that meet business goals and customer needs. You joined at the start of Silver — FY26 Q3.</p>
+  </div>
+
+  <div class="ids-notice ids-notice-warning" style="margin-bottom:16px">
+    <span class="ids-notice-icon">⚠️</span>
+    <div><strong>Team feedback:</strong> The roadmap below reflects onboarding materials as of April 2026, but Amit flagged that it <strong>needs a reset and discussion</strong> — timelines, deliverable scope, and phase definitions may have shifted. Do not treat the Silver/Gold breakdown as locked. Schedule a working session with the PM and engineering triad to align on current state before making design commitments tied to any specific phase.</div>
+  </div>
+
+  <div class="rm-track">
+    <div class="rm-phase">
+      <div class="rm-circle rm-bronze">🥉<br>DONE</div>
+      <div class="rm-label">Bronze</div><div class="rm-timing">Q1 FY26 — Delivered</div>
+      <div class="rm-body">
+        <div class="rm-item">Persistent app switcher across all platforms for easy switching and discoverability</div>
+        <div class="rm-item">Unified DevPortal URL available for all workbenches</div>
+      </div>
+    </div>
+    <div class="rm-phase">
+      <div class="rm-circle rm-silver">🥈<br>NOW</div>
+      <div class="rm-label">Silver</div><div class="rm-timing">Q2–Q3 FY26 — In Progress</div>
+      <div class="rm-body">
+        <div class="rm-item">Bronze + top IA unification</div>
+        <div class="rm-item">Contextual left menu introduction (Q3)</div>
+        <div class="rm-item">Global DevPortal search for all tools (Q3)</div>
+        <div class="rm-item">Remove duplicate experiences, align (Q3)</div>
+        <div class="rm-item">Entities linked to Delivery Team + Project View (Q3)</div>
+        <div class="rm-item">Unified layouts: AI Workbench + DevPortal</div>
+        <div class="rm-item">Global Search — new for AI Workbench</div>
+        <div class="rm-item">Map + update top 3 cross-tool user journeys</div>
+        <div class="rm-item">Native Asset View components for key journeys</div>
+        <div class="rm-item">Paved road integrated into unified creation flow</div>
+      </div>
+    </div>
+    <div class="rm-phase">
+      <div class="rm-circle rm-gold">🥇<br>H2</div>
+      <div class="rm-label">Gold</div><div class="rm-timing">H2 FY26 — Target State</div>
+      <div class="rm-body">
+        <div class="rm-item">All flows natively integrated within DevPortal</div>
+        <div class="rm-item">Unified Data Models across all integrated tools</div>
+        <div class="rm-item">Workbench teams co-own the end-to-end developer journey</div>
+        <div class="rm-item">Unified dashboards with data from all tools</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">Silver phase design work — what you'll lead now</div>
+    <div class="g2">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Unified layouts: AI Workbench → DevPortal</div>
+        <div class="pain-row"><div><div class="pain-label">Home / Dashboard</div><div class="pain-desc">Merge AI Workbench home into DevPortal as a unified launchpad experience</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Project List</div><div class="pain-desc">Will evolve into "Asset Groups" as the data model matures over time</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Asset Group Detail (Project)</div><div class="pain-desc">Project-level view of all assets and their status across tools</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Asset Detail (AI Experience)</div><div class="pain-desc">Individual AI experience deep-dive page with full context</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Global Search</div><div class="pain-desc">New capability for AI Workbench — cross-tool search is currently absent</div></div></div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Q2 design workstreams</div>
+        <div class="pain-row"><div><div class="pain-label">Audit Key Workflows — Driver: Ainatte Inbal</div><div class="pain-desc">JTBD-based workflow mapping: Consume API · Service Config · Cloud Workspace · Incident Recovery</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Audit Key Experiences — Driver: Srini Chakkarapani</div><div class="pain-desc">20+ pages across AIW, DDE, DevPortal, IDX Studio, IXP. 10+ component + 6+ page unification opportunities.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Reimagine Key Workflows</div><div class="pain-desc">Agent Development Paved Road · Bundled Paved Road for Webapp Prototype</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">IDS Standardization</div><div class="pain-desc">Modern, token-driven component foundation across all tools. Reduce design debt. Build AI-ready system.</div></div></div>
+        <div class="pain-row"><div><div class="pain-label">Content as Infrastructure — Driver: April Jernberg</div><div class="pain-desc">Embed content guidelines in page layouts. AI agents trained on content best practices.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">FY26 outcome metrics</div>
+    <div class="g4">
+      <div class="stat-box" style="background:var(--ids-green-100);border-color:#a7f3d0"><div class="stat-num" style="color:var(--ids-green-600)">10%</div><div class="stat-desc">Development Efficiency exit rate by end of FY26</div></div>
+      <div class="stat-box" style="background:var(--ids-blue-50);border-color:var(--ids-blue-100)"><div class="stat-num" style="color:var(--primary)">&gt;50%</div><div class="stat-desc">AI-Assisted DFY Tool adoption among eligible users</div></div>
+      <div class="stat-box" style="background:var(--ids-orange-100);border-color:#fed7b3"><div class="stat-num" style="color:var(--ids-orange-600)">&gt;80%</div><div class="stat-desc">CES score for critical development workflows</div></div>
+      <div class="stat-box" style="background:var(--ids-purple-100);border-color:#d8c7f5"><div class="stat-num" style="color:var(--ids-purple-600)">$4M</div><div class="stat-desc">Observability cost savings target for FY26</div></div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">Vertical integration status — all 17 apps to unify</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">From the Platform Vision doc (Rishav Mittal). These are the apps that need to be brought under one DevPortal shell. Each represents a design surface you will eventually need to account for.</p>
+    <div class="table-wrap">
+    <table class="integ-table">
+      <thead><tr><th>Vertical</th><th>Complexity</th><th>Status</th><th>E2E Tested</th><th>Design Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AI Workbench</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-active">In Progress</span></td><td>No</td><td>Primary Silver focus. POC complete. Header integration &amp; layout unification in progress.</td></tr>
+        <tr><td><strong>IXP (Experiments)</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Has internal React routing + external feature flag dependencies. Complex lift.</td></tr>
+        <tr><td><strong>Data Discovery (DDE)</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Missing AppFabric route + internal routing. MCP ecosystem is active and growing.</td></tr>
+        <tr><td><strong>Intuit API Client</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>—</td></tr>
+        <tr><td><strong>Dev 360</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Has all 3 integration problems: no AppFabric route, internal routing, and external deps.</td></tr>
+        <tr><td><strong>Cloud 360</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Same as Dev 360 — triple complexity.</td></tr>
+        <tr><td><strong>Agent Registry</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Medium lift. No AppFabric route needed; has internal routing only.</td></tr>
+        <tr><td><strong>SIP (Structured Intake)</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Has internal routing + external dependencies.</td></tr>
+        <tr><td><strong>Code Assist</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Internal routing only. No major blockers expected.</td></tr>
+        <tr><td><strong>MCP Marketplace</strong></td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>No integration problems identified. Fast path to unify.</td></tr>
+        <tr><td><strong>App Intelligence</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Internal routing only.</td></tr>
+        <tr><td><strong>Scout</strong></td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-done">Completed</span></td><td>Yes</td><td>First vertical successfully integrated. Reference implementation for other teams.</td></tr>
+        <tr><td><strong>Decisions App</strong></td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>No integration problems. Low complexity.</td></tr>
+        <tr><td><strong>IDX Studio</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>No AppFabric route + internal routing. High effort.</td></tr>
+        <tr><td><strong>IKSM</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>—</td></tr>
+        <tr><td><strong>NetGenie</strong></td><td><span class="badge badge-med">Medium</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>Also handles domain redirection for other verticals.</td></tr>
+        <tr><td><strong>Services Vertical</strong></td><td><span class="badge badge-high">High</span></td><td><span class="badge badge-pending">Not Started</span></td><td>No</td><td>—</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div><strong>Design implication:</strong> Every vertical listed above has its own current header, navigation, and layout patterns. Your audit work (Srini Chakkarapani's IDS standardization workstream) feeds directly into this — each integrated vertical will need its own header disabled and replaced by the Shell's global header.</div></div>
+  </div>
+
+  <div class="ids-footnote">
+    <strong>FY Calendar:</strong> Intuit FY starts Aug 1. Joining April 2026 = FY26 Q3. Silver is active now. | <strong>Audit results so far:</strong> 20+ pages audited · 10+ internal component unification opportunities · 6+ page unification opportunities. Prioritized by Reusability × Impact × Effort. | <strong>Gold availability targets:</strong> T1/T2 Web &amp; Mobile: 99.931% → 99.990% · Service T1: 99.999% → &gt;99.999% · IKS AIR adopted by &gt;1000 prod services.
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PANEL 5 · PRINCIPLES ══════════ -->
+<div id="tab-principles" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>Guiding Principles — The Design Mindset</h1>
+    <p>The team's explicit agreed principles. Know them cold — they'll shape every design decision and every stakeholder conversation. Each principle includes a concrete Dev Portal application below.</p>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="ids-section-label" style="color:var(--ids-purple-600);margin-top:0">🧠 Mindset</div>
+      <div class="prin-card mindset">
+        <div class="prin-title">One Experience, Not Just One URL</div>
+        <div class="prin-quote">"Design the experience, not the directory."</div>
+        <div class="prin-desc">True unification is not about putting all tools under one domain. It's about making the boundaries between tools feel invisible. A unified URL was Bronze. Unified experience is Gold.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> A developer starting a project in Build should be able to transition to AI Workbench's Playground and back to DevPortal's Manage view without ever feeling they changed apps. Navigation state, context, and terminology must be consistent across all tool surfaces.</div>
+      </div>
+      <div class="prin-card mindset">
+        <div class="prin-title">Anticipate Needs, Don't Just Present Tools</div>
+        <div class="prin-quote">"Think ahead for the builder."</div>
+        <div class="prin-desc">Move from a reactive catalog to a proactive, intelligent assistant. The "Next Best Step" Intent Framework proactively suggests the next logical action based on context, role, and project goals. Foundational for future AI agents performing multi-step tasks on behalf of the user.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> When a developer registers a new AI Agent, the platform should proactively surface: "You'll also need to request PrivateAuth+ access, configure circuit breakers, and run an ADAPT sandbox test" — not wait for them to discover this by failing three times.</div>
+      </div>
+      <div class="prin-card mindset">
+        <div class="prin-title">Connect Every Action to Customer Value</div>
+        <div class="prin-quote">"Show the 'why' behind the 'what.'"</div>
+        <div class="prin-desc">Every persona should be able to trace a microservice/library → customer-facing feature → business outcome. IA should be organized around the customer, not internal technical assets.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> The Teams → Features (PDLC Tracker) view must show: which microservices power which product features, which customer segments they affect, and what the measured impact is. This turns DevPortal from an engineering tool into a business tool.</div>
+      </div>
+      <div class="prin-card mindset">
+        <div class="prin-title">Empower the Community to Build the Platform</div>
+        <div class="prin-quote">"Built by many, guided by one."</div>
+        <div class="prin-desc">DevPortal should not be top-down or centrally controlled. It should be an open platform that harnesses collective developer expertise — contribute, share, and reuse over reinvent.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> Security, Observability, and Paved Roads teams each own their feature areas within DevPortal. Your role as Principal Designer is not to design every screen — it's to govern the shared design language, set the contribution model, and ensure consistency across all team contributions.</div>
+      </div>
+    </div>
+    <div>
+      <div class="ids-section-label" style="margin-top:0">⚙️ Execution</div>
+      <div class="prin-card">
+        <div class="prin-title">Adaptive to Every Builder</div>
+        <div class="prin-quote">"One system, many expressions."</div>
+        <div class="prin-desc">Design flexible, persona-aware experiences that adjust to context, role, and need — without fragmenting the ecosystem. Same underlying IA, expressed differently per persona. Do not create separate portals; create adaptive surfaces.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> Home must render a completely different experience for a Data Engineer vs. a new SWE vs. an Engineering Manager — all from the same URL and same underlying IA. This is solved at the persona detection layer, not by building separate apps.</div>
+      </div>
+      <div class="prin-card">
+        <div class="prin-title">Cohesive by Design</div>
+        <div class="prin-quote">"Consistency in patterns, continuity in journeys."</div>
+        <div class="prin-desc">Create seamless, end-to-end flows that make multiple tools feel like one connected experience. Cross-tool transitions should feel like navigating a feature, not switching an app.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> The Silver phase audit found 20+ pages and 10+ component patterns inconsistently implemented across DevPortal, AI Workbench, DDE, IDX Studio, and IXP. Srini Chakkarapani's IDS standardization workstream is the execution of this principle.</div>
+      </div>
+      <div class="prin-card">
+        <div class="prin-title">Intelligent by Nature</div>
+        <div class="prin-quote">"Smart guidance, not noise."</div>
+        <div class="prin-desc">Infuse AI thoughtfully to anticipate intent, reduce friction, and surface meaningful insights. Intuit Assist is ambient — embedded in context throughout, not just a chat box in the corner.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> Intuit Assist should be present at every friction point: helping a developer find the right API in Products, explaining a compliance gap inline in Monitor, suggesting the next action in Build based on project context. It's an ambient layer woven into each surface, never a separate destination.</div>
+      </div>
+      <div class="prin-card">
+        <div class="prin-title">Simplify Relentlessly</div>
+        <div class="prin-quote">"Design for focus, not feature overload."</div>
+        <div class="prin-desc">Show what matters — no more, no less. The audit found 20+ pages of inconsistency across tools. This job is as much about subtraction as addition.</div>
+        <div class="prin-application"><strong>In DevPortal:</strong> The Silver phase is not just about adding new surfaces — it's about removing redundant ones. Every duplicate experience found in the audit (duplicate search bars, duplicate Create flows, duplicate dashboards across AIW and DevPortal) is a subtraction opportunity. "What can we remove?" is as important as "What should we build?"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card" style="margin-top:20px">
+    <div class="ids-card-title">The LEGO analogy — the team's core mental model</div>
+    <div class="g2">
+      <div class="lego-card" style="background:var(--ids-blue-50);border-color:var(--ids-blue-100)">
+        <div class="lego-title" style="color:var(--ids-blue-600)">The Consumer: Shopping for LEGO Parts</div>
+        <div class="lego-body">A builder who needs a specific pre-built part to finish their creation. They aren't looking to invent a new brick — they want to find an existing one that solves their problem right now.<br><br><strong>Job:</strong> Find a high-quality, pre-built technical artifact they can trust and easily snap into their project. Avoid reinventing the wheel.</div>
+      </div>
+      <div class="lego-card" style="background:var(--ids-purple-100);border-color:#d8c7f5">
+        <div class="lego-title" style="color:var(--ids-purple-600)">The Creator: Building with Raw LEGO Bricks</div>
+        <div class="lego-body">The builder has a brand new idea. They aren't looking for a pre-made part — they are starting with raw materials to build a new component that has never existed before.<br><br><strong>Job:</strong> Build a new, high-quality, reusable technical artifact from the ground up that solves a new problem and makes it available for others.</div>
+      </div>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-top:16px;margin-bottom:0"><span class="ids-notice-icon">💡</span><div>The portal must serve both mindsets simultaneously and often within the same session. Never assume which mode a user is in when they land on any page. Persona-based Home + intent-based navigation solves for this.</div></div>
+  </div>
+
+  <div class="ids-card" style="margin-top:16px">
+    <div class="big-quote">
+      <div class="big-quote-text">"We're not unifying tools. We're unifying intent."</div>
+      <div class="big-quote-sub">Users should do work, not choose tools. Stop creating "hubs" as destinations and replace them with intent, context, and persona gravity.</div>
+    </div>
+  </div>
+
+  <div class="ids-footnote">
+    <strong>Contributing platform model:</strong> DevPortal is contribution-based. Security, Observability, Paved Roads, and other platform teams build their own features within the portal. Your role as Principal Designer is governing the cohesive experience across all contributions. | <strong>IDS adoption:</strong> Not all tools have adopted IDS tokens and standards yet. Srini Chakkarapani's workstream covers AIW, DDE, IDX Studio, and IXP — a key design dependency for cohesion across Silver deliverables.
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PANEL 6 · TEAM ══════════ -->
+<div id="tab-team" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>Team &amp; Key Stakeholders</h1>
+    <p>PDX Design is a platform design team within PDX (Platform Development Experience). Mountain View (MTV) is home base.</p>
+  </div>
+
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">PDX design team</div>
+    <div class="g3">
+      <div class="person-card"><div class="person-name">Natasha Girotra</div><div class="person-role">Product Design Manager · MTV</div><div class="person-ctx">Direct manager. Group Design Manager for DevX design. Organized the Design Sprint. Ask: recurring 1:1 cadence + Q4 priorities (IKS, IBP, 3x).</div></div>
+      <div class="person-card buddy"><div class="person-name">Muyi Tao <span style="font-size:11px;font-weight:600;background:var(--primary);color:#fff;border-radius:9999px;padding:2px 8px;margin-left:6px;vertical-align:middle">Onboarding Buddy</span></div><div class="person-role">Staff Designer · MTV</div><div class="person-ctx">Your design onboarding buddy. First 1:1 priority. Ask: current projects, team norms, how design decisions get made, what to know in month 1.</div></div>
+      <div class="person-card"><div class="person-name">Jacque Roby</div><div class="person-role">Senior Staff Design Ops · SF</div><div class="person-ctx">Design Ops lead. Natasha flagged Q4 discussions on IKS, IBP &amp; 3x — loop her in early. Ask: Autura, design rituals, handoff process, research request process.</div></div>
+      <div class="person-card"><div class="person-name">Srini Chakkarapani</div><div class="person-role">Staff Designer · MTV</div><div class="person-ctx">Driving IDS standardization across DevPortal, AIW, DDE, IDX Studio. Built a workshop with setup steps &amp; cookbooks — ask for a demo.</div></div>
+      <div class="person-card"><div class="person-name">April Jernberg</div><div class="person-role">Sr. Content Designer · MTV</div><div class="person-ctx">Content-as-infrastructure. Embedding content guidelines in page layouts. AI agents trained on content best practices. Ask what she's actively shipping.</div></div>
+      <div class="person-card"><div class="person-name">Bright Tzeng</div><div class="person-role">Staff Designer · MTV</div><div class="person-ctx">Led the "Hands on with Claude" session. Ask about IDS plugin setup and the team's AI tooling workflow.</div></div>
+      <div class="person-card"><div class="person-name">Alexander Cayetano</div><div class="person-role">Senior Product Designer · MTV</div><div class="person-ctx">Helped others with DevAssist (Claude Code) setup — good technical resource for getting your AI tools running.</div></div>
+      <div class="person-card"><div class="person-name">Abigail Hikima</div><div class="person-role">Senior Product Designer · SDG</div><div class="person-ctx">Only remote teammate (San Diego). Sprint Group 2: tooling + marketplace, LLMs/RAG/Agents as nav items. Ask how she stays connected to MTV work.</div></div>
+      <div class="person-card"><div class="person-name">Elna Amiri</div><div class="person-role">Staff Design Researcher · MTV</div><div class="person-ctx">Closest research partner. Ask about ongoing studies and how to request research support.</div></div>
+      <div class="person-card"><div class="person-name">Christine Rhodenhill</div><div class="person-role">Manager 3, Design Research · RMT</div><div class="person-ctx">Manages the research team. Understand research capacity and formal process for requesting studies. Remote (RMT).</div></div>
+      <div class="person-card"><div class="person-name">Ainatte Inbal</div><div class="person-role">Staff Design Researcher</div><div class="person-ctx">Driving JTBD-based workflow mapping. Built the Persona Generator tool (persona-generator-liard.vercel.app).</div></div>
+      <div class="person-card"><div class="person-name">Sam Anderson</div><div class="person-role">Director, Experience Design · RMT</div><div class="person-ctx">Your skip-level. Design director for Horizontals. Understand his design org priorities. Schedule after your first 30 days.</div></div>
+    </div>
+  </div>
+
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">Platform product owners — key PMs across the unified portal</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">These are the PMs responsible for each platform you'll be designing across. Confirmed via Slack search (April 2026). You'll need to connect with each of them to understand current roadmaps, constraints, and integration timelines.</p>
+    <div class="g2">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Development Portal (DevPortal)</div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Rag Ramanathan</div><div class="person-role">Group Product Manager · DevPortal</div><div class="person-ctx">GPM leading the DevPortal PM team. Owns the Dev Portal platform vision and is actively hiring a Staff PM to focus specifically on the internal portal. Your primary PM counterpart.</div></div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Srini Indla</div><div class="person-role">Director, Product Management · PDX</div><div class="person-ctx">PM leadership for the full GA &amp; DEE product area. Senior stakeholder for platform strategy decisions.</div></div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Aravind Hariramasamy</div><div class="person-role">Staff Product Manager · Delivery Team, Asterias</div><div class="person-ctx">Covers DevPortal Delivery Team features and Asterias/Reference App.</div></div>
+        <div class="person-card"><div class="person-name">Hemant Sirdeshpande</div><div class="person-role">Staff Product Manager · Developer Success</div><div class="person-ctx">Owns Developer Support and Capability Integrations — the two key pillars for developer onboarding and capability discovery.</div></div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Vertical Platform PMs</div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Maggie (Kun) Hu</div><div class="person-role">Product Manager · AI Workbench, Prompt, Fine-Tuning</div><div class="person-ctx">PM for AI Workbench — the highest-priority Silver integration target. The AIW → DevPortal layout unification is your most immediate Silver design collaboration. Confirmed via #cmty-ai-workbench.</div></div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Akash Mohan</div><div class="person-role">Principal Product Manager · Data &amp; Analytics (A2D)</div><div class="person-ctx">PM for Data Discovery (DDE). Credited as "Product" on the DDE MCP launch in #pdx-launched. Owns the Data Understanding roadmap including MCP ecosystem growth and future DDE UI integration.</div></div>
+        <div class="person-card" style="margin-bottom:12px"><div class="person-name">Aditya Srinivasan</div><div class="person-role">Senior Staff Product Manager · Growth / IXP</div><div class="person-ctx">Referenced as the PM contact for IXP. Note: as of April 2026, the IXP platform team is reportedly without a dedicated PM — for IXP platform questions, Suji and akaley are the engineering leads to contact in the interim.</div></div>
+        <div class="person-card"><div class="person-name">Suneet Nandwani</div><div class="person-role">VP / Leadership · AI Foundations</div><div class="person-ctx">Leadership sponsor for AI Foundations team including AI Workbench context. Referenced in multiple AI platform announcements and the DDE MCP launch. Senior stakeholder for AIW and data platform direction.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">Cross-functional partners — DevX triad</div>
+    <div class="g3">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Product Management</div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Srini Indla</div><div class="person-role">Director, Product Mgmt.</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Rag Ramanathan</div><div class="person-role">Group Product Manager</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Hemant Sirdeshpande</div><div class="person-role">Staff Product Manager</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Praneet Singh</div><div class="person-role">Staff PM · Sprint Group 1</div><div class="person-ctx">Search-first IA — pushed for minimal flat nav with AI as primary entry point.</div></div>
+        <div class="person-card"><div class="person-name">Aravind</div><div class="person-role">Staff Product Manager</div></div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Product Development</div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Tapasvi Moturu</div><div class="person-role">VP, Development</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Mohan Naik</div><div class="person-role">Director, Development</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Adi Garg</div><div class="person-role">Manager 3, Software Engineering</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Alexander Tickle</div><div class="person-role">Manager 2, Software Engineering</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Landon Parrish</div><div class="person-role">Staff Technical Program Manager</div></div>
+        <div class="person-card buddy"><div class="person-name">Amit Soni <span style="font-size:11px;font-weight:600;background:var(--primary);color:#fff;border-radius:9999px;padding:2px 8px;margin-left:6px;vertical-align:middle">Onboarding Buddy</span></div><div class="person-role">Principal Engineer · MTV</div><div class="person-ctx">Your engineering onboarding buddy. Part of Sprint Group 3 (Muyi, Melani, Amit). Connect early — great for understanding how design–eng handoff works on this team.</div></div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Sprint Participants</div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Group 1: Praneet, Kanchi, Elmer</div><div class="person-ctx">Search-first IA · Requests inbox (Incoming/Outgoing) · Minimal flat nav</div></div>
+        <div class="person-card" style="margin-bottom:8px"><div class="person-name">Group 2: Abigail, Sooji, Baotam</div><div class="person-ctx">Tooling + Marketplace · LLMs, RAG, Agents as nav · Workbenches pipeline</div></div>
+        <div class="person-card"><div class="person-name">Group 3: Muyi, Melani, Amit</div><div class="person-ctx">Comprehensive persona IA · Compliance first-class · Sticky note synthesis</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">Team rhythms &amp; culture</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">How the PDX Design team stays aligned, creates together, and communicates day-to-day.</p>
+    <div class="g2">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Recurring rituals</div>
+        <div class="person-card" style="margin-bottom:10px">
+          <div class="person-name">Monthly Team Jams</div>
+          <div class="person-ctx">Hosted by Natasha. Full-team creative session — show-and-tell, design critique, and alignment on team direction. Block these on your calendar immediately.</div>
+        </div>
+        <div class="person-card" style="margin-bottom:10px">
+          <div class="person-name">Figma Fridays</div>
+          <div class="person-ctx">Weekly informal Figma working session. Show WIP, get quick feedback, learn how teammates use components. Low-stakes, high-signal.</div>
+        </div>
+        <div class="person-card">
+          <div class="person-name">Claude / AI Sessions</div>
+          <div class="person-ctx">Team actively explores AI tooling (Claude, DevAssist, etc.). Participate actively — the team led "Hands on with Claude" and positions AI fluency as a core design skill.</div>
+        </div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Communication &amp; location</div>
+        <div class="person-card" style="margin-bottom:10px">
+          <div class="person-name">Slack-first culture</div>
+          <div class="person-ctx">Primary channel: <strong>#pdx-ddg</strong>. Team defaults to async communication. Respond same-day, use threads, and keep design decisions documented in Slack or Figma comments for context later.</div>
+        </div>
+        <div class="person-card" style="margin-bottom:10px">
+          <div class="person-name">Home base: Mountain View (MTV)</div>
+          <div class="person-ctx">The team is based at Intuit's MTV campus. If you're relocating from Bellevue, connect with Natasha on timeline — most of the team will be in-office on core collaboration days.</div>
+        </div>
+        <div class="person-card">
+          <div class="person-name">Abigail (remote SDG) as model</div>
+          <div class="person-ctx">Abigail Hikima is the team's only fully-remote member (San Diego). Ask her how she stays plugged into MTV work — useful framework if you're hybrid or transitioning.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ids-card">
+    <div class="ids-card-title">30 / 60 / 90 day success criteria</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:20px;line-height:1.65">From Natasha's onboarding deck. Use these as your own internal compass — not just checkboxes, but signals of real integration into the team.</p>
+    <div class="g3">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="background:#b45309;color:#fff;border-radius:9999px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.5px">30 DAYS</span>
+          <span style="font-size:13px;font-weight:600;color:var(--foreground)">Orient &amp; Listen</span>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--foreground)">
+          <li>Met your full design team + onboarding buddies (Muyi, Amit)</li>
+          <li>Completed 1:1s with all PDX Design members</li>
+          <li>Understand current quarter's design priorities</li>
+          <li>Set up recurring 1:1 with Natasha</li>
+          <li>Attended a Monthly Team Jam and a Figma Friday</li>
+          <li>Can articulate the DevPortal IA problem &amp; the 3 competing mental models</li>
+          <li>Familiar with IDS and DevPortal's component patterns</li>
+        </ul>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="background:#0077C5;color:#fff;border-radius:9999px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.5px">60 DAYS</span>
+          <span style="font-size:13px;font-weight:600;color:var(--foreground)">Contribute &amp; Align</span>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--foreground)">
+          <li>Have a clear point of view on the unified portal IA</li>
+          <li>Connected with key PMs: Rag, Hemant, Maggie, Akash</li>
+          <li>Shipped or contributed to at least one design deliverable</li>
+          <li>Understand Q4 priorities: IKS, IBP, 3x expansion</li>
+          <li>Participated in design critique and received feedback</li>
+          <li>Familiar with the Bronze → Silver → Gold roadmap pacing</li>
+          <li>Established working relationship with engineering (Amit, Adi, Alexander)</li>
+        </ul>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="background:#108000;color:#fff;border-radius:9999px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.5px">90 DAYS</span>
+          <span style="font-size:13px;font-weight:600;color:var(--foreground)">Lead &amp; Shape</span>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--foreground)">
+          <li>Driving or owning at least one significant design initiative</li>
+          <li>Proposed or facilitated a decision that moved the team forward</li>
+          <li>Know the 11 developer personas and can connect design choices to them</li>
+          <li>Have a perspective on the 4 FY26 focus areas and how design contributes</li>
+          <li>Design system fluency — contributing to or improving IDS components</li>
+          <li>Trusted cross-functional partner across PM and Eng triads</li>
+          <li>Feeling at home on the team. 🎉</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ PANEL 7 · WORKSHOP PREP ══════════ -->
+<div id="tab-workshop" class="panel">
+<div class="ids-page">
+  <div class="page-header">
+    <h1>Workshop Prep — DevPortal Vision Alignment</h1>
+    <p>You're driving this session as Principal Designer. The goal is not to present — it's to align. Use this page to internalize the strategy, sharpen your point of view, and prepare to lead a real conversation with the Principal Engineer and PM.</p>
+  </div>
+
+  <div class="ids-notice ids-notice-info" style="margin-bottom:20px">
+    <span class="ids-notice-icon">⚡</span>
+    <div><strong>Your role in this workshop:</strong> You're not a note-taker or executor here. As Principal Designer, you're a co-author of the vision. Go in with a POV — on what unification should feel like, what personas are underserved, what Silver must ship — and be ready to push back when the direction doesn't hold up to the user reality you've absorbed.</div>
+  </div>
+
+  <!-- SECTION 1: MISSION & VALUE -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">1 · Mission &amp; value — what the workshop needs to align on</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:20px;line-height:1.65">This is the foundation. If you and the Principal Eng/PM don't share a working definition of what DevPortal is <em>for</em>, every design decision downstream will drift. Get this locked first.</p>
+
+    <div style="background:linear-gradient(135deg,rgba(0,119,197,.07),rgba(0,140,140,.06));border:1px solid rgba(0,119,197,.2);border-radius:var(--radius);padding:24px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:10px">The North Star — from the Project Plan</div>
+      <div style="font-size:22px;font-weight:800;color:var(--foreground);line-height:1.3;margin-bottom:10px">"We're not unifying tools.<br>We're unifying intent."</div>
+      <div style="font-size:13px;color:var(--muted-foreground);line-height:1.7">Users should do work, not choose tools. DevPortal becomes the operating system; workbenches become intent-driven execution environments; AI + Graph connects assets, workflows, teams, and outcomes.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:12px">HMW Statement</div>
+      <div style="font-size:15px;font-style:italic;color:var(--foreground);line-height:1.65">"How might we empower every builder in the PDLC with a connected, intuitive, and governed ecosystem that removes friction, enhances visibility, and amplifies the impact of their work?"</div>
+    </div>
+
+    <div class="g4" style="margin-bottom:0">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+        <div style="font-size:14px;font-weight:700;color:var(--foreground);margin-bottom:6px">DevPortal = OS</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Governance, identity, permissions, consistency, trust</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+        <div style="font-size:14px;font-weight:700;color:var(--foreground);margin-bottom:6px">Workbench = Intent</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Domain workflows, asset creation, specialized tooling</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+        <div style="font-size:14px;font-weight:700;color:var(--foreground);margin-bottom:6px">AI + Graph = Intelligence</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Connects assets, workflows, teams, outcomes</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+        <div style="font-size:14px;font-weight:700;color:var(--foreground);margin-bottom:6px">Assets = Gravity</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Search, workflows, agents, metrics revolve around them</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: TODAY → TOMORROW -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">2 · What's broken now vs. where we're going — know this cold</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">These are the validated pain points and the transformation story. You need to be able to articulate both without slides — this is your design authority in the room.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:20px">
+      <div style="padding:20px 24px;background:rgba(220,38,38,.05);border-right:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#dc2626;margin-bottom:12px">Today — The Broken State</div>
+        <div style="font-size:13px;color:var(--foreground);line-height:1.8">
+          <div style="margin-bottom:6px">🔴 Disconnected end-to-end workflows</div>
+          <div style="margin-bottom:6px">🔴 Tool sprawl — 10+ tools to do one task</div>
+          <div style="margin-bottom:6px">🔴 Serves only a handful of personas</div>
+          <div style="margin-bottom:6px">🔴 No governance or cross-tool visibility</div>
+          <div style="margin-bottom:6px">🔴 IA that doesn't flex for different roles</div>
+          <div style="margin-bottom:6px">🔴 Tribal knowledge as the only onboarding path</div>
+          <div>🔴 Manual testing consumes 60–70% of dev time</div>
+        </div>
+      </div>
+      <div style="padding:20px 24px;background:rgba(16,128,0,.05)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#108000;margin-bottom:12px">Tomorrow — The Unified Vision</div>
+        <div style="font-size:13px;color:var(--foreground);line-height:1.8">
+          <div style="margin-bottom:6px">🟢 Connected, integrated workflows in one platform</div>
+          <div style="margin-bottom:6px">🟢 Single hub for end-to-end development</div>
+          <div style="margin-bottom:6px">🟢 Persona-agnostic — serves all PDLC builders</div>
+          <div style="margin-bottom:6px">🟢 Central governance + unified data models</div>
+          <div style="margin-bottom:6px">🟢 Role-based IA with flexible + common elements</div>
+          <div style="margin-bottom:6px">🟢 Self-serve onboarding with paved paths per persona</div>
+          <div>🟢 AI + Graph intelligence layer connecting everything</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:12px">Research-backed numbers to anchor the conversation</div>
+    <div class="g4">
+      <div class="stat-box" style="background:rgba(220,38,38,.07);border-color:rgba(220,38,38,.2)"><div class="stat-num" style="color:#dc2626">61%</div><div class="stat-desc">cite discovery as the hardest phase — the broken first mile</div></div>
+      <div class="stat-box" style="background:rgba(220,38,38,.07);border-color:rgba(220,38,38,.2)"><div class="stat-num" style="color:#dc2626">50%</div><div class="stat-desc">drop-off rate on the "add connection" flow — half abandon setup</div></div>
+      <div class="stat-box" style="background:rgba(180,83,9,.07);border-color:rgba(180,83,9,.2)"><div class="stat-num" style="color:#b45309">32–48</div><div class="stat-desc">/100 satisfaction scores across all 5 primary JBTD personas</div></div>
+      <div class="stat-box" style="background:rgba(180,83,9,.07);border-color:rgba(180,83,9,.2)"><div class="stat-num" style="color:#b45309">3–12 wk</div><div class="stat-desc">onboarding time for Integration Engineers — and it starts at 10+ tools</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: WHAT'S WORKING -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">3 · What's working now &amp; what direction Silver is moving</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">Come in knowing what's already shipped and what's locked for Silver. The PM and Eng may have updates on where Silver scope has shifted — your job is to know the baseline well enough to ask sharp questions.</p>
+
+    <div class="g3" style="margin-bottom:20px">
+      <div style="background:rgba(16,128,0,.06);border:1px solid rgba(16,128,0,.2);border-radius:var(--radius);padding:18px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#108000;margin-bottom:10px">✅ Bronze — Done</div>
+        <div style="font-size:13px;color:var(--foreground);line-height:1.75">
+          <div style="margin-bottom:6px">Persistent app switcher across all platforms</div>
+          <div style="margin-bottom:6px">Unified DevPortal URL for all workbenches</div>
+          <div>Cross-linking between DevPortal, AIW, IDX Studio</div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted-foreground)">Scout is the first successfully integrated vertical — reference implementation for other teams.</div>
+      </div>
+      <div style="background:rgba(0,119,197,.06);border:1px solid rgba(0,119,197,.2);border-radius:var(--radius);padding:18px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);margin-bottom:10px">🔵 Silver — Active Now (Q3 FY26)</div>
+        <div style="font-size:13px;color:var(--foreground);line-height:1.75">
+          <div style="margin-bottom:6px">Top IA unification across portals</div>
+          <div style="margin-bottom:6px">Contextual left menu introduction</div>
+          <div style="margin-bottom:6px">Global DevPortal search across all tools</div>
+          <div style="margin-bottom:6px">Unified layouts: AI Workbench → DevPortal</div>
+          <div style="margin-bottom:6px">Entities linked to Delivery Team + Project View</div>
+          <div>Deduplicate experiences, align patterns</div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted-foreground)">⚠️ Amit flagged this needs a reset discussion — treat timelines as draft.</div>
+      </div>
+      <div style="background:rgba(92,51,207,.05);border:1px solid rgba(92,51,207,.15);border-radius:var(--radius);padding:18px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5c33cf;margin-bottom:10px">🔮 Gold — Target H2+</div>
+        <div style="font-size:13px;color:var(--foreground);line-height:1.75">
+          <div style="margin-bottom:6px">All 17 apps natively integrated in DevPortal</div>
+          <div style="margin-bottom:6px">Unified data models across all tools</div>
+          <div style="margin-bottom:6px">Workbench teams co-own the E2E dev journey</div>
+          <div>AI + Graph intelligence layer fully operational</div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted-foreground)">17 verticals total — only Scout is done. This is a multi-year effort.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:10px">Q2 active workstreams to know</div>
+      <div class="g2">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--primary);margin-bottom:4px">WS1 — Persona &amp; Workflow Audit · <span style="color:var(--muted-foreground);font-weight:400">Driver: Ainatte Inbal</span></div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">JTBD personas, pain point inventory, 3 validated cross-tool journey maps (Consumer, Producer, Maintainer). <strong style="color:var(--foreground)">Status: Complete.</strong> Key workflow validation still pending.</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--primary);margin-bottom:4px">WS2 — Experience &amp; UX Audit · <span style="color:var(--muted-foreground);font-weight:400">Driver: Srini Chakkarapani</span></div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">20+ pages audited · 10+ component unification opportunities · 6+ page unification opportunities. Prioritized by reusability × impact × effort. <strong style="color:var(--foreground)">Status: In Progress.</strong></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--primary);margin-bottom:4px">WS3 — Unified Vision &amp; Workflows · <span style="color:var(--muted-foreground);font-weight:400">Driver: TBD</span></div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Unified IA proposal complete. Silver design in progress. Gold vision prototype is future. <strong style="color:#dc2626">Risk: driver not yet named for this workstream.</strong></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--primary);margin-bottom:4px">Research Plan · <span style="color:var(--muted-foreground);font-weight:400">Driver: Muyi Tao · Approver: Natasha</span></div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">8-week mixed-methods study: 15 interviews, 3 journey workshops, diary study (10 devs), survey (n≥100), 2 co-design sessions. Feeds directly into Silver IA decisions. <strong style="color:var(--foreground)">Status: Planned.</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: VISION ALIGNMENT AGENDA -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">4 · Suggested workshop agenda — 60–90 min</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">Adapt freely. The goal is a shared, durable point of view — not a status update. Allocate the most time to wherever alignment is thinnest.</p>
+
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:grid;grid-template-columns:90px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);padding-top:2px">0–10 min</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:4px">Frame the session — why we're here</div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Set the tone: this is a vision-level alignment, not a delivery status. Start with the HMW and the quote: "We're not unifying tools. We're unifying intent." Ask: "Does this still hold for each of you?"</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:90px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);padding-top:2px">10–25 min</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:4px">Lock the mission — shared definition of DevPortal's value</div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Walk the architecture principles (OS / Intent / Intelligence / Gravity). Test whether Principal Eng and PM define these the same way you do. Surface any gaps now. You're looking for a shared sentence you'd all stake work on.</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--foreground);background:var(--muted);border-radius:6px;padding:8px 12px"><strong>Discussion prompt:</strong> "If a new Intuit developer asked 'what is DevPortal?', what's the one-sentence answer we'd all give?" — make sure it's the same sentence.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:90px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);padding-top:2px">25–45 min</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:4px">What's working + where Silver needs to go</div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Anchor to Bronze wins. Then move to Silver: what does "unified IA" mean concretely? Which of the 17 app integrations are realistic by Q3? What does "global search" scope to? Is the contextual left nav the right pattern?</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--foreground);background:var(--muted);border-radius:6px;padding:8px 12px"><strong>Discussion prompt:</strong> "Scout is the only done vertical. Given that, what does Silver unification realistically mean — 3 verticals? 5? And what's the quality bar?" Get PM and Eng on record about scope.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:90px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);padding-top:2px">45–65 min</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:4px">Resolve the open strategic questions</div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Work through the open questions below. Don't try to resolve all of them — pick the 2–3 that block Silver design decisions and get alignment on those. Document the rest as open.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:90px 1fr;gap:16px;padding:16px 0">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);padding-top:2px">65–75 min</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--foreground);margin-bottom:4px">Close — shared commitments &amp; next steps</div>
+          <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Leave with: (1) a shared mission statement, (2) Silver scope that all three triads have agreed to, (3) named owner for WS3 unified vision, (4) 3 open questions each person owns to resolve. Write it up in Slack same day.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: OPEN QUESTIONS -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">5 · Open questions — strategic decisions that need resolution</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">These are the unresolved questions from the Project Plan plus the design-specific ones you should surface. Flag which 2–3 are blocking Silver and prioritize those.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      <div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-left:3px solid #dc2626;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#dc2626;margin-bottom:4px">HIGH PRIORITY — BLOCKING SILVER DESIGN</div>
+        <div style="font-size:13px;font-weight:600;color:var(--foreground);margin-bottom:4px">Will unification actually solve the problems, or are root causes elsewhere?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">This is the highest-risk assumption in the entire plan. Silver research will validate it — but you need Eng and PM to agree that we're holding this hypothesis loosely and will course-correct based on Silver user research findings.</div>
+      </div>
+      <div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-left:3px solid #dc2626;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#dc2626;margin-bottom:4px">HIGH PRIORITY — BLOCKING SILVER DESIGN</div>
+        <div style="font-size:13px;font-weight:600;color:var(--foreground);margin-bottom:4px">Who owns WS3 (Unified Vision)? And how does design workload split between unified portal work vs. domain work?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">WS3 driver is still TBD in the project plan — this is the workstream you're most likely to be driving. Get it named. Also surface the open question: how do designers balance unified portal work vs. domain work (80/20? 1 hr/wk?).</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#b45309;margin-bottom:4px">MEDIUM PRIORITY</div>
+        <div style="font-size:13px;font-weight:600;color:var(--foreground);margin-bottom:4px">What is the Search MVP scope? JIRA + Confluence + GitHub first? Figma later?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Global search is a Silver deliverable — but its scope determines the design complexity. As the designer, you need to know which surfaces are in scope so you can design the right search result patterns, filters, and ranking UX.</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#b45309;margin-bottom:4px">MEDIUM PRIORITY</div>
+        <div style="font-size:13px;font-weight-600;color:var(--foreground);margin-bottom:4px">What is the source of truth for the Product Catalog? New service or existing sources?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Affects every Asset Detail page design. If there's no single data source, we're designing for eventual consistency — which changes layout decisions around freshness signals, fallback states, and data trust indicators.</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#b45309;margin-bottom:4px">MEDIUM PRIORITY</div>
+        <div style="font-size:13px;font-weight:600;color:var(--foreground);margin-bottom:4px">What are the RBAC models for the cross-tool Product Lifecycle Dashboard?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Affects Teams → Members, Monitor views, and compliance surfaces. If RBAC isn't defined, you'll either under-design (missing permission states) or over-engineer surfaces that later need to be restricted.</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#b45309;margin-bottom:4px">MEDIUM PRIORITY</div>
+        <div style="font-size:13px;font-weight:600;color:var(--foreground);margin-bottom:4px">Which of the 16 data products integrate first for Silver? DDE + SuperGlue?</div>
+        <div style="font-size:12px;color:var(--muted-foreground);line-height:1.6">Data domain spans 16 products across 10 capability areas. The proposed first step is DDE + SuperGlue — confirm this with PM and Eng so you know what Data surfaces to prioritize designing.</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:10px">Designer-specific questions to add to the agenda</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong>The AI Newcomer (Transitioner) has the lowest satisfaction score (32/100) and isn't currently served by the DevPortal IA.</strong> Should SWE AI onboarding be a first-class Silver design priority? What does the PM/Eng prioritization look like for this persona?
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong>Contextual left nav is a Silver deliverable — but is the pattern right?</strong> The Sprint produced three competing mental models. Which did Eng and PM align on? Before Silver design begins, the nav architecture needs to be locked.
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong>Design–code pipeline: is Stack Mirroring (Figma → Code Connect → Storybook) on the eng roadmap?</strong> Without this, design and code diverge over time. This needs a named engineering owner and timeline.
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--foreground);line-height:1.65">
+        <strong>Success metrics: are eNPS +40 and 90% task completion measurable by Silver?</strong> What instrumentation does Eng have in place? As Principal Designer you should be tied to observable outcomes, not just shipped screens.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: RISKS TO SURFACE -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">6 · Risks to surface in the room</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">Don't hide risks — name them early and get them on the shared problem list. This is part of your role as Principal Designer.</p>
+
+    <div class="g2">
+      <div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-left:3px solid #dc2626;border-radius:var(--radius);padding:16px">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px">HIGH · Cross-triad alignment</div>
+        <div style="font-size:13px;color:var(--foreground);margin-bottom:6px;line-height:1.6">DevPortal, AI Workbench, IDX, and Data triads must all align. Any opt-out breaks the experience — the unified shell only works if every team commits to disabling their current header.</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Mitigation: leadership alignment sessions; Suneet Nandwani as escalation path.</div>
+      </div>
+      <div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-left:3px solid #dc2626;border-radius:var(--radius);padding:16px">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px">HIGH · Unification hypothesis not yet validated</div>
+        <div style="font-size:13px;color:var(--foreground);margin-bottom:6px;line-height:1.6">Silver research (Muyi's plan) will validate whether unification actually solves the pain. We're designing before that validation is in. If findings contradict, Silver scope may need to pivot.</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Mitigation: hold Silver design loosely until co-design sessions in Weeks 5–6 of the research plan.</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:16px">
+        <div style="font-size:12px;font-weight:700;color:#b45309;margin-bottom:8px">MEDIUM · Design–code drift (WS2 dependency)</div>
+        <div style="font-size:13px;color:var(--foreground);margin-bottom:6px;line-height:1.6">Without Stack Mirroring (Figma → Code Connect → Storybook), design and code will diverge. WS2 establishes this pipeline — but it's planned, not started.</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Mitigation: get engineering commitment on Code Connect timeline in this workshop.</div>
+      </div>
+      <div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.15);border-left:3px solid #b45309;border-radius:var(--radius);padding:16px">
+        <div style="font-size:12px;font-weight:700;color:#b45309;margin-bottom:8px">MEDIUM · Roadmap reset needed (Amit's flag)</div>
+        <div style="font-size:13px;color:var(--foreground);margin-bottom:6px;line-height:1.6">Amit flagged that the Silver/Gold breakdown may have shifted — timelines, deliverable scope, and phase definitions are not locked. This workshop is the right venue to surface and resolve this.</div>
+        <div style="font-size:12px;color:var(--muted-foreground)">Mitigation: come in with questions, not assumptions. Let the Eng lead reset the scope and document it live.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: SUCCESS METRICS -->
+  <div class="ids-card" style="margin-bottom:20px">
+    <div class="ids-card-title">7 · Success metrics — what we're working toward</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">From the Project Plan (Natasha / Tapasvi). Make sure PM and Eng can trace their Silver work back to at least one of these. As Principal Designer, tie your design decisions to measurable outcomes.</p>
+
+    <div style="overflow-x:auto;margin-bottom:16px">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:var(--muted)">
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-foreground);border-bottom:2px solid var(--border)">Goal</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-foreground);border-bottom:2px solid var(--border)">Metric</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-foreground);border-bottom:2px solid var(--border)">Target</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Velocity</td><td style="padding:10px 14px;color:var(--muted-foreground)">Median cycle time: first commit to prod</td><td style="padding:10px 14px;color:#108000;font-weight:700">15% reduction</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Velocity</td><td style="padding:10px 14px;color:var(--muted-foreground)">Deployments per team per week</td><td style="padding:10px 14px;color:#108000;font-weight:700">20% increase</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Adoption</td><td style="padding:10px 14px;color:var(--muted-foreground)">Weekly active users across R&amp;D</td><td style="padding:10px 14px;color:#108000;font-weight:700">80% WAU in 6 months</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Experience</td><td style="padding:10px 14px;color:var(--muted-foreground)">Platform eNPS from R&amp;D users</td><td style="padding:10px 14px;color:#108000;font-weight:700">+40 eNPS</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Experience</td><td style="padding:10px 14px;color:var(--muted-foreground)">"Easy to find information I need" (user survey)</td><td style="padding:10px 14px;color:#108000;font-weight:700">90% task completion</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;color:var(--foreground);font-weight:600">AI Value</td><td style="padding:10px 14px;color:var(--muted-foreground)">Intuit Assist weekly usage among WAUs</td><td style="padding:10px 14px;color:#108000;font-weight:700">50% of WAUs</td></tr>
+        <tr><td style="padding:10px 14px;color:var(--foreground);font-weight:600">Reuse</td><td style="padding:10px 14px;color:var(--muted-foreground)">Marketplace reusable solution consumption</td><td style="padding:10px 14px;color:#108000;font-weight:700">25% QoQ increase</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="ids-notice ids-notice-info" style="margin-bottom:0"><span class="ids-notice-icon">💡</span><div>Ask in the workshop: <strong>which 2 of these does Silver have to move the needle on to be considered a success?</strong> Don't let all 7 be equally important — force prioritization with PM and Eng before Silver ships.</div></div>
+  </div>
+
+  <!-- SECTION 8: KEY LINKS -->
+  <div class="ids-card">
+    <div class="ids-card-title">8 · Key artifacts to bring into the room</div>
+    <p style="font-size:13px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.65">Have these open and ready to reference. Don't present from them — use them to ground the conversation when it gets abstract.</p>
+
+    <div class="g2">
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Design artifacts</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="https://www.figma.com/board/t4YlTrkOHpGGkCCeVJZzvQ/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">PDX Connect The Dots →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">Full cross-team strategic view. The best artifact for orienting a vision conversation.</div>
+          </a>
+          <a href="https://www.figma.com/board/GBL2FuOHHaJWgSgXLx8aXy/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">JBTD &amp; Connecting Dots →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">Persona definitions, JTBD framework, connecting threads across all domains.</div>
+          </a>
+          <a href="https://www.figma.com/board/aAbK90Ug0A1lw4N7DspWmX/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">Component Standardization →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">WS2 audit findings — use this if the conversation moves to design-code pipeline.</div>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="ids-section-label" style="margin-top:0">Prototypes &amp; vision decks</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="https://www.figma.com/make/6Eg2P7PcnVS9HystisH5pM/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">Concept V8 (Figma Make) →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">Latest concept prototype. Most current Silver vision. Use this if you want to ground the nav discussion in something concrete.</div>
+          </a>
+          <a href="https://www.figma.com/make/sxeYVl07RRkr7xlQlXwH2i/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">Concept V7 (Figma Make) →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">Previous iteration — useful for showing design evolution if there's a "why did we move away from X" question.</div>
+          </a>
+          <a href="https://docs.google.com/presentation/d/1ZC3hgby87dA2YzkfrNA-d-4TPulPV6ETeMvnwaV6xbU/" target="_blank" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:var(--foreground);font-size:13px;line-height:1.5">
+            <div style="font-weight:600;color:var(--primary);margin-bottom:2px">Interim State Deck →</div>
+            <div style="font-size:12px;color:var(--muted-foreground)">Current-state summary deck. Good reference for what's been shared with leadership already.</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</main>
+
+<script>
+/* ── Tab switching ── */
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ── Dark mode ── */
+(function() {
+  var saved = localStorage.getItem('devportal-theme');
+  if (saved === 'light') {
+    applyDark(false);
+  } else {
+    applyDark(true); /* dark by default */
+  }
+})();
+function applyDark(on) {
+  if (on) {
+    document.documentElement.classList.add('dark');
+    setToggleLabel('🌙', 'Dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    setToggleLabel('☀️', 'Light');
+  }
+}
+function setToggleLabel(icon, label) {
+  var ti = document.getElementById('themeIcon');
+  var tl = document.getElementById('themeLabel');
+  var tim = document.getElementById('themeIconMobile');
+  var tlm = document.getElementById('themeLabelMobile');
+  if (ti) ti.textContent = icon;
+  if (tl) tl.textContent = label;
+  if (tim) tim.textContent = icon;
+  if (tlm) tlm.textContent = label + ' mode';
+}
+function toggleTheme() {
+  var isDark = document.documentElement.classList.contains('dark');
+  applyDark(!isDark);
+  localStorage.setItem('devportal-theme', isDark ? 'light' : 'dark');
+}
+
+/* ── Mobile nav ── */
+function openMobileNav() {
+  document.getElementById('mobileNav').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function mobileTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.mobile-nav-link').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  var desktopBtn = document.querySelector('.nav-tab[onclick*="' + id + '"]');
+  if (desktopBtn) desktopBtn.classList.add('active');
+  closeMobileNav();
+  window.scrollTo(0, 0);
+}
+
+/* ── Persona detail toggle ── */
+var curP = null;
+function selP(id, card) {
+  if (curP === id) {
+    document.querySelectorAll('.persona-detail').forEach(function(d){ d.classList.remove('active'); });
+    document.querySelectorAll('.persona-card').forEach(function(c){ c.classList.remove('sel'); });
+    curP = null; return;
+  }
+  document.querySelectorAll('.persona-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.persona-card').forEach(function(c){ c.classList.remove('sel'); });
+  var det = document.getElementById('pd-' + id);
+  if (det) { det.classList.add('active'); setTimeout(function(){ det.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50); }
+  card.classList.add('sel');
+  curP = id;
+}
+
+/* ── IA diagram toggle ── */
+function selIA(id, node) {
+  document.querySelectorAll('.ia-detail-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.ia-nav-node').forEach(function(n){ n.classList.remove('sel'); });
+  var panel = document.getElementById('ia-' + id);
+  if (panel) panel.classList.add('active');
+  node.classList.add('sel');
+}
+</script>
+</body>
+</html>
