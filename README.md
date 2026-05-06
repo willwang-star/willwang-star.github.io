@@ -4,7 +4,7 @@ HTML previews hosted via GitHub Pages.
 
 - **Repo:** https://github.com/willwang-star/devportal-previews
 - **Live site:** https://willwang-star.github.io/devportal-previews/
-- **Local folder:** `/Users/wwang22/Data/Design/AI/Claude/Dev Potral`
+- **Local folder:** `/Users/wwang22/Data/Design/AI/Claude/Dev Portal`
 
 ## Workflow
 
@@ -15,7 +15,7 @@ HTML previews hosted via GitHub Pages.
 3. Commit and push:
 
    ```bash
-   cd "/Users/wwang22/Data/Design/AI/Claude/Dev Potral"
+   cd "/Users/wwang22/Data/Design/AI/Claude/Dev Portal"
    git add .
    git commit -m "describe the change"
    git push
