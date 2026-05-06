@@ -1,27 +1,55 @@
 # Dev Portal Previews
 
-HTML previews hosted via GitHub Pages.
+HTML previews hosted via GitHub Pages, fronted by a React index page (Vite + shadcn/ui).
 
 - **Repo:** https://github.com/willwang-star/devportal-previews
 - **Live site:** https://willwang-star.github.io/devportal-previews/
 - **Local folder:** `/Users/wwang22/Data/Design/AI/Claude/Dev Portal`
 
+## Project layout
+
+```
+Dev Portal/
+├── app/                          ← React index app (Vite + Tailwind + shadcn/ui)
+│   ├── public/                   ← static HTML previews live here
+│   │   ├── AIW Onboarding.html
+│   │   ├── DDE Onboarding.html
+│   │   └── ...
+│   └── src/                      ← React source for the index page
+│       ├── App.tsx
+│       └── lib/previews.ts       ← list of previews + tags
+└── .github/workflows/deploy.yml  ← builds + deploys to Pages on push to main
+```
+
 ## Workflow
 
-### Add or update an HTML file
+### Add a new HTML preview
 
-1. Drop the new/updated `.html` file into this folder.
-2. If it's a new file, add a link to it in `index.html` (under the `<ul>` list). Use `%20` in place of spaces in the `href`.
+1. Drop the new `.html` file into `app/public/`.
+2. Add an entry to `app/src/lib/previews.ts` with the title, file name, and tags.
 3. Commit and push:
 
    ```bash
-   cd "/Users/wwang22/Data/Design/AI/Claude/Dev Portal"
    git add .
    git commit -m "describe the change"
    git push
    ```
 
-4. Pages redeploys automatically in ~1 minute.
+4. GitHub Actions builds the app and redeploys Pages in ~1–2 minutes.
+
+### Update an existing preview
+
+Edit the file in `app/public/` (filename stays the same so the URL is stable). Push.
+
+### Run the dev server locally
+
+```bash
+cd app
+npm install   # first time only
+npm run dev
+```
+
+Open http://localhost:5173/devportal-previews/
 
 ### URL pattern
 
@@ -33,6 +61,7 @@ https://willwang-star.github.io/devportal-previews/<File Name>.html
 
 ## Notes
 
-- `.DS_Store` and `SESSION_CONTEXT.md` are gitignored.
+- `.DS_Store`, `SESSION_CONTEXT.md`, `node_modules`, and `dist` are gitignored.
 - Repo is public (required for free GitHub Pages).
 - Auth is handled by `gh auth` on this machine — no extra setup needed for pushes.
+- GitHub Pages must be set to **Source: GitHub Actions** in repo Settings → Pages.
