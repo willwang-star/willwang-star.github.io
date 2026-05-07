@@ -18,7 +18,7 @@ export function AiwOnboardingPage() {
         />
 
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList>
+          <TabsList pin>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="workflow">Agent Workflow</TabsTrigger>
             <TabsTrigger value="vision">Design Vision</TabsTrigger>

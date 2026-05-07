@@ -17,7 +17,7 @@ export function DevPortalOnboardingPage() {
         />
 
         <Tabs defaultValue="problem" className="space-y-8">
-          <TabsList>
+          <TabsList pin>
             <TabsTrigger value="problem">The Problem</TabsTrigger>
             <TabsTrigger value="transform">FROM → TO</TabsTrigger>
             <TabsTrigger value="consequences">5 Consequences</TabsTrigger>

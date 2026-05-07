@@ -24,7 +24,7 @@ export function DdeOnboardingPage() {
         </StatGrid>
 
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList>
+          <TabsList pin>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="mcp">MCP Tools</TabsTrigger>
             <TabsTrigger value="setup">Getting Started</TabsTrigger>

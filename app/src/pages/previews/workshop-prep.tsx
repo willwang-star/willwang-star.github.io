@@ -25,7 +25,7 @@ export function WorkshopPrepPage() {
         </StatGrid>
 
         <Tabs defaultValue="vision" className="space-y-8">
-          <TabsList>
+          <TabsList pin>
             <TabsTrigger value="vision">01 Vision</TabsTrigger>
             <TabsTrigger value="research">02 Research</TabsTrigger>
             <TabsTrigger value="stakeholders">03 Stakeholders</TabsTrigger>

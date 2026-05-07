@@ -16,15 +16,26 @@ function Tabs({
   )
 }
 
+interface TabsListExtraProps {
+  /**
+   * Pin the tabs to the top while scrolling. Anchors under the page banner
+   * (which is ~48px tall in the preview shell).
+   */
+  pin?: boolean
+}
+
 function TabsList({
   className,
+  pin,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+}: React.ComponentProps<typeof TabsPrimitive.List> & TabsListExtraProps) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
         "inline-flex h-auto w-full items-center justify-start gap-1 overflow-x-auto border-b border-border",
+        pin &&
+          "sticky top-12 z-30 -mx-4 bg-background/85 px-4 backdrop-blur sm:-mx-6 sm:px-6",
         className,
       )}
       {...props}
