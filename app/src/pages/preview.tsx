@@ -16,7 +16,9 @@ export function PreviewPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    document.title = preview ? `${preview.title} · Will's Repo` : "Will's Repo"
+    document.title = preview
+      ? `${preview.platform} · ${preview.title} · Will's Repo`
+      : "Will's Repo"
     return () => {
       document.title = "Will's Repo"
     }
@@ -39,10 +41,15 @@ export function PreviewPage() {
               <span className="sm:hidden">Back</span>
             </Link>
           </Button>
-          <div className="hidden h-5 w-px bg-border sm:block" />
-          <h1 className="truncate text-sm font-medium sm:text-base">
-            {preview.title}
-          </h1>
+          <div className="hidden h-8 w-px bg-border sm:block" />
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              {preview.platform}
+            </p>
+            <h1 className="truncate text-sm font-medium sm:text-base">
+              {preview.title}
+            </h1>
+          </div>
         </div>
         <Button asChild variant="ghost" size="sm" className="gap-2">
           <a href={src} target="_blank" rel="noreferrer">

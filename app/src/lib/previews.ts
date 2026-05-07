@@ -1,5 +1,8 @@
 export type Preview = {
   slug: string
+  /** Platform / context — small first line on the card. */
+  platform: string
+  /** Type of content — bigger second line on the card. */
   title: string
   file: string
   description?: string
@@ -11,36 +14,42 @@ export type Preview = {
 export const previews: Preview[] = [
   {
     slug: "ai-workbench-onboarding",
-    title: "AI Workbench Onboarding",
+    platform: "AI Workbench",
+    title: "Onboarding",
     file: "AIW Onboarding.html",
     tags: ["Onboarding", "AIW"],
   },
   {
     slug: "data-discovery-onboarding",
-    title: "Data Discovery & Exploration Onboarding",
+    platform: "Data Discovery & Exploration",
+    title: "Onboarding",
     file: "DDE Onboarding.html",
     tags: ["Onboarding", "DDE"],
   },
   {
     slug: "dev-portal-onboarding",
-    title: "Dev Portal Onboarding",
+    platform: "Dev Portal",
+    title: "Onboarding",
     file: "Dev Portal Onboarding.html",
     tags: ["Onboarding", "Dev Portal"],
   },
   {
     slug: "user-research",
+    platform: "Dev Portal",
     title: "User Research",
     file: "DevPortal User Research.html",
     tags: ["Research", "Dev Portal"],
   },
   {
     slug: "workshop-prep",
+    platform: "Dev Portal",
     title: "Workshop Prep",
     file: "DevPortal Workshop Brief.html",
     tags: ["Workshop", "Dev Portal"],
   },
   {
     slug: "pdlc-tools-research",
+    platform: "Dev Portal",
     title: "PDLC Tools Research",
     file: "DevPortal PDLC Tools Research.html",
     tags: ["Research", "Dev Portal", "PDLC"],

@@ -37,6 +37,7 @@ export function HomePage() {
       const matchesQuery =
         q === "" ||
         preview.title.toLowerCase().includes(q) ||
+        preview.platform.toLowerCase().includes(q) ||
         preview.tags.some((tag) => tag.toLowerCase().includes(q)) ||
         (preview.description?.toLowerCase().includes(q) ?? false)
       const matchesTags =
@@ -155,10 +156,15 @@ export function HomePage() {
                 <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
                   <CardHeader className="flex flex-row items-start justify-between gap-4">
                     <div className="space-y-2">
-                      <CardTitle className="text-base font-medium">
-                        {preview.title}
-                      </CardTitle>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          {preview.platform}
+                        </p>
+                        <CardTitle className="text-base font-medium leading-snug">
+                          {preview.title}
+                        </CardTitle>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
                         {preview.tags.map((tag) => (
                           <Badge
                             key={tag}
