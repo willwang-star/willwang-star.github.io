@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevPortal · PDLC Tools Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ── */
+:root {
+  --background: #FAFBFC; --foreground: #1A2332; --card: #FFFFFF;
+  --border: #E2E8F0; --muted: #F4F6F9; --muted-foreground: #64748B;
+  --primary: #0077C5; --accent: rgba(0,119,197,.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06); --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+  --radius: 12px; --font: 'Inter', system-ui, sans-serif;
+
+  /* PDLC stage palette (matches the FigJam matrix) */
+  --stage-architect: #1F8FB8;
+  --stage-code: #16A085;
+  --stage-build: #F39C12;
+  --stage-test: #2DB6E0;
+  --stage-release: #E67E22;
+  --stage-monitor: #F1C40F;
+  --stage-operate: #2ECC71;
+
+  /* Row palette (DevPortal / DevX-PDX / Outside Intuit / 3rd party) */
+  --row-pillar: #DDE3EB;
+  --row-devportal: #E8F1FB;
+  --row-devx: #DDEBFB;
+  --row-outside-intuit: #DCFAF1;
+  --row-third-party: #DCF6E2;
+
+  /* Loop pills */
+  --loop-pre: #FCDDB3;
+  --loop-post: #F0B25C;
+  --loop-both: #EE8A2C;
+  --loop-inner: #FBE5C5;
+  --loop-outer: #F08A3F;
+}
+html.dark {
+  --background: #0F1117; --foreground: #E2E4EB; --card: #171B27;
+  --border: #2A2F3F; --muted: #1E2333; --muted-foreground: #8B92A9;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 20px rgba(0,0,0,.4);
+  --row-pillar: #232938;
+  --row-devportal: #1A2A3F;
+  --row-devx: #1A2842;
+  --row-outside-intuit: #14322A;
+  --row-third-party: #163522;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--background); color: var(--foreground); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Header ── */
+.header {
+  background: rgba(15,17,23,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  padding: 0 32px;
+}
+html:not(.dark) .header { background: rgba(255,255,255,.92); }
+.header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+.header-brand { font-size: 14px; font-weight: 700; color: var(--foreground); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.header-brand .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+.header-meta { font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; gap: 16px; }
+.theme-btn { background: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--foreground); cursor: pointer; font-family: var(--font); }
+
+/* ── Hero ── */
+.hero { max-width: 1280px; margin: 0 auto; padding: 56px 32px 32px; }
+.hero-tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; }
+.hero-title { font-size: 36px; font-weight: 800; letter-spacing: -.02em; color: var(--foreground); margin-bottom: 12px; line-height: 1.15; }
+.hero-sub { font-size: 16px; color: var(--muted-foreground); max-width: 760px; line-height: 1.65; margin-bottom: 28px; }
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.stat-num { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; margin-bottom: 4px; }
+.stat-desc { font-size: 12px; color: var(--muted-foreground); line-height: 1.5; }
+
+/* ── Source bar ── */
+.source-bar { background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 32px; }
+.source-inner { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
+.source-inner strong { color: var(--foreground); font-weight: 600; }
+.source-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 9999px; padding: 4px 10px; font-size: 11px; font-weight: 500; color: var(--foreground); }
+.source-pill svg { width: 12px; height: 12px; }
+
+/* ── Content ── */
+.content { max-width: 1280px; margin: 0 auto; padding: 40px 32px 80px; }
+.section { margin-bottom: 56px; }
+.section-tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+.section-title { font-size: 24px; font-weight: 700; color: var(--foreground); margin-bottom: 8px; letter-spacing: -.01em; }
+.section-sub { font-size: 14px; color: var(--muted-foreground); margin-bottom: 24px; max-width: 740px; line-height: 1.65; }
+
+/* ── Pull-quote ── */
+.pullquote {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1.5;
+  letter-spacing: -.01em;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+.pullquote .attr { display: block; margin-top: 12px; font-size: 12px; font-weight: 500; color: var(--muted-foreground); letter-spacing: 0; text-transform: none; }
+
+/* ── PDLC stage strip (loops + stages legend) ── */
+.loop-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.loop-pill { padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1A2332; text-align: center; }
+.loop-grid.first .loop-pill:nth-child(1) { background: var(--loop-pre); }
+.loop-grid.first .loop-pill:nth-child(2) { background: var(--loop-post); }
+.loop-grid.first .loop-pill:nth-child(3) { background: var(--loop-both); }
+.loop-grid.second { grid-template-columns: 2fr 2fr 1fr; }
+.loop-grid.second .loop-pill:nth-child(1) { background: var(--loop-inner); }
+.loop-grid.second .loop-pill:nth-child(2) { background: var(--loop-outer); }
+.loop-grid.second .loop-pill:nth-child(3) { background: var(--loop-both); }
+
+.stage-strip { display: grid; grid-template-columns: 1fr repeat(7, 1fr); gap: 6px; margin: 12px 0 18px; }
+.stage-strip .stage-spacer { background: transparent; }
+.stage-pill { padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: white; text-align: center; }
+.stage-pill.architect { background: var(--stage-architect); }
+.stage-pill.code { background: var(--stage-code); }
+.stage-pill.build { background: var(--stage-build); }
+.stage-pill.test { background: var(--stage-test); color: #1A2332; }
+.stage-pill.release { background: var(--stage-release); }
+.stage-pill.monitor { background: var(--stage-monitor); color: #1A2332; }
+.stage-pill.operate { background: var(--stage-operate); color: #1A2332; }
+
+/* ── Matrix table ── */
+.matrix-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); }
+.matrix-scroll { overflow-x: auto; }
+.matrix { width: 100%; min-width: 1100px; border-collapse: collapse; font-size: 12px; }
+.matrix th, .matrix td { padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); text-align: left; line-height: 1.5; }
+.matrix th:last-child, .matrix td:last-child { border-right: none; }
+.matrix thead th { background: var(--muted); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); position: sticky; top: 0; }
+.matrix .row-label { font-weight: 700; font-size: 12px; color: var(--foreground); width: 168px; min-width: 168px; }
+.matrix .row-label .row-sub { font-weight: 500; font-size: 11px; color: var(--muted-foreground); margin-top: 4px; line-height: 1.4; display: block; }
+.matrix .pillar td { background: var(--row-pillar); }
+.matrix .devportal td { background: var(--row-devportal); }
+.matrix .devx td { background: var(--row-devx); }
+.matrix .outside-intuit td { background: var(--row-outside-intuit); }
+.matrix .third-party td { background: var(--row-third-party); }
+.matrix ul { list-style: none; padding: 0; margin: 0; }
+.matrix li { padding-left: 14px; position: relative; padding-bottom: 4px; line-height: 1.5; }
+.matrix li::before { content: '•'; position: absolute; left: 0; color: var(--muted-foreground); }
+.matrix .stage-summary { font-size: 11.5px; color: var(--foreground); }
+
+/* ── Card grid ── */
+.card-grid { display: grid; gap: 16px; }
+.card-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.insight-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+.insight-card .icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; margin-bottom: 14px; background: var(--primary); }
+.insight-card h4 { font-size: 16px; font-weight: 700; color: var(--foreground); margin-bottom: 8px; letter-spacing: -.01em; }
+.insight-card p { font-size: 13.5px; color: var(--muted-foreground); line-height: 1.65; }
+.insight-card.theme-orange .icon { background: #E67E22; }
+.insight-card.theme-teal .icon { background: #16A085; }
+.insight-card.theme-purple .icon { background: #8B5CF6; }
+.insight-card.theme-amber .icon { background: #D97706; }
+
+/* ── Onboarding tools list ── */
+.tools-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tool-pill { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--foreground); box-shadow: var(--shadow-sm); }
+.tool-pill .tool-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tool-pill.purple .tool-icon { background: #8B5CF6; }
+.tool-pill.slack .tool-icon { background: linear-gradient(135deg, #E01E5A 0%, #ECB22E 50%, #2EB67D 100%); }
+.tool-pill.pink .tool-icon { background: #EC4899; }
+.tool-pill.green .tool-icon { background: #10B981; }
+.tool-pill.red .tool-icon { background: #EF4444; }
+.tool-pill .tool-icon svg { width: 18px; height: 18px; color: white; }
+
+/* ── Cover image card ── */
+.cover-card { background: linear-gradient(135deg, #055393 0%, #043F70 100%); border-radius: var(--radius); padding: 56px 48px; color: white; box-shadow: var(--shadow-md); margin-bottom: 24px; position: relative; overflow: hidden; }
+.cover-card .cover-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .7; margin-bottom: 18px; }
+.cover-card .cover-title { font-size: 40px; font-weight: 200; letter-spacing: -.02em; line-height: 1.05; max-width: 720px; margin-bottom: 12px; }
+.cover-card .cover-sub { font-size: 18px; font-weight: 300; opacity: .85; }
+.cover-card .cover-meta { margin-top: 32px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .6; display: flex; gap: 24px; }
+
+/* ── Footnote ── */
+.footnote { font-size: 12px; color: var(--muted-foreground); border-top: 1px solid var(--border); padding-top: 20px; margin-top: 32px; line-height: 1.65; }
+.footnote a { color: var(--primary); }
+
+@media (max-width: 800px) {
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .hero-title { font-size: 28px; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .tools-list { grid-template-columns: 1fr; }
+  .stage-strip { display: none; }
+  .cover-card .cover-title { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand"><span class="dot"></span> DevPortal Research</div>
+    <div class="header-meta">
+      <span class="hide-sm">Updated May 2026 · Source: Horizons UX</span>
+      <button class="theme-btn" onclick="document.documentElement.classList.toggle('dark')">Toggle theme</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">Research synthesis · DP / DevX</div>
+  <h1 class="hero-title">PDLC Tools Research: Mapping the developer environment</h1>
+  <p class="hero-sub">
+    What developers actually use across the Product Development Lifecycle — DevPortal,
+    DevX/PAG/PDX paved roads, Intuit-internal tools, and 3rd-party services — synthesized
+    from the Horizons UX <em>Developer Tools</em> board and the FY25 <em>AI-Native Modern
+    Dev Environment</em> strategy. The foundation work is months old, but the framework
+    still holds: tooling isn't the problem; the lack of connection between tools is.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-card"><div class="stat-num">7</div><div class="stat-desc">PDLC stages mapped end-to-end (Architect → Operate)</div></div>
+    <div class="stat-card"><div class="stat-num">5</div><div class="stat-desc">Tool ownership tiers (DevPortal, DevX, Intuit, 3rd-party)</div></div>
+    <div class="stat-card"><div class="stat-num">60+</div><div class="stat-desc">Distinct tools and services catalogued</div></div>
+    <div class="stat-card"><div class="stat-num">FY25</div><div class="stat-desc">Strategy horizon for AI-Native Dev Environment</div></div>
+  </div>
+</section>
+
+<div class="source-bar">
+  <div class="source-inner">
+    <strong>Sources:</strong>
+    <a class="source-pill" href="https://www.figma.com/board/gUfsZizVSaa1XPNLei2Rf5/Developer-tools?node-id=236-2996" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Developer Tools (FigJam · Horizons UX)
+    </a>
+    <a class="source-pill" href="https://www.figma.com/design/BNSuitdn8MMGPsaP24p6CI/AI-Native-Dev-Environment" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      AI-Native Dev Environment (Figma · July '24)
+    </a>
+    <span class="source-pill">Slack handoff: April Jernberg → Will Wang &amp; Elnaz Amiri</span>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- ============================================================== -->
+  <!-- SECTION 1 — Strategic frame -->
+  <!-- ============================================================== -->
+  <section class="section" id="strategy">
+    <div class="section-tag">Strategic frame</div>
+    <h2 class="section-title">FY25 horizon: AI-native, modern dev environment</h2>
+    <p class="section-sub">
+      The DevX/Horizons FY25 strategy reframes the developer environment as one
+      continuous AI-native surface. DevAssist (DP info in the IDE) is the first
+      concrete step. The research below maps the existing surface this strategy
+      has to absorb — every tool a developer touches across the lifecycle.
+    </p>
+
+    <div class="cover-card">
+      <div class="cover-eyebrow">Horizons UX · FY25 Strategy &amp; Concepts</div>
+      <div class="cover-title">AI-Native Modern Dev Environment</div>
+      <div class="cover-sub">Moving DP information into the IDE (DevAssist) and unifying the lifecycle.</div>
+      <div class="cover-meta"><span>DEVX</span><span>July 2024</span></div>
+    </div>
+
+    <div class="pullquote">
+      Tooling isn't the problem — it's the lack of connection between them.
+      <span class="attr">— Horizons UX research synthesis · Developer Tools board</span>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- SECTION 2 — PDLC matrix -->
+  <!-- ============================================================== -->
+  <section class="section" id="matrix">
+    <div class="section-tag">Mapping framework</div>
+    <h2 class="section-title">Dev environment tools across the PDLC</h2>
+    <p class="section-sub">
+      Two axes: lifecycle stage (Architect → Operate) horizontally, ownership tier
+      vertically. Each cell is the tooling a developer reaches for in that stage,
+      grouped by who owns it. This is the screenshot-based recreation of the
+      Horizons UX Service Blueprint mapping (the original Figma file is missing,
+      per April Jernberg's note).
+    </p>
+
+    <!-- Loop banners -->
+    <div class="loop-grid first">
+      <div class="loop-pill">Pre-production</div>
+      <div class="loop-pill">Post-production</div>
+      <div class="loop-pill">Both</div>
+    </div>
+    <div class="loop-grid second">
+      <div class="loop-pill">Inner loop</div>
+      <div class="loop-pill">Outer loop</div>
+      <div class="loop-pill">Both</div>
+    </div>
+
+    <!-- Stage header strip -->
+    <div class="stage-strip">
+      <div class="stage-spacer"></div>
+      <div class="stage-pill architect">Architect</div>
+      <div class="stage-pill code">Code</div>
+      <div class="stage-pill build">Build</div>
+      <div class="stage-pill test">Test</div>
+      <div class="stage-pill release">Release &amp; Deploy</div>
+      <div class="stage-pill monitor">Monitor</div>
+      <div class="stage-pill operate">Operate</div>
+    </div>
+
+    <div class="matrix-wrap">
+      <div class="matrix-scroll">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Architect</th>
+              <th>Code</th>
+              <th>Build</th>
+              <th>Test</th>
+              <th>Release &amp; Deploy</th>
+              <th>Monitor</th>
+              <th>Operate</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Pillars -->
+            <tr class="pillar">
+              <td class="row-label">Design team pillars
+                <span class="row-sub">What each stage actually means for a developer</span>
+              </td>
+              <td><div class="stage-summary"><strong>Search &amp; discover.</strong> Access essential documentation, tutorials, forums, and resources to kickstart development. Info / resource sharing / learn.</div></td>
+              <td><div class="stage-summary"><strong>Setup &amp; configure.</strong> Setup development environment, configure APIs, and integrate essential tools and SDKs.</div></td>
+              <td><div class="stage-summary"><strong>Develop &amp; test.</strong> Daily developer tasks to produce and test code.</div></td>
+              <td><div class="stage-summary">N/A — testing folds into Build in this lens.</div></td>
+              <td><div class="stage-summary"><strong>Integrate, test, deploy.</strong> Code changes get shared. Starts when a dev shares their code (commit / PR).</div></td>
+              <td><div class="stage-summary"><strong>Performance &amp; optimize.</strong> Optimize system performance and reliability through service delivery and infra ops.</div></td>
+              <td><div class="stage-summary"><strong>Monitor &amp; operations.</strong> Real-time monitoring and analytics; incident detection and recovery.</div><div class="stage-summary" style="margin-top:6px"><strong>Reporting.</strong> Goal tracking / project timelines.</div></td>
+            </tr>
+
+            <!-- DevPortal -->
+            <tr class="devportal">
+              <td class="row-label">DevPortal</td>
+              <td>
+                <ul>
+                  <li>Documentation / Autura</li>
+                  <li>API Explorer</li>
+                  <li>Tech Maturity</li>
+                  <li>Lifecycle</li>
+                  <li>API Stewardship guidelines</li>
+                  <li>Security and compliance</li>
+                  <li>Intuit Assist</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Paved roads (Create)</li>
+                  <li>Projects / assets</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Tools (community hub)</li>
+                </ul>
+              </td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td>
+                <ul>
+                  <li>Metrics and insights</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Observability</li>
+                  <li>Operations</li>
+                  <li>Metrics and insights</li>
+                </ul>
+              </td>
+            </tr>
+
+            <!-- DevX / PAG / PDX -->
+            <tr class="devx">
+              <td class="row-label">DevX / PAG / PDX
+                <span class="row-sub">Intuit paved-road platforms</span>
+              </td>
+              <td>
+                <ul>
+                  <li>City Map</li>
+                  <li>Intuit API client</li>
+                  <li>Data bricks / data map</li>
+                  <li>Operational Data Lake (ODL)</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>AI Workbench</li>
+                  <li>GenStudio</li>
+                  <li>API Gateway</li>
+                  <li>Configuration management</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Intuit Kubernetes Services (IKS), IKS AIR</li>
+                  <li>Modern SaaS</li>
+                  <li>App Insights</li>
+                  <li>Cloud accounts</li>
+                  <li>Cloud workspaces</li>
+                  <li>Data bricks / data map</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Argo (CD tools)</li>
+                  <li>Argo CD (CD tools)</li>
+                </ul>
+              </td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td>
+                <ul>
+                  <li>Golden signals</li>
+                  <li>Alert2Incident</li>
+                  <li>Data bricks / data map</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Dev 360</li>
+                </ul>
+              </td>
+            </tr>
+
+            <!-- Outside DevX / Intuit owned -->
+            <tr class="outside-intuit">
+              <td class="row-label">Outside DevX, Intuit-owned
+                <span class="row-sub">Other Intuit-built systems</span>
+              </td>
+              <td>
+                <ul>
+                  <li>Insight</li>
+                  <li>Degreed</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>AI Sandbox</li>
+                  <li>Intuit API client (Postman)</li>
+                  <li>Intuit Data Protection Service (IDPS)</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Ecosystem Wide Orchestrator Kit (EWOK)</li>
+                  <li>Intuit Build Platform (IBP)</li>
+                  <li>quickETL</li>
+                  <li>ADAPT</li>
+                  <li>Gatling</li>
+                  <li>Automated Compliance Platform (ACP)</li>
+                </ul>
+              </td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td>
+                <ul>
+                  <li>Essential Notice Dashboard of Readiness (ENDOR)</li>
+                  <li>Intuit Build Platform (IBP)</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>One Intuit Portal</li>
+                </ul>
+              </td>
+            </tr>
+
+            <!-- 3rd party -->
+            <tr class="third-party">
+              <td class="row-label">Outside Intuit / 3rd-party
+                <span class="row-sub">External tools developers depend on</span>
+              </td>
+              <td>
+                <ul>
+                  <li>Stack Overflow</li>
+                  <li>Slack</li>
+                  <li>GitHub</li>
+                  <li>Wiki / Confluence</li>
+                  <li>Google Workspace</li>
+                  <li>Zoom / email</li>
+                  <li>Jira</li>
+                  <li>ETL / data integration tools</li>
+                  <li>AWS</li>
+                  <li>Lucidchart</li>
+                  <li>Storybook</li>
+                  <li>Drawing tools / Mermaid</li>
+                  <li>Splunk</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>GitHub</li>
+                  <li>Cursor</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>IDEs (IntelliJ, VS Code)</li>
+                  <li>Code gen tools (Qodo)</li>
+                  <li>GitHub</li>
+                  <li>Kubernetes</li>
+                  <li>AWS</li>
+                  <li>Other cloud servers</li>
+                  <li>Postman</li>
+                  <li>Kiki</li>
+                  <li>JFrog Artifactory</li>
+                  <li>Lucid Charts</li>
+                  <li>Jira</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>GitHub</li>
+                  <li>Jenkins (CI tools)</li>
+                  <li>GitHub Actions (CI tools)</li>
+                </ul>
+              </td>
+              <td><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td>
+                <ul>
+                  <li>Splunk</li>
+                  <li>Wavefront</li>
+                  <li>Service Now</li>
+                  <li>PagerDuty</li>
+                  <li>Service Now</li>
+                  <li>Slack</li>
+                  <li>Amplitude</li>
+                  <li>BPP</li>
+                  <li>EMR logs</li>
+                  <li>Wiki</li>
+                  <li>DQM</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Jira</li>
+                  <li>Google Workspace</li>
+                  <li>LeanIX</li>
+                  <li>Airtable</li>
+                  <li>GitHub</li>
+                  <li>Slack</li>
+                  <li>Dynatrace</li>
+                </ul>
+              </td>
+            </tr>
+
+            <!-- What makes DP unique -->
+            <tr class="pillar">
+              <td class="row-label">What makes DevPortal unique here?</td>
+              <td>
+                <ul>
+                  <li>Resource ownership names / contact info</li>
+                  <li>Up to date, current information</li>
+                  <li>Adheres to guidelines</li>
+                  <li>Easy user consumability</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Known place to track requirements</li>
+                  <li>Connecting to a service</li>
+                </ul>
+              </td>
+              <td colspan="5"><span style="color: var(--muted-foreground); font-style: italic">Differentiators concentrate in Architect (discover) and Code (setup) — the upstream "front door" of the lifecycle.</span></td>
+            </tr>
+
+            <!-- Notes row -->
+            <tr class="pillar">
+              <td class="row-label">Notes</td>
+              <td colspan="3"><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+              <td colspan="2">
+                <div class="stage-summary"><strong>Release</strong> = commit changes to shared repo / the decision to make it available to end users. <strong>Deploy</strong> = release to prod / the technical process to deploy to different environments (e2e, prod, etc.).</div>
+                <ul style="margin-top:6px">
+                  <li>CI pipeline: will start building and running test (Jenkins &amp; now GitHub Actions)</li>
+                  <li>CD tool will take over and start deploying it (backend service is Argo)</li>
+                  <li>Ex: all CD tools are shown in CI tools — issue in argo, look at it on Jenkins dashboard</li>
+                </ul>
+              </td>
+              <td colspan="2"><span style="color: var(--muted-foreground); font-style: italic">—</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p style="font-size: 12px; color: var(--muted-foreground); margin-top: 14px; line-height: 1.6;">
+      Loop legend: <strong>Pre-production</strong> covers Architect → Build &amp; Test (the inner loop, what a single developer iterates on locally). <strong>Post-production</strong> covers Release/Deploy → Monitor → Operate (the outer loop, post-merge). <strong>Both</strong> = stages that span the inner and outer loop. The transition between inner and outer loop is "a critical point where the individual developer's work first becomes part of the larger team effort."
+    </p>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- SECTION 3 — Insights -->
+  <!-- ============================================================== -->
+  <section class="section" id="insights">
+    <div class="section-tag">Headline insights</div>
+    <h2 class="section-title">What the matrix reveals</h2>
+    <p class="section-sub">
+      Patterns that emerge once the lifecycle is mapped. These are the framings the
+      Horizons UX team carried forward into the AI-Native Dev Environment strategy.
+    </p>
+
+    <div class="card-grid cols-3">
+
+      <div class="insight-card theme-orange">
+        <div class="icon">01</div>
+        <h4>Tools aren't missing — connections are.</h4>
+        <p>Across 7 stages and 5 ownership tiers, developers already have 60+ tools available. The friction is context-switching and discovery between them, not lack of capability. This is the central thesis behind DevAssist.</p>
+      </div>
+
+      <div class="insight-card theme-teal">
+        <div class="icon">02</div>
+        <h4>DevPortal owns the front door.</h4>
+        <p>DevPortal's differentiated value concentrates in <strong>Architect</strong> (discover, docs, API explorer) and <strong>Code</strong> (paved roads). It's how a developer <em>starts</em> a task — and the key place AI can intercept and accelerate.</p>
+      </div>
+
+      <div class="insight-card theme-purple">
+        <div class="icon">03</div>
+        <h4>Inner-to-outer loop is the danger zone.</h4>
+        <p>The transition from Build/Test → Release is where individual code becomes team-shared. Tooling here is dense and duplicated (Jenkins, GitHub Actions, Argo, Argo CD all overlap). It's the highest-value seam to simplify.</p>
+      </div>
+
+      <div class="insight-card theme-amber">
+        <div class="icon">04</div>
+        <h4>Operate sprawls across vendors.</h4>
+        <p>Monitor &amp; Operate stages pull in the most heterogeneous vendor tools (Splunk, PagerDuty, Service Now, Wavefront, Dynatrace, Amplitude, Airtable, LeanIX). Consolidating signal here is a downstream win.</p>
+      </div>
+
+      <div class="insight-card theme-teal">
+        <div class="icon">05</div>
+        <h4>3rd-party tools dominate Architect.</h4>
+        <p>Stack Overflow, Slack, GitHub, Confluence, Google, Zoom, Jira, Lucidchart — discovery happens largely <em>outside</em> Intuit's surface. DP can win only by being the most up-to-date, contact-aware, and consumable place to start.</p>
+      </div>
+
+      <div class="insight-card theme-orange">
+        <div class="icon">06</div>
+        <h4>DevAssist = DP info in the IDE.</h4>
+        <p>The FY25 strategy bet: instead of pulling developers to a portal, push the portal's authoritative info (ownership, lifecycle, guidelines, paved roads) into the IDE where Code happens. It's the AI-native bridge across the matrix.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- SECTION 4 — Adjacent artifacts on the research page -->
+  <!-- ============================================================== -->
+  <section class="section" id="artifacts">
+    <div class="section-tag">Adjacent on the research page</div>
+    <h2 class="section-title">Other artifacts in the same Figma board</h2>
+    <p class="section-sub">
+      The PDLC matrix is the centerpiece, but it sits alongside three other foundational
+      artifacts on the same research page. Pulling them in here for completeness.
+    </p>
+
+    <div class="card-grid cols-2">
+
+      <div class="insight-card">
+        <h4>PDX Developer Blueprint</h4>
+        <p>Service-blueprint-style table mapping the PDX (Platform / Developer Experience) developer journey across the same lifecycle stages — actions, channels, supporting systems, and pain points per stage.</p>
+        <p style="margin-top: 12px;"><a href="https://www.figma.com/board/gUfsZizVSaa1XPNLei2Rf5/Developer-tools?node-id=236-2996" target="_blank" rel="noopener">Open in Figma →</a></p>
+      </div>
+
+      <div class="insight-card">
+        <h4>DevPortal FE/BE Developer Blueprint</h4>
+        <p>Companion blueprint focused specifically on DevPortal's frontend and backend engineers — what they touch, what's broken, and where their dependencies lie.</p>
+        <p style="margin-top: 12px;"><a href="https://www.figma.com/board/gUfsZizVSaa1XPNLei2Rf5/Developer-tools?node-id=236-2996" target="_blank" rel="noopener">Open in Figma →</a></p>
+      </div>
+
+      <div class="insight-card">
+        <h4>System &amp; Product Development diagram</h4>
+        <p>Conceptual visualization showing how systems and products develop — concentric loops with team and individual scope, the same inner/outer loop framing as the matrix.</p>
+        <p style="margin-top: 12px;"><a href="https://www.figma.com/board/gUfsZizVSaa1XPNLei2Rf5/Developer-tools?node-id=236-2996" target="_blank" rel="noopener">Open in Figma →</a></p>
+      </div>
+
+      <div class="insight-card">
+        <h4>Onboarding tool stack</h4>
+        <p>What new developers reach for in their first weeks: Documentation, Onboarding deck, Slack, Chat with team mates / onboarding buddy, Dev Portal, Complete trainings, Dev @ Intuit, Google.</p>
+        <div class="tools-list" style="margin-top: 14px;">
+          <div class="tool-pill purple"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>Documentation</div>
+          <div class="tool-pill purple"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>Onboarding deck</div>
+          <div class="tool-pill slack"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M5 15a2 2 0 1 0 0-4h2v4zm1 0a2 2 0 1 0 4 0V5a2 2 0 1 0-4 0zm2-12a2 2 0 1 0 0 4h2V3zm1 1a2 2 0 1 0 0 4h6a2 2 0 1 0 0-4zm12 4a2 2 0 1 0 0 4h-2V8zm-1 0a2 2 0 1 0-4 0v6a2 2 0 1 0 4 0zm-2 12a2 2 0 1 0 0-4h-2v4zm-1-1a2 2 0 1 0 0-4H9a2 2 0 1 0 0 4z"/></svg></span>Slack</div>
+          <div class="tool-pill pink"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Onboarding buddy</div>
+          <div class="tool-pill green"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Dev Portal</div>
+          <div class="tool-pill green"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Complete trainings</div>
+          <div class="tool-pill red"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></span>Dev @ Intuit</div>
+          <div class="tool-pill red"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></span>Google</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- SECTION 5 — How to read this -->
+  <!-- ============================================================== -->
+  <section class="section" id="usage">
+    <div class="section-tag">How to use this page</div>
+    <h2 class="section-title">For DP product, design, and engineering</h2>
+    <div class="card-grid cols-3">
+      <div class="insight-card">
+        <h4>Designers</h4>
+        <p>Use the matrix to scope where a journey actually starts and ends. If the work touches Architect or Code stages, DevPortal is in the critical path.</p>
+      </div>
+      <div class="insight-card">
+        <h4>PMs</h4>
+        <p>Use the ownership tiers to know who you need to align with. Anything that crosses into DevX or 3rd-party rows is a coordination effort, not a unilateral one.</p>
+      </div>
+      <div class="insight-card">
+        <h4>Engineers</h4>
+        <p>Use the &quot;What makes DP unique&quot; row as the working spec for what DP must guarantee in Architect/Code stages: ownership, freshness, conformance, consumability.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <p>
+      <strong>Provenance.</strong> April Jernberg shared the source links via Slack on
+      May 6, 2026 (group DM with Natasha Girotra, Muyi Tao, Jacque Roby, Elnaz Amiri,
+      and Will Wang). The original Service Blueprint Figma file is missing; this page
+      reconstructs the framework from the screenshots and the strategy deck cover.
+      The foundational structure remains relevant; specific tools may have shifted
+      since July 2024.
+    </p>
+    <p style="margin-top: 12px;">
+      <strong>Next steps.</strong> (1) Validate tool list with current DevX inventory.
+      (2) Layer in DevAssist's actual coverage map. (3) Add quantitative usage data
+      from Intuit Assist / DevPortal analytics where available.
+    </p>
+  </div>
+
+</main>
+
+</body>
+</html>
