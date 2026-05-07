@@ -156,7 +156,7 @@ export function HomePage() {
                 <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
                   <CardHeader className="flex flex-row items-start justify-between gap-4">
                     <div className="space-y-2">
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         <p className="text-sm font-medium text-muted-foreground">
                           {preview.platform}
                         </p>
