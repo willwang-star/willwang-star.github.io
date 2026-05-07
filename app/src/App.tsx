@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { PortalLayout } from "@/components/layout/portal-layout"
 import { HomePage } from "@/pages/home"
-import { WorkPage } from "@/pages/work"
 import { ChatPage } from "@/pages/chat"
 import { ContactPage } from "@/pages/contact"
 
@@ -11,7 +10,7 @@ function App() {
       <Routes>
         <Route element={<PortalLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="work" element={<WorkPage />} />
+          <Route path="work" element={<Navigate to="/" replace />} />
           <Route path="chat" element={<ChatPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

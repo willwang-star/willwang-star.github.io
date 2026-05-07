@@ -3,8 +3,8 @@
 
 export const profile = {
   name: "Will Wang",
-  role: "Designer",
-  team: "Intuit",
+  role: "Principal Product Designer",
+  team: "",
   bio: "Building tools, prototypes, and AI-driven workflows. Below is a portal of what I'm working on, and ways to reach me.",
 
   // Contact channels — leave any blank to hide that action.
