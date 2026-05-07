@@ -8,12 +8,20 @@ export const profile = {
   bio: "Building tools, prototypes, and AI-driven workflows. Below is a portal of what I'm working on, and ways to reach me.",
 
   // Contact channels — leave any blank to hide that action.
-  // Slack DM: copy your Slack profile URL or "slack://user?team=T...&id=U..." deep link.
   contact: {
-    slack: "", // e.g. "https://intuit.enterprise.slack.com/team/U12345"
+    // Slack DM CTA on the home title row. Two ways to wire this up:
+    //  1. Workspace web URL — paste your "View profile" share link from Slack.
+    //     Looks like: https://<workspace>.slack.com/team/U01ABC23DEF
+    //     Works for everyone (opens Slack in browser → app handoff).
+    //  2. Just a member ID — set slackUserId to e.g. "U01ABC23DEF" and
+    //     slackTeamDomain to e.g. "intuit-corp" and the site will build the URL.
+    // Leave empty to hide the button.
+    slack: "", // takes priority if set
+    slackUserId: "", // e.g. "U01ABC23DEF"
+    slackTeamDomain: "", // e.g. "intuit-corp" (the bit before .slack.com)
     email: "will_wang@intuit.com",
-    zoom: "", // e.g. "https://intuit.zoom.us/my/willwang"
-    calendar: "", // e.g. Calendly / Google booking link
+    zoom: "",
+    calendar: "",
     github: "https://github.com/willwang-star",
   },
 

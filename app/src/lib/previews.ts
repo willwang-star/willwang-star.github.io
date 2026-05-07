@@ -5,16 +5,16 @@ export type Preview = {
   tags: string[]
 }
 
-// File names match the actual files in app/public/.
-// Tags are placeholders — update once the user provides the real tag schema.
+// File names match the actual files in app/public/ exactly (including spaces).
+// Tags drive the filter pills.
 export const previews: Preview[] = [
   {
-    title: "AIW Onboarding",
+    title: "AI Workbench Onboarding",
     file: "AIW Onboarding.html",
     tags: ["Onboarding", "AIW"],
   },
   {
-    title: "DDE Onboarding",
+    title: "Data Discovery & Exploration Onboarding",
     file: "DDE Onboarding.html",
     tags: ["Onboarding", "DDE"],
   },
@@ -24,19 +24,18 @@ export const previews: Preview[] = [
     tags: ["Onboarding", "Dev Portal"],
   },
   {
-    title: "DevPortal User Research",
+    title: "User Research",
     file: "DevPortal User Research.html",
     tags: ["Research", "Dev Portal"],
   },
   {
-    title: "DevPortal Workshop Brief",
+    title: "Workshop Prep",
     file: "DevPortal Workshop Brief.html",
     tags: ["Workshop", "Dev Portal"],
   },
   {
-    title: "DevPortal PDLC Tools Research",
+    title: "PDLC Tools Research",
     file: "DevPortal PDLC Tools Research.html",
-    description: "PDLC × ownership-tier mapping of every tool in the dev environment, synthesized from Horizons UX FigJam + AI-Native Dev Environment strategy.",
     tags: ["Research", "Dev Portal", "PDLC"],
   },
 ]

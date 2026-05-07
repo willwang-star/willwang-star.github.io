@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react"
-import { ArrowUpRight, Search } from "lucide-react"
+import { ArrowUpRight, MessageSquareIcon, Search } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -15,7 +14,16 @@ import { profile } from "@/lib/profile"
 const baseUrl = import.meta.env.BASE_URL
 
 function buildHref(file: string) {
-  return `${baseUrl}${encodeURIComponent(file)}`
+  // Encode each path segment so spaces become %20 but the slash separator stays a slash.
+  return baseUrl + encodeURIComponent(file)
+}
+
+function buildSlackHref(): string | null {
+  if (profile.contact.slack) return profile.contact.slack
+  if (profile.contact.slackUserId && profile.contact.slackTeamDomain) {
+    return `https://${profile.contact.slackTeamDomain}.slack.com/team/${profile.contact.slackUserId}`
+  }
+  return null
 }
 
 export function HomePage() {
@@ -23,6 +31,7 @@ export function HomePage() {
   const [activeTags, setActiveTags] = useState<string[]>([])
 
   const tags = useMemo(() => allTags(previews), [])
+  const slackHref = buildSlackHref()
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -55,17 +64,22 @@ export function HomePage() {
   const hasActiveFilters = query !== "" || activeTags.length > 0
 
   return (
-    <div className="space-y-8 sm:space-y-10">
-      <header className="space-y-2">
+    <div className="space-y-6 sm:space-y-8">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          {profile.name}
+          Will's Repo
         </h1>
-        <p className="text-base text-muted-foreground sm:text-lg">
-          {profile.role}
-        </p>
+        {slackHref && (
+          <Button asChild size="sm" className="gap-2">
+            <a href={slackHref} target="_blank" rel="noreferrer">
+              <MessageSquareIcon className="size-4" />
+              Slack me
+            </a>
+          </Button>
+        )}
       </header>
 
-      <section className="space-y-4">
+      <section className="space-y-3">
         <div className="relative">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -114,57 +128,56 @@ export function HomePage() {
         </div>
       </section>
 
-      <section
-        aria-live="polite"
-        className="text-xs text-muted-foreground"
-      >
-        {filtered.length} of {previews.length}
-        {hasActiveFilters ? " (filtered)" : ""}
-      </section>
+      <section className="space-y-3">
+        <p
+          aria-live="polite"
+          className="text-xs text-muted-foreground"
+        >
+          {filtered.length} of {previews.length}
+          {hasActiveFilters ? " (filtered)" : ""}
+        </p>
 
-      <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-        {filtered.map((preview) => (
-          <li key={preview.file}>
-            <a
-              href={buildHref(preview.file)}
-              className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
-                <CardHeader className="flex flex-row items-start justify-between gap-4">
-                  <div className="space-y-1.5">
-                    <CardTitle className="text-base font-medium">
-                      {preview.title}
-                    </CardTitle>
-                    {preview.description && (
-                      <CardDescription>{preview.description}</CardDescription>
-                    )}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {preview.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="rounded-full text-[10px] font-normal text-muted-foreground"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
+        <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+          {filtered.map((preview) => (
+            <li key={preview.file}>
+              <a
+                href={buildHref(preview.file)}
+                className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
+                <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
+                  <CardHeader className="flex flex-row items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <CardTitle className="text-base font-medium">
+                        {preview.title}
+                      </CardTitle>
+                      <div className="flex flex-wrap gap-1.5">
+                        {preview.tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="outline"
+                            className="rounded-full text-[10px] font-normal text-muted-foreground"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <ArrowUpRight
-                    className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-                    aria-hidden="true"
-                  />
-                </CardHeader>
-              </Card>
-            </a>
-          </li>
-        ))}
-        {filtered.length === 0 && (
-          <li className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground sm:col-span-2">
-            No previews match your search.
-          </li>
-        )}
-      </ul>
+                    <ArrowUpRight
+                      className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                      aria-hidden="true"
+                    />
+                  </CardHeader>
+                </Card>
+              </a>
+            </li>
+          ))}
+          {filtered.length === 0 && (
+            <li className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground sm:col-span-2">
+              No previews match your search.
+            </li>
+          )}
+        </ul>
+      </section>
     </div>
   )
 }
