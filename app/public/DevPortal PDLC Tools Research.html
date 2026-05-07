@@ -185,6 +185,67 @@ html:not(.dark) .header { background: rgba(255,255,255,.92); }
 .footnote { font-size: 12px; color: var(--muted-foreground); border-top: 1px solid var(--border); padding-top: 20px; margin-top: 32px; line-height: 1.65; }
 .footnote a { color: var(--primary); }
 
+/* ── Vintage / "this is old" callout ── */
+.vintage-callout {
+  background: linear-gradient(0deg, rgba(217,119,6,.08), rgba(217,119,6,.08)), var(--card);
+  border: 1px solid rgba(217,119,6,.4);
+  border-left: 3px solid #D97706;
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  box-shadow: var(--shadow-sm);
+}
+.vintage-callout .vintage-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #D97706;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+}
+.vintage-callout .vintage-body { flex: 1; font-size: 13.5px; color: var(--foreground); line-height: 1.65; }
+.vintage-callout .vintage-body strong { color: #D97706; font-weight: 700; }
+.vintage-callout .vintage-body p { margin: 0; }
+.vintage-callout .vintage-body p + p { margin-top: 8px; }
+
+.vintage-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(217,119,6,.12);
+  border: 1px solid rgba(217,119,6,.4);
+  color: #D97706;
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.vintage-badge .pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #D97706;
+}
+
+.vintage-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(217,119,6,.08);
+  border: 1px solid rgba(217,119,6,.3);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #D97706;
+  margin-bottom: 12px;
+}
+
 @media (max-width: 800px) {
   .hero-stats { grid-template-columns: 1fr 1fr; }
   .hero-title { font-size: 28px; }
@@ -201,21 +262,23 @@ html:not(.dark) .header { background: rgba(255,255,255,.92); }
   <div class="header-inner">
     <div class="header-brand"><span class="dot"></span> DevPortal Research</div>
     <div class="header-meta">
-      <span class="hide-sm">Updated May 2026 · Source: Horizons UX</span>
+      <span class="vintage-badge"><span class="pulse-dot"></span>Source dated July 2024</span>
       <button class="theme-btn" onclick="document.documentElement.classList.toggle('dark')">Toggle theme</button>
     </div>
   </div>
 </header>
 
 <section class="hero">
-  <div class="hero-tag">Research synthesis · DP / DevX</div>
+  <div class="hero-tag">Research synthesis · DP / DevX · Foundational (July 2024)</div>
   <h1 class="hero-title">PDLC Tools Research: Mapping the developer environment</h1>
   <p class="hero-sub">
     What developers actually use across the Product Development Lifecycle — DevPortal,
     DevX/PAG/PDX paved roads, Intuit-internal tools, and 3rd-party services — synthesized
     from the Horizons UX <em>Developer Tools</em> board and the FY25 <em>AI-Native Modern
-    Dev Environment</em> strategy. The foundation work is months old, but the framework
-    still holds: tooling isn't the problem; the lack of connection between tools is.
+    Dev Environment</em> strategy. <strong>These artifacts are from July 2024.</strong> They're
+    months old; specific tools may have shifted. But the framework still holds — and the
+    central thesis is unchanged: tooling isn't the problem; the lack of connection between
+    tools is.
   </p>
   <div class="hero-stats">
     <div class="stat-card"><div class="stat-num">7</div><div class="stat-desc">PDLC stages mapped end-to-end (Architect → Operate)</div></div>
@@ -228,6 +291,7 @@ html:not(.dark) .header { background: rgba(255,255,255,.92); }
 <div class="source-bar">
   <div class="source-inner">
     <strong>Sources:</strong>
+    <span class="source-pill" style="background: rgba(217,119,6,.12); border-color: rgba(217,119,6,.4); color: #D97706;">⚠️ Foundational, but dated</span>
     <a class="source-pill" href="https://www.figma.com/board/gUfsZizVSaa1XPNLei2Rf5/Developer-tools?node-id=236-2996" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       Developer Tools (FigJam · Horizons UX)
@@ -241,6 +305,22 @@ html:not(.dark) .header { background: rgba(255,255,255,.92); }
 </div>
 
 <main class="content">
+
+  <!-- ============================================================== -->
+  <!-- TOP CALLOUT — explicit "this is old" framing per April Jernberg -->
+  <!-- ============================================================== -->
+  <div class="vintage-callout" id="vintage-notice">
+    <div class="vintage-icon">!</div>
+    <div class="vintage-body">
+      <p><strong>Read this as foundation, not gospel.</strong> The source artifacts are from <strong>July 2024</strong> — months old at the time of synthesis. Per April Jernberg (Horizons UX) on May 6, 2026:</p>
+      <p style="font-style: italic; color: var(--muted-foreground);">
+        &ldquo;We have a lot of work on future DP states — that said, it could all be different given the current state of AI tools. These are months old. But there has been work on dev environment workflows, etc. … The blueprint work is on the research page. These are old, but the foundational parts are still there.&rdquo;
+      </p>
+      <p>
+        <strong>What's still trustworthy:</strong> the framing — PDLC stages, ownership tiers, inner/outer-loop concept, "tooling isn't the problem" thesis, and DevAssist as the AI-native bridge. <strong>What may have shifted:</strong> specific tool names, vendors, and what each platform owns today (the tool inventory is a snapshot, not a current truth). Validate against current DevX inventory before treating any cell as authoritative.
+      </p>
+    </div>
+  </div>
 
   <!-- ============================================================== -->
   <!-- SECTION 1 — Strategic frame -->
@@ -281,6 +361,7 @@ html:not(.dark) .header { background: rgba(255,255,255,.92); }
       Horizons UX Service Blueprint mapping (the original Figma file is missing,
       per April Jernberg's note).
     </p>
+    <div class="vintage-flag">⚠️ Tool inventory snapshot — July 2024. Names &amp; ownership may have shifted.</div>
 
     <!-- Loop banners -->
     <div class="loop-grid first">
