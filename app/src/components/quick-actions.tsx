@@ -1,9 +1,4 @@
-import {
-  CalendarIcon,
-  MailIcon,
-  MessageSquareIcon,
-  VideoIcon,
-} from "lucide-react"
+import { CalendarIcon, MessageSquareIcon, VideoIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { profile } from "@/lib/profile"
 
@@ -25,13 +20,6 @@ export function QuickActions({
       label: "Slack me",
       href: profile.contact.slack || null,
       icon: <MessageSquareIcon className="size-4" />,
-    },
-    {
-      label: "Email",
-      href: profile.contact.email
-        ? `mailto:${profile.contact.email}`
-        : null,
-      icon: <MailIcon className="size-4" />,
     },
     {
       label: "Book a Zoom",
