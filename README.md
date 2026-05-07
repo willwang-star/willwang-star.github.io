@@ -1,9 +1,9 @@
-# Dev Portal Previews
+# Dev Portal
 
-HTML previews hosted via GitHub Pages, fronted by a React index page (Vite + shadcn/ui).
+Personal internal portal hosted via GitHub Pages, fronted by a React index page (Vite + shadcn/ui).
 
-- **Repo:** https://github.com/willwang-star/devportal-previews
-- **Live site:** https://willwang-star.github.io/devportal-previews/
+- **Repo:** https://github.com/willwang-star/devportal
+- **Live site:** https://willwang-star.github.io/devportal/
 - **Local folder:** `/Users/wwang22/Data/Design/AI/Claude/Dev Portal`
 
 ## Project layout
@@ -49,14 +49,14 @@ npm install   # first time only
 npm run dev
 ```
 
-Open http://localhost:5173/devportal-previews/
+Open http://localhost:5173/devportal/
 
 ### URL pattern
 
 Filenames are preserved as-is. Spaces become `%20` in the URL:
 
 ```
-https://willwang-star.github.io/devportal-previews/<File Name>.html
+https://willwang-star.github.io/devportal/<File Name>.html
 ```
 
 ## Notes
