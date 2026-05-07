@@ -43,10 +43,10 @@ export function PreviewPage() {
           </Button>
           <div className="hidden h-8 w-px bg-border sm:block" />
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+            <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">
               {preview.platform}
             </p>
-            <h1 className="truncate text-sm font-medium sm:text-base">
+            <h1 className="truncate text-sm font-semibold sm:text-base">
               {preview.title}
             </h1>
           </div>
