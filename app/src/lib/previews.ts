@@ -38,21 +38,21 @@ export const previews: Preview[] = [
     platform: "Dev Portal",
     title: "User Research",
     file: "DevPortal User Research.html",
-    tags: ["Dev Portal", "User Research"],
+    tags: ["Dev Portal", "Research"],
   },
   {
     slug: "workshop-prep",
     platform: "Dev Portal",
     title: "Workshop Prep",
     file: "DevPortal Workshop Brief.html",
-    tags: ["Dev Portal", "Workshop Prep"],
+    tags: ["Dev Portal", "Workshop"],
   },
   {
     slug: "pdlc-tools-research",
     platform: "Dev Portal",
     title: "PDLC Tools Research",
     file: "DevPortal PDLC Tools Research.html",
-    tags: ["Dev Portal", "PDLC Tools Research"],
+    tags: ["Dev Portal", "Research"],
   },
 ]
 

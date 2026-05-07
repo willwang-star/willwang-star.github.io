@@ -160,7 +160,7 @@ export function HomePage() {
                         <p className="text-sm font-medium text-muted-foreground">
                           {preview.platform}
                         </p>
-                        <CardTitle className="text-xl font-semibold leading-snug tracking-tight">
+                        <CardTitle className="text-2xl font-semibold leading-snug tracking-tight">
                           {preview.title}
                         </CardTitle>
                       </div>
