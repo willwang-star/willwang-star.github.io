@@ -146,7 +146,7 @@ export function HomePage() {
           {hasActiveFilters ? " (filtered)" : ""}
         </p>
 
-        <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+        <ul className="grid grid-cols-2 gap-3 sm:gap-4">
           {filtered.map((preview) => (
             <li key={preview.slug}>
               <Link
@@ -160,7 +160,7 @@ export function HomePage() {
                         <p className="text-sm font-medium text-muted-foreground">
                           {preview.platform}
                         </p>
-                        <CardTitle className="text-2xl font-semibold leading-snug tracking-tight">
+                        <CardTitle className="text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
                           {preview.title}
                         </CardTitle>
                       </div>
@@ -186,7 +186,7 @@ export function HomePage() {
             </li>
           ))}
           {filtered.length === 0 && (
-            <li className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground sm:col-span-2">
+            <li className="col-span-2 rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
               No previews match your search.
             </li>
           )}
