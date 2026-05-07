@@ -8,7 +8,7 @@
       // Stashes the path + search in sessionStorage, then loads index.html,
       // where main.tsx will pick it up and replace the URL.
       (function () {
-        var basePath = "/devportal/";
+        var basePath = "/";
         var l = window.location;
         var path = l.pathname;
         // Don't redirect actual asset 404s (e.g. /assets/missing.css) or HTML files.
