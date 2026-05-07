@@ -150,7 +150,7 @@ export function HomePage() {
           {filtered.map((preview) => (
             <li key={preview.slug}>
               <Link
-                to={`/preview/${preview.slug}`}
+                to={`/${preview.slug}`}
                 className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
                 <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
