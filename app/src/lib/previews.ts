@@ -24,7 +24,7 @@ export const previews: Preview[] = [
     platform: "Data Discovery & Exploration",
     title: "Onboarding",
     file: "DDE Onboarding.html",
-    tags: ["Data Discovery & Exploration", "Onboarding"],
+    tags: ["DDE", "Onboarding"],
   },
   {
     slug: "dev-portal-onboarding",
