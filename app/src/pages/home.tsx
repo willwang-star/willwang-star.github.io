@@ -65,7 +65,7 @@ export function HomePage() {
     <div className="space-y-6 sm:space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
-          <Avatar className="size-[60px]">
+          <Avatar className="size-14">
             {avatarSrc && (
               <AvatarImage src={avatarSrc} alt={profile.name} />
             )}
