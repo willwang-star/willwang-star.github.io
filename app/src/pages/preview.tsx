@@ -13,7 +13,7 @@ const previewComponents: Record<string, () => React.JSX.Element> = {
   "dev-portal-onboarding": DevPortalOnboardingPage,
   "user-research": UserResearchPage,
   "workshop-prep": WorkshopPrepPage,
-  "pdlc-tools-research": PdlcToolsResearchPage,
+  "prior-research": PdlcToolsResearchPage,
 }
 
 export function PreviewPage() {

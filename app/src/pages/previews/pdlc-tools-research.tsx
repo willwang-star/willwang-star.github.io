@@ -164,7 +164,7 @@ const matrix: Row[] = [
 
 export function PdlcToolsResearchPage() {
   return (
-    <PreviewShell platform="Dev Portal" title="PDLC Tools Research">
+    <PreviewShell platform="Dev Portal" title="Prior Research">
       <div className="space-y-12">
         <PageHeader
           title="PDLC Tools: Mapping the developer environment"

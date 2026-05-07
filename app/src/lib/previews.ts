@@ -48,9 +48,9 @@ export const previews: Preview[] = [
     tags: ["Dev Portal", "Workshop"],
   },
   {
-    slug: "pdlc-tools-research",
+    slug: "prior-research",
     platform: "Dev Portal",
-    title: "PDLC Tools Research",
+    title: "Prior Research",
     file: "DevPortal PDLC Tools Research.html",
     tags: ["Dev Portal", "Research"],
   },
