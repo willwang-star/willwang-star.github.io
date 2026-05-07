@@ -118,7 +118,6 @@ export function UserResearchPage() {
     <PreviewShell platform="Dev Portal" title="User Research">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="Research Overview · Internal Sources Only"
           title="What Intuit Developers Actually Say About DevPortal"
           subtitle="Synthesized from #devportal-support, public Slack channels, Google Drive research docs, and platform vision documents. Verbatim quotes wherever possible — no invented feedback."
         />

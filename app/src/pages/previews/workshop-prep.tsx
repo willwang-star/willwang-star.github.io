@@ -13,7 +13,6 @@ export function WorkshopPrepPage() {
     <PreviewShell platform="Dev Portal" title="Workshop Prep">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="DevPortal · Workshop Brief · May 2026"
           title="Vision, Research & the Path Forward"
           subtitle="A synthesis of two years of platform strategy, user research, and stakeholder alignment — prepared for the DevPortal workshop team."
         />
@@ -26,7 +25,7 @@ export function WorkshopPrepPage() {
         </StatGrid>
 
         <Tabs defaultValue="vision" className="space-y-8">
-          <TabsList className="flex flex-wrap h-auto p-1">
+          <TabsList>
             <TabsTrigger value="vision">01 Vision</TabsTrigger>
             <TabsTrigger value="research">02 Research</TabsTrigger>
             <TabsTrigger value="stakeholders">03 Stakeholders</TabsTrigger>

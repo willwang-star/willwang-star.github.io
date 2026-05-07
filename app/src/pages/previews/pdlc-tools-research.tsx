@@ -167,7 +167,6 @@ export function PdlcToolsResearchPage() {
     <PreviewShell platform="Dev Portal" title="PDLC Tools Research">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="Research synthesis · DP / DevX · Foundational (July 2024)"
           title="PDLC Tools: Mapping the developer environment"
           subtitle="What developers actually use across the Product Development Lifecycle — DevPortal, DevX/PAG/PDX paved roads, Intuit-internal tools, and 3rd-party services. Synthesized from the Horizons UX Developer Tools board and the FY25 AI-Native Modern Dev Environment strategy."
         />

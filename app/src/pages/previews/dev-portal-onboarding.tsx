@@ -12,13 +12,12 @@ export function DevPortalOnboardingPage() {
     <PreviewShell platform="Dev Portal" title="Onboarding">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="Dev Portal — Onboarding"
           title="The Core Problem: Tool Sprawl & Fragmentation"
           subtitle="Builders must hop across 10+ scattered, unfamiliar tools to complete a single PDLC task. This is the central problem the Unified Development Portal is solving."
         />
 
         <Tabs defaultValue="problem" className="space-y-8">
-          <TabsList className="flex flex-wrap h-auto p-1">
+          <TabsList>
             <TabsTrigger value="problem">The Problem</TabsTrigger>
             <TabsTrigger value="transform">FROM → TO</TabsTrigger>
             <TabsTrigger value="consequences">5 Consequences</TabsTrigger>

@@ -9,7 +9,7 @@ interface QuoteProps {
 
 export function Quote({ children, attribution, className }: QuoteProps) {
   return (
-    <Card className={cn("border-l-2 border-l-foreground/30", className)}>
+    <Card className={cn("border-l-4 border-l-primary/60", className)}>
       <CardContent className="space-y-2 p-5">
         <p className="text-base leading-relaxed text-foreground italic">
           "{children}"

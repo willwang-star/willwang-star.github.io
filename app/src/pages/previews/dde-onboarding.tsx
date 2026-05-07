@@ -12,7 +12,6 @@ export function DdeOnboardingPage() {
     <PreviewShell platform="DDE" title="Onboarding">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="Data Discovery & Exploration (DDE) — Onboarding"
           title="Search, understand, and access data assets from your IDE"
           subtitle="DDE exposes data tables, schemas, columns, and lineage through MCP-powered agentic tools — turning a 45-minute search into a 4-minute conversation."
         />
@@ -25,7 +24,7 @@ export function DdeOnboardingPage() {
         </StatGrid>
 
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="flex flex-wrap h-auto p-1">
+          <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="mcp">MCP Tools</TabsTrigger>
             <TabsTrigger value="setup">Getting Started</TabsTrigger>
