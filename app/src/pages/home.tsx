@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
 import { ArrowUpRight, MessageSquareIcon, Search } from "lucide-react"
+import { Link } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -10,13 +11,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { allTags, previews } from "@/lib/previews"
 import { profile } from "@/lib/profile"
-
-const baseUrl = import.meta.env.BASE_URL
-
-function buildHref(file: string) {
-  // Encode each path segment so spaces become %20 but the slash separator stays a slash.
-  return baseUrl + encodeURIComponent(file)
-}
 
 function buildSlackHref(): string | null {
   if (profile.contact.slack) return profile.contact.slack
@@ -139,9 +133,9 @@ export function HomePage() {
 
         <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
           {filtered.map((preview) => (
-            <li key={preview.file}>
-              <a
-                href={buildHref(preview.file)}
+            <li key={preview.slug}>
+              <Link
+                to={`/preview/${preview.slug}`}
                 className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
                 <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
@@ -168,7 +162,7 @@ export function HomePage() {
                     />
                   </CardHeader>
                 </Card>
-              </a>
+              </Link>
             </li>
           ))}
           {filtered.length === 0 && (

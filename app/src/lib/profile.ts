@@ -16,7 +16,7 @@ export const profile = {
     //  2. Just a member ID — set slackUserId to e.g. "U01ABC23DEF" and
     //     slackTeamDomain to e.g. "intuit-corp" and the site will build the URL.
     // Leave empty to hide the button.
-    slack: "", // takes priority if set
+    slack: "https://intuit.enterprise.slack.com/team/U0ATX5LV6UE",
     slackUserId: "", // e.g. "U01ABC23DEF"
     slackTeamDomain: "", // e.g. "intuit-corp" (the bit before .slack.com)
     email: "will_wang@intuit.com",
