@@ -1,78 +1,33 @@
-import { useEffect, useState } from "react"
-import { Link, Navigate, useParams } from "react-router-dom"
-import { ArrowLeftIcon, ExternalLinkIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Navigate, useParams } from "react-router-dom"
 import { findPreviewBySlug } from "@/lib/previews"
+import { AiwOnboardingPage } from "@/pages/previews/aiw-onboarding"
+import { DdeOnboardingPage } from "@/pages/previews/dde-onboarding"
+import { DevPortalOnboardingPage } from "@/pages/previews/dev-portal-onboarding"
+import { UserResearchPage } from "@/pages/previews/user-research"
+import { WorkshopPrepPage } from "@/pages/previews/workshop-prep"
+import { PdlcToolsResearchPage } from "@/pages/previews/pdlc-tools-research"
 
-const baseUrl = import.meta.env.BASE_URL
-
-function fileHref(file: string) {
-  return baseUrl + encodeURIComponent(file)
+const previewComponents: Record<string, () => React.JSX.Element> = {
+  "ai-workbench-onboarding": AiwOnboardingPage,
+  "data-discovery-onboarding": DdeOnboardingPage,
+  "dev-portal-onboarding": DevPortalOnboardingPage,
+  "user-research": UserResearchPage,
+  "workshop-prep": WorkshopPrepPage,
+  "pdlc-tools-research": PdlcToolsResearchPage,
 }
 
 export function PreviewPage() {
   const { slug } = useParams<{ slug: string }>()
   const preview = slug ? findPreviewBySlug(slug) : undefined
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    document.title = preview
-      ? `${preview.platform} · ${preview.title} · Will's Repo`
-      : "Will's Repo"
-    return () => {
-      document.title = "Will's Repo"
-    }
-  }, [preview])
-
-  if (!preview) {
+  if (!preview || !slug) {
     return <Navigate to="/" replace />
   }
 
-  const src = fileHref(preview.file)
+  const Component = previewComponents[slug]
+  if (!Component) {
+    return <Navigate to="/" replace />
+  }
 
-  return (
-    <div className="dark fixed inset-0 flex flex-col bg-background text-foreground">
-      <header className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-border bg-background/80 px-4 py-3 backdrop-blur sm:px-6">
-        <div className="flex min-w-0 items-center gap-3">
-          <Button asChild variant="ghost" size="sm" className="gap-2">
-            <Link to="/">
-              <ArrowLeftIcon className="size-4" />
-              <span className="hidden sm:inline">Will's Repo</span>
-              <span className="sm:hidden">Back</span>
-            </Link>
-          </Button>
-          <div className="hidden h-8 w-px bg-border sm:block" />
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">
-              {preview.platform}
-            </p>
-            <h1 className="truncate text-sm font-semibold sm:text-base">
-              {preview.title}
-            </h1>
-          </div>
-        </div>
-        <Button asChild variant="ghost" size="sm" className="gap-2">
-          <a href={src} target="_blank" rel="noreferrer">
-            <ExternalLinkIcon className="size-4" />
-            <span className="hidden sm:inline">Open standalone</span>
-          </a>
-        </Button>
-      </header>
-
-      <div className="relative flex-1 overflow-hidden">
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background">
-            <div className="size-6 animate-spin rounded-full border-2 border-border border-t-foreground" />
-          </div>
-        )}
-        <iframe
-          key={preview.slug}
-          src={src}
-          title={preview.title}
-          className="size-full border-0"
-          onLoad={() => setLoading(false)}
-        />
-      </div>
-    </div>
-  )
+  return <Component />
 }
