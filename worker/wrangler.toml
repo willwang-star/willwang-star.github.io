@@ -1,0 +1,19 @@
+# Cloudflare Worker config for the Dev Portal chat backend.
+# Deploy: `npm run deploy` (after `wrangler login` and `wrangler secret put` for credentials).
+
+name = "devportal-chat"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# CORS allowlist for the public site. Update if the domain changes.
+[vars]
+ALLOWED_ORIGIN = "https://willwang-star.github.io"
+TWIN_URL = "https://raw.githubusercontent.com/wangyuewwl/Digital-Twin/main/digital-twin.md"
+LLM_PROVIDER = "mock"   # mock | anthropic | genos — flip when access lands
+MODEL = "claude-sonnet-4-6"
+
+# Secrets are set via `wrangler secret put <NAME>` — never commit them.
+# Required when LLM_PROVIDER != "mock":
+#   ANTHROPIC_API_KEY        (path 2: personal Anthropic key)
+#   GENOS_ENDPOINT           (path 1: Intuit GenOS / Bedrock endpoint)
+#   GENOS_AUTH_TOKEN         (path 1: GenOS auth)
