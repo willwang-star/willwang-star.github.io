@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import { ArrowUpRight, MessageSquareIcon, Search } from "lucide-react"
 import { Link } from "react-router-dom"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -10,7 +11,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { allTags, previews } from "@/lib/previews"
-import { profile } from "@/lib/profile"
+import { initials, profile } from "@/lib/profile"
+
+const baseUrl = import.meta.env.BASE_URL
 
 function buildSlackHref(): string | null {
   if (profile.contact.slack) return profile.contact.slack
@@ -26,6 +29,7 @@ export function HomePage() {
 
   const tags = useMemo(() => allTags(previews), [])
   const slackHref = buildSlackHref()
+  const avatarSrc = profile.avatarFile ? `${baseUrl}${profile.avatarFile}` : ""
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -60,9 +64,19 @@ export function HomePage() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Will's Repo
-        </h1>
+        <div className="flex items-center gap-4">
+          <Avatar className="size-20">
+            {avatarSrc && (
+              <AvatarImage src={avatarSrc} alt={profile.name} />
+            )}
+            <AvatarFallback className="text-xl font-medium">
+              {initials(profile.name)}
+            </AvatarFallback>
+          </Avatar>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Will's Repo
+          </h1>
+        </div>
         {slackHref && (
           <Button asChild size="sm" className="gap-2">
             <a href={slackHref} target="_blank" rel="noreferrer">

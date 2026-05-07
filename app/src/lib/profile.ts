@@ -25,9 +25,8 @@ export const profile = {
     github: "https://github.com/willwang-star",
   },
 
-  // Profile photo — drop a square image into app/public/avatar.jpg
-  // and set this to "avatar.jpg". Leave blank to use initials fallback.
-  avatarFile: "",
+  // Profile photo — file is in app/public/. Leave blank to fall back to initials.
+  avatarFile: "will-profile.png",
 } as const
 
 export function initials(name: string): string {
