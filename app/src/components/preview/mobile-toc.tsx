@@ -60,7 +60,7 @@ export function MobileToc({ headings, activeId }: MobileTocProps) {
                       }}
                       className={cn(
                         "block w-full text-left text-sm py-2 transition-colors",
-                        h.level === 3 ? "pl-5" : "pl-2",
+                        h.level >= 3 ? "pl-7" : "pl-3",
                         isActive
                           ? "text-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground",
