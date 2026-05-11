@@ -12,7 +12,6 @@ export function AiwOnboardingPage() {
     <PreviewShell platform="AI Workbench" title="Onboarding">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="AI Workbench (AIW) — Onboarding"
           title="Intuit's internal developer platform for AI and ML"
           subtitle="Lives inside Dev Portal. Your entry point for building, testing, and shipping AI agents at Intuit. This brief covers everything — from current state to where the platform is heading and who's driving it."
         />

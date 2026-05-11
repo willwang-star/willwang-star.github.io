@@ -11,7 +11,6 @@ export function DevPortalOnboardingPage() {
     <PreviewShell platform="Dev Portal" title="Onboarding">
       <div className="space-y-12">
         <PageHeader
-          eyebrow="Dev Portal — Onboarding"
           title="The Core Problem: Tool Sprawl & Fragmentation"
           subtitle="Builders must hop across 10+ scattered, unfamiliar tools to complete a single PDLC task. This is the central problem the Unified Development Portal is solving."
         />

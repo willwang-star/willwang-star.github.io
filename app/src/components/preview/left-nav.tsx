@@ -68,9 +68,6 @@ export function LeftNav({ headings, activeId }: LeftNavProps) {
         aria-label="On this page"
         className="sticky top-20 max-h-[calc(100svh-6rem)] overflow-y-auto"
       >
-        <p className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          On this page
-        </p>
         <ul ref={listRef} className="relative">
           {/* Faint full-height rail. */}
           <span
