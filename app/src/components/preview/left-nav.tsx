@@ -38,7 +38,7 @@ export function LeftNav({ headings, activeId }: LeftNavProps) {
     <aside className="hidden lg:block">
       <nav
         aria-label="On this page"
-        className="sticky top-28 max-h-[calc(100svh-8rem)] overflow-y-auto"
+        className="sticky top-20 max-h-[calc(100svh-6rem)] overflow-y-auto"
       >
         <p className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           On this page

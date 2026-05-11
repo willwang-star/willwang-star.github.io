@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Callout } from "@/components/preview/callout"
 import { LabeledList } from "@/components/preview/labeled-list"
-import { PageHeader, Section } from "@/components/preview/section"
+import { Category, PageHeader, Section } from "@/components/preview/section"
 import { PreviewShell } from "@/components/preview/preview-shell"
 import { Quote } from "@/components/preview/quote"
 import { StatCard, StatGrid } from "@/components/preview/stat-card"
@@ -168,7 +168,8 @@ export function UserResearchPage() {
           </CardContent>
         </Card>
 
-        <Section title="Overall signal: what the data says at a glance">
+        <Category title="Overall Signal">
+          <Section title="What the data says at a glance">
           <div className="grid gap-3">
             {[
               {
@@ -207,12 +208,14 @@ export function UserResearchPage() {
               </Callout>
             ))}
           </div>
-        </Section>
+          </Section>
+        </Category>
 
-        <Section
+        <Category
           title="Search & Discovery"
           description="The single most-reported failure. Broken search, stale index links returning 404, confusing result ordering, and months of unfixed bugs. Directly impacts the #1 blocker developers cite: the 'broken first mile.'"
         >
+          <Section title="Findings">
           <Accordion type="multiple" className="rounded-lg border border-border">
             {findings.map((finding, i) => (
               <AccordionItem
@@ -246,12 +249,11 @@ export function UserResearchPage() {
               </AccordionItem>
             ))}
           </Accordion>
-        </Section>
+          </Section>
+        </Category>
 
-        <Section
-          title="Design implications"
-          description="6 callout boxes linking research to Silver-phase actions."
-        >
+        <Category title="Design Implications" description="6 callouts linking research to Silver-phase actions.">
+          <Section title="Implications">
           <LabeledList
             cols={1}
             items={[
@@ -288,9 +290,11 @@ export function UserResearchPage() {
               },
             ]}
           />
-        </Section>
+          </Section>
+        </Category>
 
-        <Section title="Methodology & limitations">
+        <Category title="Methodology">
+          <Section title="Methodology & limitations">
           <Card>
             <CardContent className="p-5 text-sm leading-relaxed text-muted-foreground">
               <p>
@@ -309,7 +313,8 @@ export function UserResearchPage() {
               </p>
             </CardContent>
           </Card>
-        </Section>
+          </Section>
+        </Category>
       </div>
     </PreviewShell>
   )

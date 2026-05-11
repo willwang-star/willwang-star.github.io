@@ -110,9 +110,9 @@ export function useHeadingsSpy({
         if (next) setActiveId(next)
       },
       {
-        // Trigger when the heading crosses ~96px below the viewport top
-        // (banner 48px + sticky tabs ~44px = ~92px sticky chrome).
-        rootMargin: "-96px 0px -65% 0px",
+        // Trigger when the heading crosses ~64px below the viewport top
+        // (banner ~48px + breathing).
+        rootMargin: "-64px 0px -70% 0px",
         threshold: 0,
       },
     )

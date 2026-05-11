@@ -39,7 +39,7 @@ export function PreviewShell({
   const { headings, activeId } = useHeadingsSpy({ containerRef: contentRef })
 
   return (
-    <div className="dark min-h-svh bg-background text-foreground [&_h2]:scroll-mt-28 [&_h3]:scroll-mt-28">
+    <div className="dark min-h-svh bg-background text-foreground [&_h2]:scroll-mt-20 [&_h3]:scroll-mt-20">
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-border bg-background/80 px-4 py-2.5 backdrop-blur sm:px-6">
         <Button asChild variant="ghost" size="sm" className="gap-2 px-2">
           <Link to="/">

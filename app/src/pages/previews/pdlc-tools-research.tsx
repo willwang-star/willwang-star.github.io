@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Callout } from "@/components/preview/callout"
 import { LabeledList } from "@/components/preview/labeled-list"
-import { PageHeader, Section } from "@/components/preview/section"
+import { Category, PageHeader, Section } from "@/components/preview/section"
 import { PreviewShell } from "@/components/preview/preview-shell"
 import { Quote } from "@/components/preview/quote"
 import { StatCard, StatGrid } from "@/components/preview/stat-card"
@@ -202,7 +202,8 @@ export function PdlcToolsResearchPage() {
           authoritative.
         </Callout>
 
-        <Section title="Strategic frame" eyebrow="FY25 horizon">
+        <Category title="Framework">
+          <Section title="Strategic frame" eyebrow="FY25 horizon">
           <p className="text-sm leading-relaxed text-muted-foreground">
             The DevX/Horizons FY25 strategy reframes the developer environment
             as one continuous AI-native surface. DevAssist (DP info in the IDE)
@@ -288,8 +289,10 @@ export function PdlcToolsResearchPage() {
             </CardContent>
           </Card>
         </Section>
+        </Category>
 
-        <Section title="Headline insights">
+        <Category title="Insights">
+          <Section title="Headline insights">
           <LabeledList
             cols={2}
             items={[
@@ -327,10 +330,13 @@ export function PdlcToolsResearchPage() {
           />
         </Section>
 
-        <Section
-          title="Adjacent artifacts"
-          description="Other research outputs from the Horizons UX board."
-        >
+        </Category>
+
+        <Category title="Adjacent Work">
+          <Section
+            title="Adjacent artifacts"
+            description="Other research outputs from the Horizons UX board."
+          >
           <LabeledList
             cols={2}
             items={[
@@ -380,6 +386,7 @@ export function PdlcToolsResearchPage() {
             ]}
           />
         </Section>
+        </Category>
 
         <Card>
           <CardContent className="space-y-3 p-5 text-sm leading-relaxed text-muted-foreground">
