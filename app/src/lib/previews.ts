@@ -56,12 +56,12 @@ export const previews: Preview[] = [
   },
   {
     slug: "graph-view",
-    platform: "Tools",
-    title: "Graph View",
+    platform: "Prototype",
+    title: "Graph Nav",
     file: "",
-    tags: ["Tools", "Knowledge Graph"],
+    tags: ["Prototype", "Knowledge Graph"],
     description:
-      "Obsidian-style graph view — left file tree, right force-directed graph, click a node to highlight its 1-hop neighbors.",
+      "Editable knowledge graph — add entities at any depth, assign relationships, watch the graph update live.",
   },
 ]
 

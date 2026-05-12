@@ -735,6 +735,7 @@ function GraphCanvas({
   const [viewport, setViewport] = useState({ tx: 0, ty: 0, scale: 1 })
   const [size, setSize] = useState({ w: 800, h: 600 })
   const [isPanning, setIsPanning] = useState(false)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [, forceRender] = useState(0)
 
   useEffect(() => {
@@ -862,16 +863,18 @@ function GraphCanvas({
     onSelectNode(id)
   }
 
-  const neighborSet = selectedId ? adjacency[selectedId] : null
+  // Selection wins over hover. Either one drives highlighting.
+  const focusedId = selectedId ?? hoveredId
+  const neighborSet = focusedId ? adjacency[focusedId] : null
   function nodeStyle(id: string) {
-    if (!selectedId) return { fill: "#a1a1aa", opacity: 1, labelOpacity: 0.85 }
-    if (id === selectedId) return { fill: "#8b5cf6", opacity: 1, labelOpacity: 1 }
+    if (!focusedId) return { fill: "#a1a1aa", opacity: 1, labelOpacity: 0.85 }
+    if (id === focusedId) return { fill: "#8b5cf6", opacity: 1, labelOpacity: 1 }
     if (neighborSet?.has(id)) return { fill: "#c4b5fd", opacity: 1, labelOpacity: 1 }
     return { fill: "#52525b", opacity: 0.5, labelOpacity: 0.35 }
   }
   function edgeStyle(e: GraphEdge) {
-    if (!selectedId) return { stroke: "#3f3f46", opacity: 0.7, width: 0.6 }
-    const isHit = e.source === selectedId || e.target === selectedId
+    if (!focusedId) return { stroke: "#3f3f46", opacity: 0.7, width: 0.6 }
+    const isHit = e.source === focusedId || e.target === focusedId
     if (isHit) return { stroke: "#8b5cf6", opacity: 0.95, width: 1.2 }
     return { stroke: "#27272a", opacity: 0.35, width: 0.5 }
   }
@@ -891,7 +894,7 @@ function GraphCanvas({
           <ArrowLeft className="size-4" aria-hidden="true" />
           <span className="text-xs">Back</span>
         </Link>
-        <span className="font-medium tracking-tight text-zinc-200">Graph view</span>
+        <span className="font-medium tracking-tight text-zinc-200">Graph Nav</span>
         <span className="w-[60px]" />
       </div>
 
@@ -939,6 +942,10 @@ function GraphCanvas({
                   key={n.id}
                   data-node={n.id}
                   onPointerDown={(e) => handleNodePointerDown(e, n.id)}
+                  onPointerEnter={() => setHoveredId(n.id)}
+                  onPointerLeave={() =>
+                    setHoveredId((cur) => (cur === n.id ? null : cur))
+                  }
                   style={{ cursor: "pointer" }}
                 >
                   <circle
@@ -947,8 +954,6 @@ function GraphCanvas({
                     r={n.radius}
                     fill={s.fill}
                     fillOpacity={s.opacity}
-                    stroke={n.id === selectedId ? "#ddd6fe" : "transparent"}
-                    strokeWidth={n.id === selectedId ? 1.5 : 0}
                   />
                   <text
                     x={n.x}
