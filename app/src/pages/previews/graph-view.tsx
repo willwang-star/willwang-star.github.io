@@ -222,7 +222,9 @@ function buildGraph(
       y: p?.y ?? Math.sin(angle) * r,
       vx: p?.vx ?? 0,
       vy: p?.vy ?? 0,
-      radius: 4 + Math.sqrt(degree[id] || 1) * 1.6,
+      // Base 2.5px, grows ~sqrt(degree) so a node with 9 links is ~5.5px
+      // and most leaves stay ~3.5px — a noticeable but small bump.
+      radius: 2.5 + Math.sqrt(degree[id] || 1) * 1.1,
     }
   })
 
@@ -249,8 +251,8 @@ type SimConfig = {
 }
 
 const DEFAULT_CFG: SimConfig = {
-  repulsion: 2400,
-  springLength: 120,
+  repulsion: 3200,
+  springLength: 150,
   springStrength: 0.04,
   centerStrength: 0.012,
   damping: 0.82,
@@ -957,9 +959,9 @@ function GraphCanvas({
                   />
                   <text
                     x={n.x}
-                    y={n.y + n.radius + 12}
+                    y={n.y + n.radius + 9}
                     textAnchor="middle"
-                    fontSize={9}
+                    fontSize={7}
                     fill="#e4e4e7"
                     opacity={s.labelOpacity}
                     style={{ pointerEvents: "none", userSelect: "none" }}
