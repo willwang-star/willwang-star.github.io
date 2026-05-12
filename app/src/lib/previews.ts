@@ -54,6 +54,15 @@ export const previews: Preview[] = [
     file: "DevPortal PDLC Tools Research.html",
     tags: ["Dev Portal", "Research"],
   },
+  {
+    slug: "graph-view",
+    platform: "Tools",
+    title: "Graph View",
+    file: "",
+    tags: ["Tools", "Knowledge Graph"],
+    description:
+      "Obsidian-style graph view — left file tree, right force-directed graph, click a node to highlight its 1-hop neighbors.",
+  },
 ]
 
 export function allTags(items: Preview[]): string[] {
