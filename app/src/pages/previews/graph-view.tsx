@@ -891,7 +891,7 @@ function GraphCanvas({
           <ArrowLeft className="size-4" aria-hidden="true" />
           <span className="text-xs">Back</span>
         </Link>
-        <span className="font-medium tracking-tight text-zinc-200">Graph view</span>
+        <span className="font-medium tracking-tight text-zinc-200">Graph Nav</span>
         <span className="w-[60px]" />
       </div>
 
