@@ -3,17 +3,21 @@ import { ArrowUpRight, MessageSquareIcon, Search } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { allTags, previews } from "@/lib/previews"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { allTags, previews, type Preview } from "@/lib/previews"
 import { initials, profile } from "@/lib/profile"
 
 const baseUrl = import.meta.env.BASE_URL
+
+// Slugs that belong on the Prototype tab. Everything else is a Doc.
+const PROTOTYPE_SLUGS = new Set<string>(["graph-view"])
+
+function isPrototype(p: Preview): boolean {
+  return PROTOTYPE_SLUGS.has(p.slug)
+}
 
 function buildSlackHref(): string | null {
   if (profile.contact.slack) return profile.contact.slack
@@ -46,6 +50,9 @@ export function HomePage() {
       return matchesQuery && matchesTags
     })
   }, [query, activeTags])
+
+  const docs = filtered.filter((p) => !isPrototype(p))
+  const prototypes = filtered.filter(isPrototype)
 
   function toggleTag(tag: string) {
     setActiveTags((current) =>
@@ -137,61 +144,100 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="space-y-3">
-        <p
-          aria-live="polite"
-          className="text-xs text-muted-foreground"
-        >
-          {filtered.length} of {previews.length}
-          {hasActiveFilters ? " (filtered)" : ""}
-        </p>
+      <Tabs defaultValue="doc" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="doc" className="gap-2">
+            Doc
+            <Badge variant="secondary" className="rounded-full px-1.5 text-[10px]">
+              {docs.length}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="prototype" className="gap-2">
+            Prototype
+            <Badge variant="secondary" className="rounded-full px-1.5 text-[10px]">
+              {prototypes.length}
+            </Badge>
+          </TabsTrigger>
+        </TabsList>
 
-        <ul className="grid grid-cols-2 gap-3 sm:gap-4">
-          {filtered.map((preview) => (
-            <li key={preview.slug}>
-              <Link
-                to={`/${preview.slug}`}
-                className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
-                  <CardHeader className="flex flex-row items-start justify-between gap-4">
-                    <div className="space-y-2">
-                      <div className="space-y-1.5">
-                        <p className="text-sm font-medium text-muted-foreground">
-                          {preview.platform}
-                        </p>
-                        <CardTitle className="text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
-                          {preview.title}
-                        </CardTitle>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {preview.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="rounded-full text-[10px] font-normal text-muted-foreground"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <ArrowUpRight
-                      className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-                      aria-hidden="true"
-                    />
-                  </CardHeader>
-                </Card>
-              </Link>
-            </li>
-          ))}
-          {filtered.length === 0 && (
-            <li className="col-span-2 rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No previews match your search.
-            </li>
-          )}
-        </ul>
-      </section>
+        <TabsContent value="doc">
+          <PreviewGrid
+            items={docs}
+            emptyText={
+              hasActiveFilters
+                ? "No docs match your search."
+                : "No docs yet."
+            }
+          />
+        </TabsContent>
+        <TabsContent value="prototype">
+          <PreviewGrid
+            items={prototypes}
+            emptyText={
+              hasActiveFilters
+                ? "No prototypes match your search."
+                : "No prototypes yet."
+            }
+          />
+        </TabsContent>
+      </Tabs>
     </div>
+  )
+}
+
+interface PreviewGridProps {
+  items: Preview[]
+  emptyText: string
+}
+
+function PreviewGrid({ items, emptyText }: PreviewGridProps) {
+  if (items.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+        {emptyText}
+      </div>
+    )
+  }
+  return (
+    <ul className="grid grid-cols-2 gap-3 sm:gap-4">
+      {items.map((preview) => (
+        <li key={preview.slug}>
+          <Link
+            to={`/${preview.slug}`}
+            className="group block h-full rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <Card className="h-full transition-colors group-hover:border-ring/60 group-hover:bg-accent/30">
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="space-y-1.5">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {preview.platform}
+                    </p>
+                    <CardTitle className="text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
+                      {preview.title}
+                    </CardTitle>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {preview.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="rounded-full text-[10px] font-normal text-muted-foreground"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <ArrowUpRight
+                  className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                  aria-hidden="true"
+                />
+              </CardHeader>
+            </Card>
+          </Link>
+        </li>
+      ))}
+    </ul>
   )
 }
