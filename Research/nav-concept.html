@@ -40,10 +40,10 @@
         --radius: 0.5rem;
       }
 
-      html,
-      body {
-        height: 100%;
-      }
+      /* Don't lock html/body to viewport height — that bounds the
+         sticky header to a single screen and breaks the sticky behavior
+         when content grows past the fold. The `min-h-screen` Tailwind
+         class on <body> already handles the empty-state case. */
       body {
         font-family:
           ui-sans-serif,
@@ -240,6 +240,33 @@
         }
       }
 
+      /* Customize-view edit mode. While active:
+         - Each card gets a dashed outline and a drag cursor.
+         - A grab handle appears in the top-right corner.
+         - The card being dragged dims; the drop target gets a stronger
+           outline so it's clear where it'll land. */
+      .dashboard-row--editing .dashboard-card {
+        cursor: grab;
+        outline: 2px dashed hsl(var(--foreground) / 0.4);
+        outline-offset: -2px;
+      }
+      .dashboard-row--editing .dashboard-card:active {
+        cursor: grabbing;
+      }
+      .dashboard-card .drag-handle {
+        display: none;
+      }
+      .dashboard-row--editing .dashboard-card .drag-handle {
+        display: inline-flex;
+      }
+      .dashboard-card.is-dragging {
+        opacity: 0.4;
+      }
+      .dashboard-card.is-drop-target {
+        outline: 2px solid hsl(var(--foreground));
+        outline-offset: -2px;
+      }
+
       /* Soft drop shadow used by the floating nav, matches shadcn `shadow-lg`
          but slightly lifted for the floating feel. */
       .floating-shadow {
@@ -366,6 +393,9 @@
         aria-hidden="false"
       >
         <div class="pointer-events-auto mx-auto w-full max-w-[1000px]">
+          <!-- Weather widget — shown by default; hidden when the page
+               breadcrumb scrolls offscreen so the mini breadcrumb can
+               take its place. -->
           <div
             id="weather"
             class="weather group relative mx-auto flex w-fit items-center"
@@ -387,6 +417,51 @@
               class="invisible absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-popover px-2.5 py-1 text-xs text-popover-foreground opacity-0 transition-opacity duration-150 floating-shadow group-hover:visible group-hover:opacity-100"
             >
               Raining at your location!
+            </div>
+          </div>
+
+          <!-- Mini breadcrumb — hidden by default. The script swaps it
+               in for the weather widget once the page breadcrumb has
+               scrolled past the top nav. Carries its own Recent visits
+               + Suggested popover, just like the page breadcrumb. -->
+          <div
+            id="mini-breadcrumb"
+            class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150"
+          >
+            <div id="mini-breadcrumb-root" class="relative inline-flex">
+              <button
+                id="mini-breadcrumb-trigger"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span>Home</span>
+                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
+              </button>
+
+              <div
+                id="mini-breadcrumb-popover"
+                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+              >
+                <div
+                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
+                >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Recent visits
+                  </p>
+                  <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
+
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Suggested by your role
+                  </p>
+                  <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -423,7 +498,7 @@
       <!-- Floating left nav -->
       <aside
         id="nav"
-        class="fixed left-6 top-[68px] z-20 w-44 rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        class="fixed left-6 top-[68px] z-20 w-max min-w-[11rem] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
         aria-label="Primary"
       >
         <!-- Search -->
@@ -665,15 +740,38 @@
             </div>
           </section>
 
+          <!-- Customize view — toggles drag-reorder mode for the
+               dashboard cards. Swaps to Done while editing. -->
+          <div class="mt-6 flex justify-end">
+            <button
+              type="button"
+              id="customize-view"
+              data-mode="idle"
+              class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              Customize view
+            </button>
+          </div>
+
           <!-- ── Action Items + Recent (side-by-side) ─────────────────
                Two-column dashboard row below the chat input. Each card
                uses the same border/radius/padding system as the rest of
                the page so they read as part of the same surface. -->
-          <section class="mt-12 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <section
+            id="dashboard-row"
+            class="mt-2 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2"
+          >
             <!-- Action Items ── mini to-do list -->
             <article
-              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="dashboard-card relative flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              draggable="false"
             >
+              <span
+                class="drag-handle pointer-events-none absolute right-3 top-3 inline-flex size-6 items-center justify-center rounded-md bg-background text-muted-foreground"
+                aria-hidden="true"
+              >
+                <i data-lucide="grip-vertical"></i>
+              </span>
               <header class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold tracking-tight">
                   Action Items
@@ -725,10 +823,17 @@
 
             <!-- Recent ── activity table -->
             <article
-              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="dashboard-card relative flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              draggable="false"
             >
+              <span
+                class="drag-handle pointer-events-none absolute right-3 top-3 inline-flex size-6 items-center justify-center rounded-md bg-background text-muted-foreground"
+                aria-hidden="true"
+              >
+                <i data-lucide="grip-vertical"></i>
+              </span>
               <header class="mb-4 flex items-center justify-between">
-                <h2 class="text-base font-semibold tracking-tight">My Recent</h2>
+                <h2 class="text-base font-semibold tracking-tight">Recent</h2>
               </header>
 
               <div class="mb-3 flex items-center justify-between gap-2">
@@ -828,6 +933,112 @@
                   class="flex items-center gap-1"
                 ></nav>
               </footer>
+            </article>
+          </section>
+
+          <!-- ── Delivery Teams (full width, no outer container) ────── -->
+          <section class="mt-10">
+            <header class="mb-3 flex items-center justify-between">
+              <h2 class="text-base font-semibold tracking-tight">
+                Delivery Teams
+              </h2>
+              <a
+                href="#"
+                class="text-xs font-medium text-foreground/80 hover:text-foreground"
+              >
+                View all
+              </a>
+            </header>
+            <ul
+              id="delivery-teams"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            ></ul>
+          </section>
+
+          <!-- ── Continue with Agents (full width, no outer container) -->
+          <section class="mt-10">
+            <header class="mb-3 flex items-center justify-between">
+              <h2 class="text-base font-semibold tracking-tight">
+                Continue with Agents
+              </h2>
+              <a
+                href="#"
+                class="text-xs font-medium text-foreground/80 hover:text-foreground"
+              >
+                View all
+              </a>
+            </header>
+            <ul
+              id="agents-list"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            ></ul>
+          </section>
+
+          <!-- ── Active Incidents & Alerts + Jira Tickets (side-by-side) -->
+          <section class="mt-10 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+            <article
+              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">
+                  Active Incidents & Alerts
+                </h2>
+              </header>
+              <ul id="incidents-list" class="flex flex-1 flex-col gap-2"></ul>
+            </article>
+
+            <!-- Jira Tickets ── In Progress -->
+            <article
+              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">
+                  Jira Tickets
+                </h2>
+                <a
+                  href="#"
+                  class="inline-flex items-center gap-1 text-xs font-medium text-foreground/80 underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  View All
+                  <i data-lucide="external-link"></i>
+                </a>
+              </header>
+
+              <div class="mb-3 flex items-center gap-2">
+                <div class="relative flex-1">
+                  <select
+                    id="jira-project"
+                    class="w-full appearance-none rounded-md border border-border bg-background bg-none px-3 py-1.5 pr-8 text-sm font-medium text-foreground outline-none focus:border-foreground/70"
+                  >
+                    <option>Decisions App</option>
+                    <option>AI Code Assistant</option>
+                    <option>Project Execution and Prioritization</option>
+                  </select>
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  ></i>
+                </div>
+                <div class="relative flex-1">
+                  <select
+                    id="jira-board"
+                    class="w-full appearance-none rounded-md border border-border bg-background bg-none px-3 py-1.5 pr-8 text-sm font-medium text-foreground outline-none focus:border-foreground/70"
+                  >
+                    <option>CX Sprint Board</option>
+                    <option>Backlog</option>
+                    <option>Done This Sprint</option>
+                  </select>
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  ></i>
+                </div>
+              </div>
+
+              <ul
+                id="jira-list"
+                class="flex flex-1 flex-col divide-y divide-border border-t border-border"
+              ></ul>
             </article>
           </section>
         </div>
@@ -1191,6 +1402,64 @@
       // Prototype placeholder — rainy at 72°F.
       setWeather("rain", 72);
 
+      // ── Mini breadcrumb on scroll ──────────────────────────────────
+      // When the page breadcrumb scrolls off-screen, swap the weather
+      // widget out for a compact breadcrumb chip in the top nav so the
+      // user always sees their current location.
+      (function () {
+        const pageBreadcrumb = document.getElementById("breadcrumb-root");
+        const weatherEl = document.getElementById("weather");
+        const miniEl = document.getElementById("mini-breadcrumb");
+        if (!pageBreadcrumb || !weatherEl || !miniEl) return;
+
+        // The page breadcrumb sits inside the scrolling page; the top
+        // nav is 44px tall. When the breadcrumb's bottom edge passes
+        // above the nav, we show the mini.
+        const NAV_HEIGHT = 44;
+        let showingMini = false;
+
+        function setShowingMini(next) {
+          if (next === showingMini) return;
+          showingMini = next;
+
+          if (next) {
+            // Reveal mini, hide weather.
+            miniEl.classList.remove("hidden");
+            miniEl.classList.add("flex");
+            // Force reflow so the opacity transition runs from 0 → 1.
+            void miniEl.offsetWidth;
+            miniEl.classList.remove("opacity-0");
+            weatherEl.classList.add("opacity-0");
+            // Drop weather from the layout after its fade completes.
+            setTimeout(() => {
+              if (showingMini) weatherEl.classList.add("hidden");
+            }, 150);
+          } else {
+            // Reveal weather, hide mini.
+            weatherEl.classList.remove("hidden");
+            void weatherEl.offsetWidth;
+            weatherEl.classList.remove("opacity-0");
+            miniEl.classList.add("opacity-0");
+            setTimeout(() => {
+              if (!showingMini) {
+                miniEl.classList.add("hidden");
+                miniEl.classList.remove("flex");
+              }
+            }, 150);
+          }
+        }
+
+        // Track via IntersectionObserver — fires when the breadcrumb
+        // crosses the top nav boundary. rootMargin's negative top equals
+        // the nav height, so the breadcrumb is considered "out" as soon
+        // as it slides under the nav.
+        const io = new IntersectionObserver(
+          ([entry]) => setShowingMini(!entry.isIntersecting),
+          { rootMargin: `-${NAV_HEIGHT}px 0px 0px 0px`, threshold: 0 }
+        );
+        io.observe(pageBreadcrumb);
+      })();
+
       // ── Nav search autocomplete ────────────────────────────────────
       // Suggestions are pulled from every submenu row (their label + the
       // parent menu's label for context). Renders an overlay below the
@@ -1299,8 +1568,8 @@
         { label: "Feature Flag", path: "Workbenches", when: "2d ago", href: "#" },
       ];
 
-      function renderSuggestions() {
-        const ul = document.getElementById("breadcrumb-suggestions");
+      function renderSuggestions(ul) {
+        if (!ul) return;
         ul.innerHTML = "";
         SUGGESTIONS.forEach((s) => {
           const li = document.createElement("li");
@@ -1316,8 +1585,8 @@
         });
       }
 
-      function renderHistory() {
-        const ul = document.getElementById("breadcrumb-history");
+      function renderHistory(ul) {
+        if (!ul) return;
         ul.innerHTML = "";
         HISTORY.forEach((h) => {
           const li = document.createElement("li");
@@ -1346,8 +1615,12 @@
         });
       }
 
-      renderSuggestions();
-      renderHistory();
+      // Populate both the page breadcrumb and the mini breadcrumb (which
+      // takes over the top nav when the page breadcrumb scrolls offscreen).
+      renderSuggestions(document.getElementById("breadcrumb-suggestions"));
+      renderHistory(document.getElementById("breadcrumb-history"));
+      renderSuggestions(document.getElementById("mini-breadcrumb-suggestions"));
+      renderHistory(document.getElementById("mini-breadcrumb-history"));
 
       // ── Action pills (Create / Manage) ─────────────────────────────
       // Both pills mirror the breadcrumb's Recent + Suggested pattern.
@@ -2248,6 +2521,554 @@
       applyTabState();
       renderRecent();
 
+      // ── Delivery Teams ─────────────────────────────────────────────
+      // Three placeholder teams the user belongs to. Each shows their
+      // function (role), member/asset counts, and any action-required
+      // badge.
+      const DELIVERY_TEAMS = [
+        {
+          name: "Decisions App",
+          fn: "Developer",
+          members: 12,
+          assets: 24,
+          actions: 3,
+        },
+        {
+          name: "AI Code Assistant",
+          fn: "Collaborator",
+          members: 8,
+          assets: 18,
+          actions: 0,
+        },
+        {
+          name: "Project Execution and Prioritization",
+          fn: "Leader",
+          members: 10,
+          assets: 31,
+          actions: 1,
+        },
+      ];
+
+      function renderDeliveryTeams() {
+        const ul = document.getElementById("delivery-teams");
+        if (!ul) return;
+        ul.innerHTML = "";
+        DELIVERY_TEAMS.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex flex-col rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-foreground/40";
+
+          const name = document.createElement("h3");
+          name.className = "text-base font-semibold tracking-tight";
+          name.textContent = t.name;
+          li.appendChild(name);
+
+          const fn = document.createElement("p");
+          fn.className = "mt-1 text-xs text-muted-foreground";
+          const fnLabel = document.createElement("span");
+          fnLabel.textContent = "Your Function: ";
+          const fnVal = document.createElement("span");
+          fnVal.className = "font-medium text-foreground";
+          fnVal.textContent = t.fn;
+          fn.append(fnLabel, fnVal);
+          li.appendChild(fn);
+
+          const stats = document.createElement("dl");
+          stats.className = "mt-4 grid grid-cols-2 gap-y-1 text-sm";
+          [
+            ["Members", t.members],
+            ["Assets", t.assets],
+          ].forEach(([label, val]) => {
+            const dt = document.createElement("dt");
+            dt.className = "text-muted-foreground";
+            dt.textContent = label;
+            const dd = document.createElement("dd");
+            dd.className = "text-right tabular-nums text-foreground";
+            dd.textContent = val;
+            stats.append(dt, dd);
+          });
+          li.appendChild(stats);
+
+          if (t.actions > 0) {
+            const actions = document.createElement("div");
+            actions.className =
+              "mt-3 flex items-center justify-between border-t border-border pt-3 text-sm";
+            const left = document.createElement("span");
+            left.className = "inline-flex items-center gap-1.5 text-foreground";
+            left.appendChild(iconEl("circle-alert", "text-foreground"));
+            const leftText = document.createElement("span");
+            leftText.textContent = "Action Required";
+            left.appendChild(leftText);
+            const count = document.createElement("span");
+            count.className =
+              "inline-flex size-5 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background";
+            count.textContent = t.actions;
+            actions.append(left, count);
+            li.appendChild(actions);
+          }
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderDeliveryTeams();
+
+      // ── Continue with Agents ───────────────────────────────────────
+      const AGENT_TASKS = [
+        {
+          name: "Code Review Agent",
+          desc: "Reviewed PR #4821 — 3 suggestions pending your approval",
+          status: "AWAITING REVIEW",
+          urgent: false,
+          when: "12m ago",
+        },
+        {
+          name: "CI/CD Agent",
+          desc: "Build pipeline optimized — deploy ready for staging",
+          status: "READY",
+          urgent: false,
+          when: "34m ago",
+        },
+        {
+          name: "Security Agent",
+          desc: "Dependency scan complete — 2 vulnerabilities flagged",
+          status: "ACTION NEEDED",
+          urgent: true,
+          when: "1h ago",
+        },
+        {
+          name: "Test Agent",
+          desc: "Generated 14 unit tests for auth-service module",
+          status: "COMPLETE",
+          urgent: false,
+          when: "2h ago",
+        },
+      ];
+
+      function renderAgents() {
+        const ul = document.getElementById("agents-list");
+        if (!ul) return;
+        ul.innerHTML = "";
+        // Show only the top 3 agents — the rest live behind "View all".
+        AGENT_TASKS.slice(0, 3).forEach((a) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex flex-col gap-2 rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground/40";
+
+          const top = document.createElement("div");
+          top.className = "flex items-start justify-between gap-2";
+          const name = document.createElement("h3");
+          name.className = "flex-1 text-sm font-semibold text-foreground";
+          name.textContent = a.name;
+          const when = document.createElement("span");
+          when.className = "shrink-0 text-xs text-muted-foreground";
+          when.textContent = a.when;
+          top.append(name, when);
+          li.appendChild(top);
+
+          const desc = document.createElement("p");
+          desc.className = "text-xs text-muted-foreground";
+          desc.textContent = a.desc;
+          li.appendChild(desc);
+
+          const footer = document.createElement("div");
+          footer.className = "mt-1 flex items-center justify-between";
+          const status = document.createElement("span");
+          status.className = a.urgent
+            ? "inline-flex items-center rounded-md bg-foreground px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-background"
+            : "inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground";
+          status.textContent = a.status;
+          footer.append(status);
+          li.appendChild(footer);
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderAgents();
+
+      // ── Active Incidents & Alerts ──────────────────────────────────
+      const INCIDENTS = [
+        {
+          title: "High latency in ML Model API",
+          service: "ML Model API",
+          severity: "high",
+          state: "investigating",
+          icon: "circle-alert",
+          when: "Reported: 15 min ago",
+        },
+        {
+          title: "Mobile Gateway connection issues",
+          service: "Mobile Gateway",
+          severity: "critical",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 45 min ago",
+        },
+        {
+          title: "Cache service intermittent failures",
+          service: "Cache Service",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 2 hours ago",
+        },
+      ];
+
+      const SEVERITY_STYLES = {
+        critical:
+          "inline-flex items-center rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold tracking-wide text-background",
+        high:
+          "inline-flex items-center rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-background",
+        medium:
+          "inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground",
+      };
+
+      function renderIncidents() {
+        const ul = document.getElementById("incidents-list");
+        if (!ul) return;
+        ul.innerHTML = "";
+        INCIDENTS.forEach((i) => {
+          const li = document.createElement("li");
+          li.className =
+            "rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground/40";
+
+          const top = document.createElement("div");
+          top.className = "flex items-start justify-between gap-2";
+
+          const left = document.createElement("div");
+          left.className = "flex items-start gap-2 min-w-0";
+          const iconWrap = document.createElement("span");
+          iconWrap.className = "mt-0.5 shrink-0 text-foreground";
+          iconWrap.appendChild(iconEl(i.icon));
+          const body = document.createElement("div");
+          body.className = "min-w-0";
+          const title = document.createElement("h3");
+          title.className = "text-sm font-semibold text-foreground";
+          title.textContent = i.title;
+          body.appendChild(title);
+          const tags = document.createElement("div");
+          tags.className = "mt-1 flex flex-wrap items-center gap-1.5";
+          const sev = document.createElement("span");
+          sev.className = SEVERITY_STYLES[i.severity];
+          sev.textContent = i.severity;
+          const state = document.createElement("span");
+          state.className =
+            "inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground";
+          state.textContent = i.state;
+          tags.append(sev, state);
+          body.appendChild(tags);
+          left.append(iconWrap, body);
+
+          const when = document.createElement("span");
+          when.className = "shrink-0 text-xs text-muted-foreground";
+          when.textContent = i.when;
+
+          top.append(left, when);
+          li.appendChild(top);
+
+          const svc = document.createElement("p");
+          svc.className = "mt-2 text-xs text-muted-foreground";
+          const svcLabel = document.createElement("span");
+          svcLabel.textContent = "Service: ";
+          const svcVal = document.createElement("span");
+          svcVal.className = "text-foreground";
+          svcVal.textContent = i.service;
+          svc.append(svcLabel, svcVal);
+          li.appendChild(svc);
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderIncidents();
+
+      // ── Jira Tickets ───────────────────────────────────────────────
+      // Per-project/board ticket lists. The user picks a project + board
+      // from the two selects; the list rerenders with that subset. Each
+      // row links out to the actual ticket.
+      const JIRA_TICKETS = {
+        "Decisions App": {
+          "CX Sprint Board": [
+            {
+              id: "CX-1234",
+              priority: "High",
+              title: "Implement new customer onboarding flow",
+              assignee: "Sarah Chen",
+            },
+            {
+              id: "CX-1235",
+              priority: "High",
+              title: "Fix payment processing bug",
+              assignee: "Michael Torres",
+            },
+            {
+              id: "CX-1236",
+              priority: "Medium",
+              title: "Update user profile UI components",
+              assignee: "Jessica Lee",
+            },
+            {
+              id: "CX-1237",
+              priority: "Medium",
+              title: "Add filter controls to decisions table",
+              assignee: "Will Wang",
+            },
+            {
+              id: "CX-1238",
+              priority: "Low",
+              title: "Polish copy on confirmation modal",
+              assignee: "Priya Patel",
+            },
+          ],
+          Backlog: [
+            {
+              id: "CX-1301",
+              priority: "Medium",
+              title: "Investigate slow rule evaluation in prod",
+              assignee: "Sarah Chen",
+            },
+            {
+              id: "CX-1302",
+              priority: "Low",
+              title: "Document new policy import format",
+              assignee: "Will Wang",
+            },
+          ],
+          "Done This Sprint": [
+            {
+              id: "CX-1199",
+              priority: "High",
+              title: "Migrate decisions service to new auth library",
+              assignee: "Michael Torres",
+            },
+          ],
+        },
+        "AI Code Assistant": {
+          "CX Sprint Board": [
+            {
+              id: "AI-220",
+              priority: "High",
+              title: "Add streaming responses to chat endpoint",
+              assignee: "Will Wang",
+            },
+            {
+              id: "AI-221",
+              priority: "Medium",
+              title: "Trim prompt cache when memory pressure is high",
+              assignee: "Jessica Lee",
+            },
+          ],
+          Backlog: [
+            {
+              id: "AI-260",
+              priority: "Medium",
+              title: "Investigate eval suite flakiness",
+              assignee: "Priya Patel",
+            },
+          ],
+          "Done This Sprint": [
+            {
+              id: "AI-180",
+              priority: "High",
+              title: "Ship new evaluation rubric editor",
+              assignee: "Sarah Chen",
+            },
+          ],
+        },
+        "Project Execution and Prioritization": {
+          "CX Sprint Board": [
+            {
+              id: "PEP-410",
+              priority: "High",
+              title: "Roll out new roadmap view to leadership",
+              assignee: "Michael Torres",
+            },
+          ],
+          Backlog: [
+            {
+              id: "PEP-455",
+              priority: "Low",
+              title: "Add filters to OKR dashboard",
+              assignee: "Will Wang",
+            },
+          ],
+          "Done This Sprint": [
+            {
+              id: "PEP-400",
+              priority: "Medium",
+              title: "Wire up Linear bidirectional sync",
+              assignee: "Jessica Lee",
+            },
+          ],
+        },
+      };
+
+      // Lightweight pill style keyed by priority. We keep colors muted
+      // (secondary fill, foreground text) so the chip reads as a tag,
+      // not a destructive badge.
+      const JIRA_PRIORITY_STYLES = {
+        High: "bg-secondary text-secondary-foreground",
+        Medium: "bg-secondary text-secondary-foreground",
+        Low: "bg-secondary text-secondary-foreground",
+      };
+
+      function renderJiraTickets() {
+        const project = document.getElementById("jira-project").value;
+        const board = document.getElementById("jira-board").value;
+        const ul = document.getElementById("jira-list");
+        if (!ul) return;
+        const tickets = (JIRA_TICKETS[project] || {})[board] || [];
+        ul.innerHTML = "";
+
+        if (tickets.length === 0) {
+          const empty = document.createElement("li");
+          empty.className =
+            "px-2 py-8 text-center text-xs text-muted-foreground";
+          empty.textContent = "No tickets on this board.";
+          ul.appendChild(empty);
+          return;
+        }
+
+        tickets.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-start justify-between gap-3 py-3 hover:bg-accent/40";
+
+          const body = document.createElement("div");
+          body.className = "min-w-0 flex-1";
+
+          const top = document.createElement("div");
+          top.className = "flex items-center gap-2";
+          const id = document.createElement("span");
+          id.className = "text-sm font-semibold text-foreground";
+          id.textContent = t.id;
+          const priority = document.createElement("span");
+          priority.className = `inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${
+            JIRA_PRIORITY_STYLES[t.priority] ||
+            "bg-secondary text-secondary-foreground"
+          }`;
+          priority.textContent = t.priority;
+          top.append(id, priority);
+          body.appendChild(top);
+
+          const title = document.createElement("p");
+          title.className = "mt-1 truncate text-sm text-foreground";
+          title.textContent = t.title;
+          body.appendChild(title);
+
+          const assignee = document.createElement("p");
+          assignee.className = "mt-0.5 text-xs text-muted-foreground";
+          const aLabel = document.createElement("span");
+          aLabel.textContent = "Assignee: ";
+          const aVal = document.createElement("span");
+          aVal.textContent = t.assignee;
+          assignee.append(aLabel, aVal);
+          body.appendChild(assignee);
+
+          li.appendChild(body);
+
+          const linkBtn = document.createElement("a");
+          linkBtn.href = "#";
+          linkBtn.setAttribute("aria-label", `Open ${t.id}`);
+          linkBtn.className =
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground";
+          linkBtn.appendChild(iconEl("external-link"));
+          li.appendChild(linkBtn);
+
+          ul.appendChild(li);
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      document.getElementById("jira-project").addEventListener("change", renderJiraTickets);
+      document.getElementById("jira-board").addEventListener("change", renderJiraTickets);
+      renderJiraTickets();
+
+      // ── Customize view: drag-to-reorder dashboard cards ────────────
+      // Clicking "Customize view" enters edit mode — each card gets a
+      // dashed outline + grab handle, and HTML5 drag-and-drop swaps the
+      // cards' DOM order on drop. Clicking "Done" exits the mode.
+      (function () {
+        const trigger = document.getElementById("customize-view");
+        const row = document.getElementById("dashboard-row");
+        if (!trigger || !row) return;
+
+        const cards = Array.from(row.querySelectorAll(".dashboard-card"));
+        let draggedCard = null;
+
+        function setMode(mode) {
+          trigger.dataset.mode = mode;
+          const editing = mode === "editing";
+          row.classList.toggle("dashboard-row--editing", editing);
+          trigger.textContent = editing ? "Done" : "Customize view";
+          trigger.classList.toggle("text-foreground", editing);
+          trigger.classList.toggle("text-muted-foreground", !editing);
+          cards.forEach((card) => {
+            card.draggable = editing;
+            if (!editing) card.classList.remove("is-dragging", "is-drop-target");
+          });
+        }
+
+        trigger.addEventListener("click", () => {
+          setMode(trigger.dataset.mode === "editing" ? "idle" : "editing");
+        });
+
+        cards.forEach((card) => {
+          card.addEventListener("dragstart", (e) => {
+            if (trigger.dataset.mode !== "editing") {
+              e.preventDefault();
+              return;
+            }
+            draggedCard = card;
+            card.classList.add("is-dragging");
+            // Required for Firefox; payload itself isn't used.
+            e.dataTransfer.setData("text/plain", "");
+            e.dataTransfer.effectAllowed = "move";
+          });
+
+          card.addEventListener("dragend", () => {
+            card.classList.remove("is-dragging");
+            cards.forEach((c) => c.classList.remove("is-drop-target"));
+            draggedCard = null;
+          });
+
+          card.addEventListener("dragover", (e) => {
+            if (!draggedCard || card === draggedCard) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            cards.forEach((c) =>
+              c === card
+                ? c.classList.add("is-drop-target")
+                : c.classList.remove("is-drop-target")
+            );
+          });
+
+          card.addEventListener("dragleave", (e) => {
+            // Only clear when the cursor actually leaves the card (not a
+            // child element).
+            if (!card.contains(e.relatedTarget)) {
+              card.classList.remove("is-drop-target");
+            }
+          });
+
+          card.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (!draggedCard || card === draggedCard) return;
+            // Insert the dragged card before or after the drop target
+            // based on which half the cursor is in. For a 2-card row this
+            // simplifies to a swap, but the math generalizes if more
+            // cards are added later.
+            const rect = card.getBoundingClientRect();
+            const isAfter = e.clientX > rect.left + rect.width / 2;
+            if (isAfter) card.after(draggedCard);
+            else card.before(draggedCard);
+            card.classList.remove("is-drop-target");
+          });
+        });
+      })();
+
       document.querySelectorAll(".action-pill").forEach((root) => {
         renderActionPill(root);
 
@@ -2280,37 +3101,59 @@
         });
       });
 
-      const bcRoot = document.getElementById("breadcrumb-root");
-      const bcTrigger = document.getElementById("breadcrumb-trigger");
-      const bcPopover = document.getElementById("breadcrumb-popover");
-      let bcOpenTimer = null;
-      let bcCloseTimer = null;
+      // Wire up both the page breadcrumb (in the main canvas) and the
+      // mini breadcrumb (in the top nav). They share identical
+      // interaction behavior — hover to open, click toggles, click
+      // outside or blur to close.
+      function wireBreadcrumb(rootId, triggerId, popoverId) {
+        const root = document.getElementById(rootId);
+        const trigger = document.getElementById(triggerId);
+        const popover = document.getElementById(popoverId);
+        if (!root || !trigger || !popover) return;
+        let closeTimer = null;
 
-      function openBreadcrumb() {
-        clearTimeout(bcCloseTimer);
-        bcPopover.classList.remove("invisible", "opacity-0");
-        bcPopover.classList.add("opacity-100");
-        bcTrigger.setAttribute("aria-expanded", "true");
+        function open() {
+          clearTimeout(closeTimer);
+          popover.classList.remove("invisible", "opacity-0");
+          popover.classList.add("opacity-100");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+        function close() {
+          popover.classList.add("opacity-0");
+          popover.classList.remove("opacity-100");
+          trigger.setAttribute("aria-expanded", "false");
+          // Wait for the transition before applying `invisible` so the
+          // hover region of the popover doesn't disappear mid-animation.
+          closeTimer = setTimeout(() => {
+            popover.classList.add("invisible");
+          }, 160);
+        }
+        root.addEventListener("mouseenter", open);
+        root.addEventListener("mouseleave", () => {
+          closeTimer = setTimeout(close, 80);
+        });
+        trigger.addEventListener("focus", open);
+        trigger.addEventListener("click", (e) => {
+          // Toggle for tap users + keyboard activation.
+          if (trigger.getAttribute("aria-expanded") === "true") close();
+          else open();
+          e.stopPropagation();
+        });
+        root.addEventListener("focusout", (e) => {
+          if (!root.contains(e.relatedTarget)) close();
+        });
+        // Click outside the root closes the popover.
+        document.addEventListener("click", (e) => {
+          if (!root.contains(e.target)) close();
+        });
       }
-      function closeBreadcrumb() {
-        bcPopover.classList.add("opacity-0");
-        bcPopover.classList.remove("opacity-100");
-        bcTrigger.setAttribute("aria-expanded", "false");
-        // Wait for the transition before applying `invisible` so the
-        // hover region of the popover doesn't disappear mid-animation.
-        bcCloseTimer = setTimeout(() => {
-          bcPopover.classList.add("invisible");
-        }, 160);
-      }
-      bcRoot.addEventListener("mouseenter", openBreadcrumb);
-      bcRoot.addEventListener("mouseleave", () => {
-        bcCloseTimer = setTimeout(closeBreadcrumb, 80);
-      });
-      bcTrigger.addEventListener("focus", openBreadcrumb);
-      bcRoot.addEventListener("focusout", (e) => {
-        // Close when focus leaves the entire root.
-        if (!bcRoot.contains(e.relatedTarget)) closeBreadcrumb();
-      });
+
+      wireBreadcrumb("breadcrumb-root", "breadcrumb-trigger", "breadcrumb-popover");
+      wireBreadcrumb(
+        "mini-breadcrumb-root",
+        "mini-breadcrumb-trigger",
+        "mini-breadcrumb-popover"
+      );
 
       // ── Dynamic greeting ───────────────────────────────────────────
       // Time-of-day greeting + first name. Defaults to "Will" so this
