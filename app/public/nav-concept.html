@@ -3207,10 +3207,12 @@
           closeTimer = setTimeout(close, 80);
         });
         trigger.addEventListener("focus", open);
+        // Click on the trigger just guarantees the popover is open — never
+        // toggle to close. (Hover already opens it via mouseenter, so a
+        // click-to-toggle would race with hover and require the user to
+        // click twice. mouseleave + outside-click are the close paths.)
         trigger.addEventListener("click", (e) => {
-          // Toggle for tap users + keyboard activation.
-          if (trigger.getAttribute("aria-expanded") === "true") close();
-          else open();
+          open();
           e.stopPropagation();
         });
         root.addEventListener("focusout", (e) => {
