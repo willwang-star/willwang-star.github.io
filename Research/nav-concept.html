@@ -985,6 +985,14 @@
                 </h2>
               </header>
               <ul id="incidents-list" class="flex flex-1 flex-col gap-2"></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="incidents-pagination"
+                  aria-label="Incidents pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
             </article>
 
             <!-- Jira Tickets ── In Progress -->
@@ -1039,6 +1047,14 @@
                 id="jira-list"
                 class="flex flex-1 flex-col divide-y divide-border border-t border-border"
               ></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="jira-pagination"
+                  aria-label="Jira pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
             </article>
           </section>
         </div>
@@ -2713,6 +2729,54 @@
           icon: "info",
           when: "Reported: 2 hours ago",
         },
+        {
+          title: "Auth service elevated 401 rate",
+          service: "Auth Service",
+          severity: "high",
+          state: "investigating",
+          icon: "circle-alert",
+          when: "Reported: 3 hours ago",
+        },
+        {
+          title: "Email delivery queue backlog growing",
+          service: "Notification Service",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 5 hours ago",
+        },
+        {
+          title: "Region us-west-2 increased error budget burn",
+          service: "Platform Infra",
+          severity: "high",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 6 hours ago",
+        },
+        {
+          title: "Search relevance regression in v3 ranker",
+          service: "Search Service",
+          severity: "medium",
+          state: "investigating",
+          icon: "info",
+          when: "Reported: 8 hours ago",
+        },
+        {
+          title: "Recommendations API timeouts under load",
+          service: "Recommendations",
+          severity: "critical",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 10 hours ago",
+        },
+        {
+          title: "Telemetry sampling drop in metrics-obs",
+          service: "Observability",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 12 hours ago",
+        },
       ];
 
       const SEVERITY_STYLES = {
@@ -2724,11 +2788,33 @@
           "inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground",
       };
 
+      const INCIDENTS_PAGE_SIZE = 3;
+      let incidentsPage = 0;
+
       function renderIncidents() {
         const ul = document.getElementById("incidents-list");
         if (!ul) return;
         ul.innerHTML = "";
-        INCIDENTS.forEach((i) => {
+
+        const totalPages = Math.max(
+          1,
+          Math.ceil(INCIDENTS.length / INCIDENTS_PAGE_SIZE)
+        );
+        if (incidentsPage >= totalPages) incidentsPage = totalPages - 1;
+        const start = incidentsPage * INCIDENTS_PAGE_SIZE;
+        const pageItems = INCIDENTS.slice(start, start + INCIDENTS_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("incidents-pagination"),
+          incidentsPage,
+          totalPages,
+          (next) => {
+            incidentsPage = next;
+            renderIncidents();
+          }
+        );
+
+        pageItems.forEach((i) => {
           const li = document.createElement("li");
           li.className =
             "rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground/40";
@@ -2790,116 +2876,80 @@
       const JIRA_TICKETS = {
         "Decisions App": {
           "CX Sprint Board": [
-            {
-              id: "CX-1234",
-              priority: "High",
-              title: "Implement new customer onboarding flow",
-              assignee: "Sarah Chen",
-            },
-            {
-              id: "CX-1235",
-              priority: "High",
-              title: "Fix payment processing bug",
-              assignee: "Michael Torres",
-            },
-            {
-              id: "CX-1236",
-              priority: "Medium",
-              title: "Update user profile UI components",
-              assignee: "Jessica Lee",
-            },
-            {
-              id: "CX-1237",
-              priority: "Medium",
-              title: "Add filter controls to decisions table",
-              assignee: "Will Wang",
-            },
-            {
-              id: "CX-1238",
-              priority: "Low",
-              title: "Polish copy on confirmation modal",
-              assignee: "Priya Patel",
-            },
+            { id: "CX-1234", priority: "High", title: "Implement new customer onboarding flow", assignee: "Sarah Chen" },
+            { id: "CX-1235", priority: "High", title: "Fix payment processing bug", assignee: "Michael Torres" },
+            { id: "CX-1236", priority: "Medium", title: "Update user profile UI components", assignee: "Jessica Lee" },
+            { id: "CX-1237", priority: "Medium", title: "Add filter controls to decisions table", assignee: "Will Wang" },
+            { id: "CX-1238", priority: "Low", title: "Polish copy on confirmation modal", assignee: "Priya Patel" },
+            { id: "CX-1239", priority: "Medium", title: "Add audit log export for compliance", assignee: "Sarah Chen" },
+            { id: "CX-1240", priority: "High", title: "Resolve race condition in rule cache invalidation", assignee: "Michael Torres" },
+            { id: "CX-1241", priority: "Low", title: "Refresh empty-state illustrations", assignee: "Jessica Lee" },
+            { id: "CX-1242", priority: "Medium", title: "Add bulk-edit action to policy list", assignee: "Will Wang" },
+            { id: "CX-1243", priority: "Medium", title: "Improve form validation messaging", assignee: "Priya Patel" },
           ],
           Backlog: [
-            {
-              id: "CX-1301",
-              priority: "Medium",
-              title: "Investigate slow rule evaluation in prod",
-              assignee: "Sarah Chen",
-            },
-            {
-              id: "CX-1302",
-              priority: "Low",
-              title: "Document new policy import format",
-              assignee: "Will Wang",
-            },
+            { id: "CX-1301", priority: "Medium", title: "Investigate slow rule evaluation in prod", assignee: "Sarah Chen" },
+            { id: "CX-1302", priority: "Low", title: "Document new policy import format", assignee: "Will Wang" },
+            { id: "CX-1303", priority: "Medium", title: "Audit unused feature flags in decisions", assignee: "Michael Torres" },
+            { id: "CX-1304", priority: "Low", title: "Add keyboard shortcuts to rule editor", assignee: "Jessica Lee" },
+            { id: "CX-1305", priority: "Medium", title: "Backfill missing audit events from Q1", assignee: "Priya Patel" },
+            { id: "CX-1306", priority: "Low", title: "Add tooltip explanations for advanced fields", assignee: "Will Wang" },
+            { id: "CX-1307", priority: "Medium", title: "Bench new rule evaluation engine", assignee: "Sarah Chen" },
           ],
           "Done This Sprint": [
-            {
-              id: "CX-1199",
-              priority: "High",
-              title: "Migrate decisions service to new auth library",
-              assignee: "Michael Torres",
-            },
+            { id: "CX-1199", priority: "High", title: "Migrate decisions service to new auth library", assignee: "Michael Torres" },
+            { id: "CX-1200", priority: "Medium", title: "Hook up new analytics dashboard", assignee: "Jessica Lee" },
+            { id: "CX-1201", priority: "Medium", title: "Add SSO support for partner accounts", assignee: "Will Wang" },
+            { id: "CX-1202", priority: "Low", title: "Bump dependencies to latest minor versions", assignee: "Sarah Chen" },
+            { id: "CX-1203", priority: "High", title: "Patch CVE-2026-4017 in policy parser", assignee: "Priya Patel" },
           ],
         },
         "AI Code Assistant": {
           "CX Sprint Board": [
-            {
-              id: "AI-220",
-              priority: "High",
-              title: "Add streaming responses to chat endpoint",
-              assignee: "Will Wang",
-            },
-            {
-              id: "AI-221",
-              priority: "Medium",
-              title: "Trim prompt cache when memory pressure is high",
-              assignee: "Jessica Lee",
-            },
+            { id: "AI-220", priority: "High", title: "Add streaming responses to chat endpoint", assignee: "Will Wang" },
+            { id: "AI-221", priority: "Medium", title: "Trim prompt cache when memory pressure is high", assignee: "Jessica Lee" },
+            { id: "AI-222", priority: "Medium", title: "Add structured logging to inference router", assignee: "Sarah Chen" },
+            { id: "AI-223", priority: "High", title: "Fix timeouts in evaluation worker", assignee: "Michael Torres" },
+            { id: "AI-224", priority: "Low", title: "Polish settings UI for prompt templates", assignee: "Priya Patel" },
+            { id: "AI-225", priority: "Medium", title: "Add cost summaries per workspace", assignee: "Will Wang" },
           ],
           Backlog: [
-            {
-              id: "AI-260",
-              priority: "Medium",
-              title: "Investigate eval suite flakiness",
-              assignee: "Priya Patel",
-            },
+            { id: "AI-260", priority: "Medium", title: "Investigate eval suite flakiness", assignee: "Priya Patel" },
+            { id: "AI-261", priority: "Low", title: "Add dark mode polish to chat UI", assignee: "Jessica Lee" },
+            { id: "AI-262", priority: "Medium", title: "Wire up evaluation rubric versioning", assignee: "Sarah Chen" },
+            { id: "AI-263", priority: "High", title: "Add red-team scenarios to safety suite", assignee: "Michael Torres" },
+            { id: "AI-264", priority: "Medium", title: "Document model deprecation policy", assignee: "Will Wang" },
           ],
           "Done This Sprint": [
-            {
-              id: "AI-180",
-              priority: "High",
-              title: "Ship new evaluation rubric editor",
-              assignee: "Sarah Chen",
-            },
+            { id: "AI-180", priority: "High", title: "Ship new evaluation rubric editor", assignee: "Sarah Chen" },
+            { id: "AI-181", priority: "Medium", title: "Add per-model cost reporting", assignee: "Will Wang" },
+            { id: "AI-182", priority: "Low", title: "Tidy up chat UI empty states", assignee: "Priya Patel" },
+            { id: "AI-183", priority: "Medium", title: "Migrate evaluation runner to k8s", assignee: "Michael Torres" },
+            { id: "AI-184", priority: "High", title: "Patch prompt injection regression", assignee: "Jessica Lee" },
           ],
         },
         "Project Execution and Prioritization": {
           "CX Sprint Board": [
-            {
-              id: "PEP-410",
-              priority: "High",
-              title: "Roll out new roadmap view to leadership",
-              assignee: "Michael Torres",
-            },
+            { id: "PEP-410", priority: "High", title: "Roll out new roadmap view to leadership", assignee: "Michael Torres" },
+            { id: "PEP-411", priority: "Medium", title: "Add OKR rollup view for VPs", assignee: "Sarah Chen" },
+            { id: "PEP-412", priority: "Medium", title: "Wire up Linear bidirectional sync", assignee: "Jessica Lee" },
+            { id: "PEP-413", priority: "Low", title: "Polish empty-state copy in roadmap", assignee: "Will Wang" },
+            { id: "PEP-414", priority: "High", title: "Add risk badges to roadmap items", assignee: "Priya Patel" },
+            { id: "PEP-415", priority: "Medium", title: "Add timeline view for milestones", assignee: "Michael Torres" },
           ],
           Backlog: [
-            {
-              id: "PEP-455",
-              priority: "Low",
-              title: "Add filters to OKR dashboard",
-              assignee: "Will Wang",
-            },
+            { id: "PEP-455", priority: "Low", title: "Add filters to OKR dashboard", assignee: "Will Wang" },
+            { id: "PEP-456", priority: "Medium", title: "Add Slack reminders for stale OKRs", assignee: "Jessica Lee" },
+            { id: "PEP-457", priority: "Medium", title: "Wire up Confluence export", assignee: "Sarah Chen" },
+            { id: "PEP-458", priority: "Low", title: "Add inline editing to roadmap rows", assignee: "Priya Patel" },
+            { id: "PEP-459", priority: "Medium", title: "Add team capacity overlay to roadmap", assignee: "Michael Torres" },
           ],
           "Done This Sprint": [
-            {
-              id: "PEP-400",
-              priority: "Medium",
-              title: "Wire up Linear bidirectional sync",
-              assignee: "Jessica Lee",
-            },
+            { id: "PEP-400", priority: "Medium", title: "Wire up Linear bidirectional sync", assignee: "Jessica Lee" },
+            { id: "PEP-401", priority: "High", title: "Ship roadmap export to PDF", assignee: "Will Wang" },
+            { id: "PEP-402", priority: "Medium", title: "Refresh empty-state illustrations", assignee: "Priya Patel" },
+            { id: "PEP-403", priority: "Low", title: "Add color presets for milestones", assignee: "Sarah Chen" },
+            { id: "PEP-404", priority: "Medium", title: "Migrate OKR data store to v2 schema", assignee: "Michael Torres" },
           ],
         },
       };
@@ -2913,6 +2963,9 @@
         Low: "bg-secondary text-secondary-foreground",
       };
 
+      const JIRA_PAGE_SIZE = 5;
+      let jiraPage = 0;
+
       function renderJiraTickets() {
         const project = document.getElementById("jira-project").value;
         const board = document.getElementById("jira-board").value;
@@ -2920,6 +2973,21 @@
         if (!ul) return;
         const tickets = (JIRA_TICKETS[project] || {})[board] || [];
         ul.innerHTML = "";
+
+        const totalPages = Math.max(1, Math.ceil(tickets.length / JIRA_PAGE_SIZE));
+        if (jiraPage >= totalPages) jiraPage = totalPages - 1;
+        const start = jiraPage * JIRA_PAGE_SIZE;
+        const pageItems = tickets.slice(start, start + JIRA_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("jira-pagination"),
+          jiraPage,
+          totalPages,
+          (next) => {
+            jiraPage = next;
+            renderJiraTickets();
+          }
+        );
 
         if (tickets.length === 0) {
           const empty = document.createElement("li");
@@ -2930,7 +2998,7 @@
           return;
         }
 
-        tickets.forEach((t) => {
+        pageItems.forEach((t) => {
           const li = document.createElement("li");
           li.className =
             "flex items-start justify-between gap-3 py-3 hover:bg-accent/40";
@@ -2982,8 +3050,14 @@
         if (window.lucide) window.lucide.createIcons();
       }
 
-      document.getElementById("jira-project").addEventListener("change", renderJiraTickets);
-      document.getElementById("jira-board").addEventListener("change", renderJiraTickets);
+      document.getElementById("jira-project").addEventListener("change", () => {
+        jiraPage = 0;
+        renderJiraTickets();
+      });
+      document.getElementById("jira-board").addEventListener("change", () => {
+        jiraPage = 0;
+        renderJiraTickets();
+      });
       renderJiraTickets();
 
       // ── Customize view: drag-to-reorder dashboard cards ────────────
