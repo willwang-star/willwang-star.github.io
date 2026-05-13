@@ -63,6 +63,15 @@ export const previews: Preview[] = [
     description:
       "Editable knowledge graph — add entities at any depth, assign relationships, watch the graph update live.",
   },
+  {
+    slug: "nav-concept",
+    platform: "Dev Portal",
+    title: "Nav Concept",
+    file: "",
+    tags: ["Prototype", "Dev Portal", "Navigation"],
+    description:
+      "Sandbox for exploring a new Dev Portal navigation pattern — left rail with section switching.",
+  },
 ]
 
 export function allTags(items: Preview[]): string[] {

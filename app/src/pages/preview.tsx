@@ -7,6 +7,7 @@ import { UserResearchPage } from "@/pages/previews/user-research"
 import { WorkshopPrepPage } from "@/pages/previews/workshop-prep"
 import { PdlcToolsResearchPage } from "@/pages/previews/pdlc-tools-research"
 import { GraphViewPage } from "@/pages/previews/graph-view"
+import { NavConceptPage } from "@/pages/previews/nav-concept"
 
 const previewComponents: Record<string, () => React.JSX.Element> = {
   "ai-workbench-onboarding": AiwOnboardingPage,
@@ -16,6 +17,7 @@ const previewComponents: Record<string, () => React.JSX.Element> = {
   "workshop-prep": WorkshopPrepPage,
   "prior-research": PdlcToolsResearchPage,
   "graph-view": GraphViewPage,
+  "nav-concept": NavConceptPage,
 }
 
 export function PreviewPage() {

@@ -13,7 +13,7 @@ import { initials, profile } from "@/lib/profile"
 const baseUrl = import.meta.env.BASE_URL
 
 // Slugs that belong on the Prototype tab. Everything else is a Doc.
-const PROTOTYPE_SLUGS = new Set<string>(["graph-view"])
+const PROTOTYPE_SLUGS = new Set<string>(["graph-view", "nav-concept"])
 
 function isPrototype(p: Preview): boolean {
   return PROTOTYPE_SLUGS.has(p.slug)
