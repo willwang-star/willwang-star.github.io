@@ -501,7 +501,7 @@
       <!-- Floating left nav -->
       <aside
         id="nav"
-        class="fixed left-6 top-[68px] z-20 w-max max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        class="fixed left-6 top-[68px] z-20 w-max min-w-[160px] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
         aria-label="Primary"
       >
         <!-- Search -->
@@ -1309,15 +1309,14 @@
             "group flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
           const label = document.createElement("span");
           label.textContent = item.label;
-          // `flex-1` pushes the chevron to the right edge of the row, so
-          // every submenu indicator lines up at the rail's right side.
-          // Minimum 8px between label and chevron via `gap-2` above.
-          label.className = "flex-1 text-left";
+          // Label hugs to its text; the rail's hover affordance signals
+          // when a row has a submenu instead of a visible chevron.
+          label.className = "text-left";
           trigger.appendChild(label);
-          if (hasChildren) {
-            trigger.appendChild(
-              iconEl("chevron-right", "shrink-0 text-muted-foreground")
-            );
+          if (item.href) {
+            trigger.addEventListener("click", () => {
+              window.location.href = item.href;
+            });
           }
           li.appendChild(trigger);
 
@@ -1562,22 +1561,65 @@
       })();
 
       // ── Nav search autocomplete ────────────────────────────────────
-      // Suggestions are pulled from every submenu row (their label + the
-      // parent menu's label for context). Renders an overlay below the
-      // search input while the user is typing.
-      const NAV_INDEX = MENU.flatMap((m) => {
-        // Top-level entries without children (Home, Teams) are themselves
-        // destinations — index them as their own row.
-        if (!Array.isArray(m.children) || m.children.length === 0) {
-          return [{ id: m.key, label: m.label, icon: m.icon, parent: m.label }];
-        }
-        return m.children.map((c) => ({
-          id: c.id,
-          label: c.label,
-          icon: c.icon,
-          parent: m.label,
-        }));
-      });
+      // Search indexes BOTH the current page's MENU and a shared list of
+      // every destination across the portal, so a search from any page
+      // surfaces results from anywhere (e.g. from the AI Workbench page
+      // you can find "Decisions App" or "Home").
+      //
+      // To keep the two pages in sync, the union of all destinations
+      // lives in GLOBAL_NAV_INDEX below. When you add a new sub-page,
+      // also add its entries here.
+      const GLOBAL_NAV_INDEX = [
+        // Dev Portal home menu
+        { id: "home", label: "Home", parent: "Dev Portal", href: "dev-portal.html" },
+        { id: "teams", label: "Teams", parent: "Dev Portal", href: "dev-portal.html" },
+        // Workbenches → individual surfaces
+        { id: "wb.agent", label: "Agent", parent: "Workbenches", href: "#" },
+        { id: "wb.ai-workbench", label: "AI Workbench", parent: "Workbenches", href: "ai-workbench.html" },
+        { id: "wb.api-explorer", label: "API Explorer", parent: "Workbenches", href: "#" },
+        { id: "wb.app-intelligence", label: "App Intelligence", parent: "Workbenches", href: "#" },
+        { id: "wb.cloud-ide", label: "Cloud IDE", parent: "Workbenches", href: "#" },
+        { id: "wb.cloud360", label: "Cloud360", parent: "Workbenches", href: "#" },
+        { id: "wb.code-assist", label: "Code Assist", parent: "Workbenches", href: "#" },
+        { id: "wb.data-discovery", label: "Data Discovery", parent: "Workbenches", href: "#" },
+        { id: "wb.decisions-app", label: "Decisions App", parent: "Workbenches", href: "#" },
+        { id: "wb.dev360", label: "Dev360", parent: "Workbenches", href: "#" },
+        { id: "wb.experiment-platform", label: "Experiment Platform", parent: "Workbenches", href: "#" },
+        { id: "wb.feature-flag", label: "Feature Flag", parent: "Workbenches", href: "#" },
+        { id: "wb.feature-store", label: "Feature Store", parent: "Workbenches", href: "#" },
+        { id: "wb.inference-hub", label: "Inference Hub", parent: "Workbenches", href: "#" },
+        { id: "wb.ixp", label: "IXP", parent: "Workbenches", href: "#" },
+        { id: "wb.mcp-marketplace", label: "MCP Marketplace", parent: "Workbenches", href: "#" },
+        { id: "wb.metrics-studio", label: "Metrics Studio", parent: "Workbenches", href: "#" },
+        { id: "wb.ml-workbench", label: "ML Workbench", parent: "Workbenches", href: "#" },
+        { id: "wb.query-editor", label: "Query Editor", parent: "Workbenches", href: "#" },
+        { id: "wb.scout", label: "Scout App", parent: "Workbenches", href: "#" },
+        { id: "wb.sip", label: "SIP", parent: "Workbenches", href: "#" },
+        // Explore
+        { id: "explore.api-docs", label: "API & Docs", parent: "Explore", href: "#" },
+        { id: "explore.tools", label: "Tools", parent: "Explore", href: "#" },
+        // More
+        { id: "more.docs", label: "Documentation", parent: "More", href: "#" },
+        { id: "more.support", label: "Support", parent: "More", href: "#" },
+        { id: "more.settings", label: "Settings", parent: "More", href: "#" },
+        { id: "more.feedback", label: "Send feedback", parent: "More", href: "#" },
+        // AI Workbench sub-page menu
+        { id: "aiw.model-discovery", label: "Model Discovery", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.md.leaderboard", label: "Leaderboard", parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.md.model-catalog", label: "Model Catalog", parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.md.llm-availability", label: "LLM Availability Tracker", parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.md.my-models", label: "My models", parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.skill-discovery", label: "Skill Discovery", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.prompt-playground", label: "Prompt Playground", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.my-projects", label: "My Projects", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.genai-use-cases", label: "GenAI Use Cases", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.operational-dashboards", label: "Operational Dashboards", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.leadership-dashboards", label: "Leadership Dashboards", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.feedback", label: "Feedback", parent: "AI Workbench", href: "ai-workbench.html" },
+        { id: "aiw.documentation-portal", label: "Documentation Portal", parent: "AI Workbench", href: "ai-workbench.html" },
+      ];
+
+      const NAV_INDEX = GLOBAL_NAV_INDEX;
 
       const navSearch = document.getElementById("nav-search");
       const navResults = document.getElementById("nav-search-results");
@@ -1620,6 +1662,13 @@
           labelWrap.append(label, parent);
           btn.appendChild(labelWrap);
           btn.addEventListener("click", () => {
+            // If the result points to a real page, navigate; otherwise
+            // (placeholder), just put the label in the search input and
+            // close the popover.
+            if (m.href && m.href !== "#") {
+              window.location.href = m.href;
+              return;
+            }
             navSearch.value = m.label;
             navResults.classList.add("hidden");
           });
@@ -1651,7 +1700,7 @@
       // (trigger + popover sit in the same wrapper so the small gap is
       // bridged by the pt-2 padding on the popover).
       const SUGGESTIONS = [
-        { label: "AI Workbench", icon: "sparkles", href: "#" },
+        { label: "AI Workbench", icon: "sparkles", href: "ai-workbench.html" },
         { label: "Data Discovery", icon: "database", href: "#" },
         { label: "Design Workbench", icon: "palette", href: "#" },
         { label: "Experiments", icon: "flask-conical", href: "#" },
