@@ -541,12 +541,12 @@
         </div>
 
         <!-- Back to Dev Portal — present on sub-pages so users can
-             always return to the main portal home in one click. Uses an
-             absolute path so it works whether the file is opened
-             locally, served from /, or deployed to a subpath. -->
+             always return to the main portal home in one click. Uses a
+             relative path so it works whether the file is opened
+             locally (file://) or served from a webserver. -->
         <div class="px-2">
           <a
-            href="/dev-portal.html"
+            href="dev-portal.html"
             class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:bg-accent"
           >
             <i data-lucide="arrow-left" class="shrink-0"></i>
@@ -1293,21 +1293,17 @@
             "group flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
           const label = document.createElement("span");
           label.textContent = item.label;
-          // No flex-1 — let the label hug its text so the chevron lands
-          // exactly `gap-3` (12px) after it, with no extra empty space.
-          label.className = "text-left";
+          // `flex-1` pushes the chevron all the way to the right edge of
+          // the row, so submenu indicators line up at the rail's right
+          // side instead of hugging the label text.
+          label.className = "flex-1 text-left";
           trigger.appendChild(label);
-          // Always reserve a chevron-sized slot on the right so rows
-          // align consistently — visible chevron only when the row has
-          // a submenu, invisible spacer otherwise.
-          trigger.appendChild(
-            iconEl(
-              "chevron-right",
-              hasChildren
-                ? "shrink-0 text-muted-foreground"
-                : "shrink-0 invisible"
-            )
-          );
+          // Visible chevron only for rows with a submenu.
+          if (hasChildren) {
+            trigger.appendChild(
+              iconEl("chevron-right", "shrink-0 text-muted-foreground")
+            );
+          }
           li.appendChild(trigger);
 
           // Submenu — only render for items with children. Anchored to the
