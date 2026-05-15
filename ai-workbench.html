@@ -453,6 +453,17 @@
                   <p
                     class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
                   >
+                    Path
+                  </p>
+                  <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
+                    <a href="dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
+                    <i data-lucide="chevron-right" class="text-muted-foreground"></i>
+                    <a href="ai-workbench.html" class="font-medium text-foreground hover:underline">AI Workbench</a>
+                  </div>
+
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
                     Recent visits
                   </p>
                   <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
@@ -603,6 +614,17 @@
                 <div
                   class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
                 >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Path
+                  </p>
+                  <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
+                    <a href="dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
+                    <i data-lucide="chevron-right" class="text-muted-foreground"></i>
+                    <a href="ai-workbench.html" class="font-medium text-foreground hover:underline">AI Workbench</a>
+                  </div>
+
                   <p
                     class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
                   >
@@ -1763,7 +1785,15 @@
         { id: "wb.cloud-ide", label: "Cloud IDE", parent: "Workbenches", href: "#" },
         { id: "wb.cloud360", label: "Cloud360", parent: "Workbenches", href: "#" },
         { id: "wb.code-assist", label: "Code Assist", parent: "Workbenches", href: "#" },
-        { id: "wb.data-discovery", label: "Data Discovery", parent: "Workbenches", href: "#" },
+        { id: "wb.data-discovery", label: "Data Discovery", parent: "Workbenches", href: "data-discovery.html" },
+        // Data Discovery sub-page menu
+        { id: "dd.data-catalog", label: "Data Catalog", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.data-map", label: "Data Map", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.feature-store", label: "Feature Store", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.redshift", label: "Redshift", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.executive-dashboards", label: "Executive Dashboards", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.data-marts", label: "Data Marts", parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "dd.search-tips", label: "Search Tips and Tricks", parent: "Data Discovery", href: "data-discovery.html" },
         { id: "wb.decisions-app", label: "Decisions App", parent: "Workbenches", href: "#" },
         { id: "wb.dev360", label: "Dev360", parent: "Workbenches", href: "#" },
         { id: "wb.experiment-platform", label: "Experiment Platform", parent: "Workbenches", href: "#" },
@@ -1883,7 +1913,7 @@
       // bridged by the pt-2 padding on the popover).
       const SUGGESTIONS = [
         { label: "AI Workbench", icon: "sparkles", href: "ai-workbench.html" },
-        { label: "Data Discovery", icon: "database", href: "#" },
+        { label: "Data Discovery", icon: "database", href: "data-discovery.html" },
         { label: "Design Workbench", icon: "palette", href: "#" },
         { label: "Experiments", icon: "flask-conical", href: "#" },
         { label: "Documentation", icon: "book-open", href: "#" },

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dev Portal</title>
+    <title>Data Discovery · Dev Portal</title>
 
     <!-- Tailwind via CDN so this single file is self-contained -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
@@ -439,7 +439,7 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <span>Home</span>
+                <span>Data Discovery</span>
                 <i data-lucide="chevron-down" class="text-muted-foreground"></i>
               </button>
 
@@ -450,6 +450,17 @@
                 <div
                   class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
                 >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Path
+                  </p>
+                  <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
+                    <a href="dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
+                    <i data-lucide="chevron-right" class="text-muted-foreground"></i>
+                    <a href="data-discovery.html" class="font-medium text-foreground hover:underline">Data Discovery</a>
+                  </div>
+
                   <p
                     class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
                   >
@@ -541,8 +552,18 @@
           </div>
         </div>
 
-        <!-- Menu -->
-        <nav id="menu" class="p-2" aria-label="Sections">
+        <!-- Back to Dev Portal — sits inside the same nav wrapper as
+             the menu list so it shares the `space-y-0.5` rhythm with
+             the rows below it (matching Home → Model Discovery's 2px
+             gap rather than nav padding). -->
+        <nav id="menu" class="px-2 pb-2" aria-label="Sections">
+          <a
+            href="dev-portal.html"
+            class="mb-0.5 flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:bg-accent"
+          >
+            <i data-lucide="arrow-left" class="shrink-0"></i>
+            <span class="whitespace-nowrap">Back to Dev Portal</span>
+          </a>
           <ul id="primary-menu" class="space-y-0.5"></ul>
 
           <!-- Pinned section, only renders when there's something pinned. -->
@@ -580,7 +601,7 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <span>Home</span>
+                <span>Data Discovery</span>
                 <i data-lucide="chevron-down" class="text-muted-foreground"></i>
               </button>
 
@@ -593,6 +614,17 @@
                 <div
                   class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
                 >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Path
+                  </p>
+                  <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
+                    <a href="dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
+                    <i data-lucide="chevron-right" class="text-muted-foreground"></i>
+                    <a href="data-discovery.html" class="font-medium text-foreground hover:underline">Data Discovery</a>
+                  </div>
+
                   <p
                     class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
                   >
@@ -776,25 +808,114 @@
             </div>
           </section>
 
-          <!-- Customize view — enters edit mode that lets the user drag
-               any section in the customize area to reorder it. -->
-          <div class="mt-6 flex justify-end">
-            <button
-              type="button"
-              id="customize-view"
-              data-mode="idle"
-              class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              Customize view
-            </button>
-          </div>
+          <!-- ── Data Discovery landing content ────────────────────────
+               Below the action pills are the Data Discovery specific
+               sections: a welcome card (with "Search Tips and Tricks"
+               link), a paginated callout carousel, and a Browse sources
+               grid covering Data Catalog + Data Map. -->
+          <section class="mt-12">
+            <div class="mb-4 flex items-center justify-end gap-3">
+              <a
+                href="#"
+                class="text-sm font-medium text-foreground/80 hover:text-foreground hover:underline"
+              >
+                Search Tips and Tricks
+              </a>
+            </div>
 
-          <!-- Customize area — every direct child <section> is a
-               reorderable block while edit mode is on. Uses flex-wrap so
-               half-width sections (Action Items, Recent, etc.) pair up
-               on lg screens and full-width sections (Delivery Teams,
-               Continue with Agents) span the whole row. -->
-          <div id="customize-area" class="mt-2 flex flex-wrap items-stretch gap-x-4 gap-y-10">
+            <!-- Featured callout — uses the same card chrome as the rest
+                 of the portal. Pagination dots below the card; left/right
+                 chevrons mirror the screenshot's carousel control. -->
+            <article class="rounded-xl border border-border bg-card p-6">
+              <div class="flex items-start justify-between gap-6">
+                <div class="flex-1">
+                  <span class="inline-flex items-center rounded-md bg-foreground px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-background">NEW</span>
+                  <h3 class="mt-3 text-lg font-semibold tracking-tight text-foreground">
+                    Find clean CDC attributes with Search 2.0 in DDE!
+                  </h3>
+                  <p class="mt-2 text-sm text-muted-foreground">
+                    Everything you need to know about CDC attributes with enhanced metadata — all in one place.
+                  </p>
+                  <p class="mt-2 text-sm text-muted-foreground">
+                    Start searching for CDC attributes by entering key words (<span class="font-semibold text-foreground">annual income</span>) or name (<span class="font-semibold text-foreground">annualIncome</span>) on the <a href="#" class="font-semibold text-foreground hover:underline">CDC Attributes</a> tab of search results.
+                  </p>
+                  <button
+                    type="button"
+                    class="mt-4 inline-flex items-center rounded-md border border-foreground bg-foreground px-3 py-1.5 text-xs font-medium text-background transition-colors hover:bg-foreground/85"
+                  >
+                    Watch demo
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Carousel pager -->
+            <div class="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <button
+                type="button"
+                aria-label="Previous"
+                class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <span class="size-1.5 rounded-full bg-foreground"></span>
+              <span class="size-1.5 rounded-full bg-border"></span>
+              <span class="size-1.5 rounded-full bg-border"></span>
+              <span class="size-1.5 rounded-full bg-border"></span>
+              <span class="size-1.5 rounded-full bg-border"></span>
+              <button
+                type="button"
+                aria-label="Next"
+                class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- Browse sources ─────────────────────────────────────────
+               Two columns: Data Catalog (3 source rows) on the left,
+               Data Map (1 source row) on the right. Source rows show
+               name + a short description. -->
+          <section class="mt-10">
+            <h2 class="mb-3 text-base font-semibold tracking-tight">Browse sources</h2>
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <article class="rounded-xl border border-border bg-card p-4 text-left">
+                <header class="mb-2 border-b border-border pb-2">
+                  <a href="#" class="text-sm font-semibold text-foreground hover:underline">Data Catalog</a>
+                </header>
+                <ul class="divide-y divide-border">
+                  <li class="flex items-baseline justify-between gap-4 py-2">
+                    <a href="#" class="text-sm font-medium text-foreground hover:underline">Feature Store</a>
+                    <span class="flex-1 text-right text-xs text-muted-foreground">Machine learning features registered through Feature…</span>
+                  </li>
+                  <li class="flex items-baseline justify-between gap-4 py-2">
+                    <a href="#" class="text-sm font-medium text-foreground hover:underline">Redshift</a>
+                    <span class="flex-1 text-right text-xs text-muted-foreground">Redshift schemas, tables, and columns</span>
+                  </li>
+                  <li class="flex items-baseline justify-between gap-4 py-2">
+                    <a href="#" class="text-sm font-medium text-foreground hover:underline">Executive Dashboards</a>
+                    <span class="flex-1 text-right text-xs text-muted-foreground">Qliksense dashboards</span>
+                  </li>
+                </ul>
+              </article>
+              <article class="rounded-xl border border-border bg-card p-4 text-left">
+                <header class="mb-2 border-b border-border pb-2">
+                  <a href="#" class="text-sm font-semibold text-foreground hover:underline">Data Map</a>
+                </header>
+                <ul class="divide-y divide-border">
+                  <li class="flex items-baseline justify-between gap-4 py-2">
+                    <a href="#" class="text-sm font-medium text-foreground hover:underline">Data Marts</a>
+                    <span class="flex-1 text-right text-xs text-muted-foreground">Data Marts</span>
+                  </li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <!-- Legacy customize-area kept hidden so the script reference
+               doesn't error out. -->
+          <div id="customize-area" class="hidden">
 
           <!-- ── Action Items (half-width) ──────────────────────────── -->
           <section
@@ -1144,44 +1265,39 @@
       // `children` is omitted for items that don't open a submenu (Home,
       // Teams). The renderer only shows the chevron + hover affordance when
       // a non-empty `children` array is present.
+      // Data Discovery scoped menu. Discover / Management / Explore /
+      // Resources each carry their own submenu of destinations.
+      //
+      // Convention for non-Dev-Portal pages: the menu opens with a
+      // non-interactive label row carrying the sub-page's name (in
+      // bold), followed by a plain "Home" row that links to that
+      // sub-page's landing view. The "Back to Dev Portal" link above
+      // it returns to the main portal home.
       const MENU = [
+        { key: "section-label", label: "Data Discovery", sectionLabel: true },
+        { key: "home", label: "Home", icon: "house", href: "data-discovery.html" },
         {
-          key: "home",
-          label: "Home",
-          icon: "house",
-        },
-        {
-          key: "teams",
-          label: "Teams",
-          icon: "users",
-        },
-        {
-          key: "workbenches",
-          label: "Workbenches",
-          icon: "layers",
+          key: "discover",
+          label: "Discover",
+          icon: "search",
           children: [
-            // Alphabetical, pulled from the reference image.
-            { id: "wb.agent", label: "Agent", icon: "bot" },
-            { id: "wb.ai-workbench", label: "AI Workbench", icon: "brain-circuit", href: "ai-workbench.html" },
-            { id: "wb.api-explorer", label: "API Explorer", icon: "globe" },
-            { id: "wb.app-intelligence", label: "App Intelligence", icon: "bar-chart-3" },
-            { id: "wb.cloud-ide", label: "Cloud IDE", icon: "code" },
-            { id: "wb.cloud360", label: "Cloud360", icon: "cloud" },
-            { id: "wb.code-assist", label: "Code Assist", icon: "code" },
-            { id: "wb.data-discovery", label: "Data Discovery", icon: "search", href: "data-discovery.html" },
-            { id: "wb.decisions-app", label: "Decisions App", icon: "file-text" },
-            { id: "wb.dev360", label: "Dev360", icon: "compass" },
-            { id: "wb.experiment-platform", label: "Experiment Platform", icon: "flask-conical" },
-            { id: "wb.feature-flag", label: "Feature Flag", icon: "flag" },
-            { id: "wb.feature-store", label: "Feature Store", icon: "layers" },
-            { id: "wb.inference-hub", label: "Inference Hub", icon: "cpu" },
-            { id: "wb.ixp", label: "IXP", icon: "layout-grid" },
-            { id: "wb.mcp-marketplace", label: "MCP Marketplace", icon: "store" },
-            { id: "wb.metrics-studio", label: "Metrics Studio", icon: "bar-chart-3" },
-            { id: "wb.ml-workbench", label: "ML Workbench", icon: "microscope" },
-            { id: "wb.query-editor", label: "Query Editor", icon: "database" },
-            { id: "wb.scout", label: "Scout App", icon: "search" },
-            { id: "wb.sip", label: "SIP", icon: "clipboard-list" },
+            { id: "dd.data-map", label: "Data Map" },
+            { id: "dd.data-lake", label: "Data Lake" },
+            { id: "dd.cdc-attributes", label: "CDC Attributes" },
+            { id: "dd.executive-dashboards", label: "Executive Dashboards" },
+            { id: "dd.feature-store", label: "Feature Store" },
+            { id: "dd.kafka-topics", label: "Kafka Topics" },
+          ],
+        },
+        {
+          key: "management",
+          label: "Management",
+          icon: "folder",
+          children: [
+            { id: "dd.my-data", label: "My Data" },
+            { id: "dd.sent-requests", label: "Sent Requests" },
+            { id: "dd.received-requests", label: "Received Requests" },
+            { id: "dd.my-collections", label: "My Collections" },
           ],
         },
         {
@@ -1189,19 +1305,23 @@
           label: "Explore",
           icon: "compass",
           children: [
-            { id: "explore.api-docs", label: "API & Docs", icon: "book-open" },
-            { id: "explore.tools", label: "Tools", icon: "wrench" },
+            { id: "dd.databricks-notebooks", label: "Databricks Notebooks" },
+            { id: "dd.databricks-sql", label: "Databricks SQL" },
+            { id: "dd.ai-workbench", label: "AI Workbench", href: "ai-workbench.html" },
+            { id: "dd.starburst", label: "Starburst" },
           ],
         },
         {
-          key: "more",
-          label: "More",
-          icon: "ellipsis",
+          key: "resources",
+          label: "Resources",
+          icon: "book-open",
           children: [
-            { id: "more.docs", label: "Documentation", icon: "book-open" },
-            { id: "more.support", label: "Support", icon: "life-buoy" },
-            { id: "more.settings", label: "Settings", icon: "settings" },
-            { id: "more.feedback", label: "Send feedback", icon: "message-square" },
+            { id: "dd.dde-walkthroughs", label: "DDE Walkthroughs" },
+            { id: "dd.data-discovery-docs", label: "Data Discovery Docs" },
+            { id: "dd.data-exploration-docs", label: "Data Exploration Docs" },
+            { id: "dd.slack-support", label: "Slack Support Channels" },
+            { id: "dd.data-observability", label: "Data Observability" },
+            { id: "dd.have-feedback", label: "Have Feedback?" },
           ],
         },
       ];
@@ -1296,6 +1416,26 @@
         ul.innerHTML = "";
 
         MENU.forEach((item) => {
+          // Spacer between groups — renders as a hairline rule.
+          if (item.divider) {
+            const sep = document.createElement("li");
+            sep.className = "my-2 border-t border-border";
+            sep.setAttribute("aria-hidden", "true");
+            ul.appendChild(sep);
+            return;
+          }
+
+          // Non-interactive section label (e.g. the page's own name at
+          // the top of the menu on non-Dev-Portal pages).
+          if (item.sectionLabel) {
+            const labelLi = document.createElement("li");
+            labelLi.className =
+              "px-2.5 py-2 text-sm font-semibold text-foreground";
+            labelLi.textContent = item.label;
+            ul.appendChild(labelLi);
+            return;
+          }
+
           const li = document.createElement("li");
           li.className = "nav-item relative";
 
@@ -1561,14 +1701,11 @@
       })();
 
       // ── Nav search autocomplete ────────────────────────────────────
-      // Search indexes BOTH the current page's MENU and a shared list of
-      // every destination across the portal, so a search from any page
-      // surfaces results from anywhere (e.g. from the AI Workbench page
-      // you can find "Decisions App" or "Home").
+      // Search indexes a shared list of every destination across the
+      // portal, so from this AI Workbench page you can still find e.g.
+      // "Decisions App" or "Home" on the main Dev Portal.
       //
-      // To keep the two pages in sync, the union of all destinations
-      // lives in GLOBAL_NAV_INDEX below. When you add a new sub-page,
-      // also add its entries here.
+      // Keep this list in sync with dev-portal.html's GLOBAL_NAV_INDEX.
       const GLOBAL_NAV_INDEX = [
         // Dev Portal home menu
         { id: "home", label: "Home", parent: "Dev Portal", href: "dev-portal.html" },
