@@ -501,7 +501,7 @@
       <!-- Floating left nav -->
       <aside
         id="nav"
-        class="fixed left-6 top-[68px] z-20 w-max min-w-[9rem] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        class="fixed left-6 top-[68px] z-20 w-max max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
         aria-label="Primary"
       >
         <!-- Search -->
@@ -1290,12 +1290,12 @@
           const trigger = document.createElement("button");
           trigger.type = "button";
           trigger.className =
-            "group flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
+            "group flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
           const label = document.createElement("span");
           label.textContent = item.label;
-          // `flex-1` pushes the chevron all the way to the right edge of
-          // the row, so submenu indicators line up at the rail's right
-          // side instead of hugging the label text.
+          // `flex-1` pushes the chevron to the right edge of the row, so
+          // every submenu indicator lines up at the rail's right side.
+          // Minimum 8px between label and chevron via `gap-2` above.
           label.className = "flex-1 text-left";
           trigger.appendChild(label);
           // Visible chevron only for rows with a submenu.
@@ -1343,8 +1343,10 @@
 
       function renderSubmenuRow(child) {
         const row = document.createElement("li");
+        // gap-2 (8px) minimum gap between label and pin; `flex-1` on the
+        // label pushes the pin to the panel's right edge.
         row.className =
-          "submenu-row flex items-center gap-3 whitespace-nowrap rounded-md px-2 py-1.5 text-sm hover:bg-accent";
+          "submenu-row flex items-center gap-2 whitespace-nowrap rounded-md px-2 py-1.5 text-sm hover:bg-accent";
 
         const labelBtn = document.createElement("button");
         labelBtn.type = "button";
