@@ -1228,10 +1228,18 @@
       }
 
       function findChildById(id) {
+        // First check this page's MENU.
         for (const item of MENU) {
           if (!Array.isArray(item.children)) continue;
           const found = item.children.find((c) => c.id === id);
           if (found) return found;
+        }
+        // Pinned items can come from any page in the portal, so fall
+        // back to GLOBAL_NAV_INDEX (declared later in the script) so
+        // pins survive cross-page navigation.
+        if (typeof GLOBAL_NAV_INDEX !== "undefined") {
+          const found = GLOBAL_NAV_INDEX.find((e) => e.id === id);
+          if (found) return { id: found.id, label: found.label, href: found.href };
         }
         return null;
       }
@@ -1422,6 +1430,14 @@
           const span = document.createElement("span");
           span.textContent = child.label;
           labelBtn.appendChild(span);
+          // Pinned entries from other pages may carry an href — clicking
+          // the label navigates there. Placeholder hrefs ("#") are
+          // skipped.
+          if (child.href && child.href !== "#") {
+            labelBtn.addEventListener("click", () => {
+              window.location.href = child.href;
+            });
+          }
           li.appendChild(labelBtn);
 
           const unpinBtn = document.createElement("button");
