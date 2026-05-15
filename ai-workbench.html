@@ -1,0 +1,3403 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Workbench · Dev Portal</title>
+
+    <!-- Tailwind via CDN so this single file is self-contained -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+    <!-- Lucide icons (used elsewhere in the portal) -->
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+    <!-- shadcn/ui tokens — copied from the portal's globals.css.
+         These map the shadcn semantic names (background, foreground, muted,
+         primary, etc.) to HSL values for the light theme. Tailwind colors
+         like `bg-background` and `text-muted-foreground` resolve through
+         them via the inline config below. -->
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --radius: 0.5rem;
+      }
+
+      /* Don't lock html/body to viewport height — that bounds the
+         sticky header to a single screen and breaks the sticky behavior
+         when content grows past the fold. The `min-h-screen` Tailwind
+         class on <body> already handles the empty-state case. */
+      body {
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+      }
+
+      /* Make Lucide icons inherit currentColor and size cleanly. */
+      [data-lucide] {
+        width: 1rem;
+        height: 1rem;
+        stroke-width: 1.75;
+      }
+
+      /* The hover bridge: when hovering a menu item OR its submenu, both stay open. */
+      .nav-item:hover > .submenu,
+      .nav-item:focus-within > .submenu {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+      .submenu {
+        opacity: 0;
+        transform: translateX(-4px);
+        transition:
+          opacity 120ms ease,
+          transform 120ms ease;
+        pointer-events: none;
+      }
+
+      /* Pin icon visibility — appears on submenu row hover. */
+      .submenu-row .pin-btn {
+        opacity: 0;
+        transition: opacity 100ms ease;
+      }
+      .submenu-row:hover .pin-btn,
+      .submenu-row:focus-within .pin-btn {
+        opacity: 1;
+      }
+
+      /* Normalize <input type="search"> so the macOS UA doesn't paint its
+         own rounded corners / inset shadow on top of our Tailwind border. */
+      input[type="search"] {
+        appearance: none;
+        -webkit-appearance: none;
+        box-shadow: none;
+      }
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration {
+        display: none;
+      }
+
+      /* Marquee-on-hover: a single-line label that truncates by default
+         and scrolls left on hover *only when its content overflows*. We
+         set `--scroll` from JS based on the measured overflow width so
+         the animation distance is exact for each row. The transition
+         duration is proportional to that distance, so longer titles
+         scroll at a steady rate instead of finishing too fast. */
+      .marquee {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .marquee .marquee-track {
+        display: inline-block;
+        max-width: 100%;
+        transition: transform var(--scroll-duration, 0s) linear;
+      }
+      .marquee[data-overflow="true"]:hover .marquee-track,
+      .marquee[data-overflow="true"]:focus-within .marquee-track {
+        transform: translateX(var(--scroll, 0px));
+      }
+
+      /* ──────────────────────────────────────────────────────────────
+         Weather widget (top nav, centered)
+         Pure ASCII glyphs with soothing keyframe animations. Three
+         distinct conditions: sunny, cloudy, rain. The widget reserves
+         100px total width with the temperature locked in the center;
+         the condition art floats on either side and animates softly. */
+      .weather {
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+      .weather-side {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: hsl(var(--muted-foreground));
+        white-space: pre;
+      }
+
+      /* Sunny — radiating glyphs that gently breathe in/out. */
+      .weather--sunny .weather-side {
+        animation: weather-sun 4s ease-in-out infinite;
+      }
+      .weather--sunny .weather-side.right {
+        animation-delay: 0.4s;
+      }
+      @keyframes weather-sun {
+        0%,
+        100% {
+          opacity: 0.55;
+          transform: translateX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-2px);
+        }
+      }
+      .weather--sunny .weather-side.right {
+        animation-name: weather-sun-right;
+      }
+      @keyframes weather-sun-right {
+        0%,
+        100% {
+          opacity: 0.55;
+          transform: translateX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(2px);
+        }
+      }
+
+      /* Cloudy — clouds drifting left to right and back. */
+      .weather--cloudy .weather-side {
+        animation: weather-cloud 6s ease-in-out infinite;
+      }
+      .weather--cloudy .weather-side.right {
+        animation-delay: 1.5s;
+      }
+      @keyframes weather-cloud {
+        0%,
+        100% {
+          transform: translateX(-4px);
+          opacity: 0.65;
+        }
+        50% {
+          transform: translateX(4px);
+          opacity: 1;
+        }
+      }
+
+      /* Rain — multiple staggered droplets falling per side. Each side
+         is a positioning anchor; .drop spans inside it loop vertically
+         with offset delays so the shower reads as a steady downpour. */
+      .weather--rain .weather-side {
+        position: relative;
+        display: inline-block;
+        width: 28px;
+        height: 14px;
+        overflow: hidden;
+      }
+      .weather--rain .drop {
+        position: absolute;
+        top: -8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11px;
+        line-height: 1;
+        color: hsl(var(--muted-foreground));
+        animation: weather-rain-fall 1.2s linear infinite;
+      }
+      @keyframes weather-rain-fall {
+        0% {
+          transform: translateY(-2px);
+          opacity: 0;
+        }
+        15% {
+          opacity: 1;
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(18px);
+          opacity: 0;
+        }
+      }
+
+      /* Respect reduced-motion preferences. */
+      @media (prefers-reduced-motion: reduce) {
+        .weather-side {
+          animation: none !important;
+          opacity: 0.8;
+          transform: none !important;
+        }
+      }
+
+      /* Customize-view edit mode. While active:
+         - Every section in the customize area gets a dashed outline
+           and a grab cursor.
+         - A grab handle chip appears at the top-right of each section.
+         - The section being dragged dims; the section the cursor is
+           over picks up a solid outline so the drop target is clear. */
+      .customize-area--editing .customize-section {
+        position: relative;
+        cursor: grab;
+        outline: 2px dashed hsl(var(--foreground) / 0.35);
+        outline-offset: 4px;
+        border-radius: 0.75rem;
+      }
+      .customize-area--editing .customize-section:active {
+        cursor: grabbing;
+      }
+      .customize-section .section-drag-handle {
+        display: none;
+      }
+      .customize-area--editing .customize-section .section-drag-handle {
+        display: inline-flex;
+      }
+      .customize-section.is-dragging {
+        opacity: 0.4;
+      }
+      .customize-section.is-drop-target {
+        outline: 2px solid hsl(var(--foreground));
+        outline-offset: 4px;
+      }
+
+      /* Soft drop shadow used by the floating nav, matches shadcn `shadow-lg`
+         but slightly lifted for the floating feel. */
+      .floating-shadow {
+        box-shadow:
+          0 1px 2px 0 rgb(0 0 0 / 0.04),
+          0 8px 24px -4px rgb(0 0 0 / 0.08);
+      }
+
+      /* Rolling placeholder. The native <textarea> placeholder doesn't
+         animate, so we render our own overlay positioned exactly where
+         the placeholder would sit, hide it once the user types, and
+         animate it between values with an ease-in-out roll. */
+      .placeholder-roll {
+        position: absolute;
+        left: 0.5rem; /* matches px-1 + form padding */
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: hsl(var(--muted-foreground));
+        font-size: 0.875rem; /* text-sm */
+        line-height: 1.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: calc(100% - 1rem);
+      }
+      .placeholder-roll .roll-track {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+      .placeholder-roll .roll-out {
+        animation: roll-out 360ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+      }
+      .placeholder-roll .roll-in {
+        animation: roll-in 360ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+      }
+      @keyframes roll-out {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-110%);
+          opacity: 0;
+        }
+      }
+      @keyframes roll-in {
+        0% {
+          transform: translateY(110%);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+
+    <script>
+      // Map shadcn semantic tokens onto Tailwind utility classes
+      // (mirrors the `tailwind.config.ts` from the real app).
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              border: "hsl(var(--border))",
+              input: "hsl(var(--input))",
+              ring: "hsl(var(--ring))",
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              primary: {
+                DEFAULT: "hsl(var(--primary))",
+                foreground: "hsl(var(--primary-foreground))",
+              },
+              secondary: {
+                DEFAULT: "hsl(var(--secondary))",
+                foreground: "hsl(var(--secondary-foreground))",
+              },
+              muted: {
+                DEFAULT: "hsl(var(--muted))",
+                foreground: "hsl(var(--muted-foreground))",
+              },
+              accent: {
+                DEFAULT: "hsl(var(--accent))",
+                foreground: "hsl(var(--accent-foreground))",
+              },
+              card: {
+                DEFAULT: "hsl(var(--card))",
+                foreground: "hsl(var(--card-foreground))",
+              },
+              popover: {
+                DEFAULT: "hsl(var(--popover))",
+                foreground: "hsl(var(--popover-foreground))",
+              },
+            },
+            borderRadius: {
+              lg: "var(--radius)",
+              md: "calc(var(--radius) - 2px)",
+              sm: "calc(var(--radius) - 4px)",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <!-- ────────────────────────────────────────────────────────────────────
+         Top nav
+         ──────────────────────────────────────────────────────────────── -->
+    <header
+      class="sticky top-0 z-30 flex h-11 items-center justify-between gap-4 border-b border-border bg-background/85 px-6 backdrop-blur"
+    >
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold tracking-tight">Dev Portal</span>
+      </div>
+
+      <!-- Weather widget — horizontally centered above the breadcrumb.
+           The breadcrumb lives inside `main`'s content envelope:
+           pl-[240px] + pr-10 + max-w-[1000px] mx-auto. We mirror that
+           same envelope here with absolute positioning so the widget
+           sits on the same vertical centerline as the breadcrumb. -->
+      <div
+        class="pointer-events-none absolute inset-0 flex items-center pl-[240px] pr-10"
+        aria-hidden="false"
+      >
+        <div class="pointer-events-auto mx-auto w-full max-w-[1000px]">
+          <!-- Weather widget — shown by default; hidden when the page
+               breadcrumb scrolls offscreen so the mini breadcrumb can
+               take its place. -->
+          <div
+            id="weather"
+            class="weather group relative mx-auto flex w-fit items-center"
+            aria-label="Current weather"
+          >
+            <span class="weather-side left" aria-hidden="true"></span>
+            <span
+              id="weather-temp"
+              class="mx-2 text-xs font-medium tabular-nums text-foreground"
+            >
+              —
+            </span>
+            <span class="weather-side right" aria-hidden="true"></span>
+
+            <!-- Hover tooltip — content is set per condition by setWeather. -->
+            <div
+              id="weather-tooltip"
+              role="tooltip"
+              class="invisible absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-popover px-2.5 py-1 text-xs text-popover-foreground opacity-0 transition-opacity duration-150 floating-shadow group-hover:visible group-hover:opacity-100"
+            >
+              Raining at your location!
+            </div>
+          </div>
+
+          <!-- Mini breadcrumb — hidden by default. The script swaps it
+               in for the weather widget once the page breadcrumb has
+               scrolled past the top nav. Carries its own Recent visits
+               + Suggested popover, just like the page breadcrumb. -->
+          <div
+            id="mini-breadcrumb"
+            class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150"
+          >
+            <div id="mini-breadcrumb-root" class="relative inline-flex">
+              <button
+                id="mini-breadcrumb-trigger"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span>AI Workbench</span>
+                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
+              </button>
+
+              <div
+                id="mini-breadcrumb-popover"
+                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+              >
+                <div
+                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
+                >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Recent visits
+                  </p>
+                  <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
+
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Suggested by your role
+                  </p>
+                  <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          aria-label="Notifications"
+        >
+          <i data-lucide="bell"></i>
+        </button>
+        <button
+          type="button"
+          class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          aria-label="Profile"
+        >
+          <span
+            class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground"
+          >
+            WW
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ────────────────────────────────────────────────────────────────────
+         Page layout
+         The floating nav sits absolutely at left: 24px, the main content
+         flows in its own column with left padding that clears the nav.
+         ──────────────────────────────────────────────────────────────── -->
+    <div class="relative">
+      <!-- Floating left nav -->
+      <aside
+        id="nav"
+        class="fixed left-6 top-[68px] z-20 w-max min-w-[9rem] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        aria-label="Primary"
+      >
+        <!-- Search -->
+        <div class="relative p-2">
+          <label
+            id="nav-search-wrap"
+            class="relative flex h-9 w-full items-center rounded-md border border-border bg-background transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+          >
+            <span class="sr-only">Go to</span>
+            <i
+              data-lucide="search"
+              class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+            ></i>
+            <input
+              id="nav-search"
+              type="search"
+              placeholder="Go to"
+              autocomplete="off"
+              class="h-full w-full rounded-md border-0 bg-transparent py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-muted-foreground focus:ring-0"
+            />
+          </label>
+          <!-- Suggestion popover sits just below the input, anchored to the
+               nav's left padding. Hidden by default; the script toggles
+               .hidden based on the input value. -->
+          <div
+            id="nav-search-results"
+            class="absolute left-2 top-[calc(100%-0.25rem)] z-30 hidden max-h-72 w-max max-w-[80vw] overflow-auto whitespace-nowrap rounded-lg border border-border bg-popover text-popover-foreground p-1 floating-shadow"
+          >
+            <ul id="nav-search-list" class="space-y-0.5"></ul>
+            <div
+              id="nav-search-empty"
+              class="hidden px-3 py-2 text-xs text-muted-foreground"
+            >
+              No matches
+            </div>
+          </div>
+        </div>
+
+        <!-- Back to Dev Portal — present on sub-pages so users can
+             always return to the main portal home in one click. Uses an
+             absolute path so it works whether the file is opened
+             locally, served from /, or deployed to a subpath. -->
+        <div class="px-2">
+          <a
+            href="/dev-portal.html"
+            class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:bg-accent"
+          >
+            <i data-lucide="arrow-left" class="shrink-0"></i>
+            <span class="whitespace-nowrap">Back to Dev Portal</span>
+          </a>
+        </div>
+
+        <!-- Menu -->
+        <nav id="menu" class="p-2" aria-label="Sections">
+          <ul id="primary-menu" class="space-y-0.5"></ul>
+
+          <!-- Pinned section, only renders when there's something pinned. -->
+          <div id="pinned-section" class="hidden">
+            <div
+              class="my-2 flex items-center gap-2 border-t border-border px-2 pt-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+            >
+              <span>Pinned menu</span>
+            </div>
+            <ul id="pinned-list" class="space-y-0.5"></ul>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main canvas — symmetrical horizontal gaps on a 4px scale.
+           Left nav occupies left-6 (24px) + w-44 (176px) = 200px. We pad
+           the main column to clear the nav and then add the same 40px gap
+           on both sides so the inner content card sits with equal
+           breathing room. pt-6 (24px) aligns the breadcrumb's top with
+           the floating nav; pb-16 (64px) leaves room before page content
+           starts to feel cramped against the viewport bottom. -->
+      <main class="pb-16 pt-6 pl-[240px] pr-10">
+        <div class="mx-auto w-full max-w-[1000px]">
+          <!-- ── Smart breadcrumb ────────────────────────────────────────
+               Hover the current-page chip to reveal suggested destinations
+               as clickable pills. The whole group (trigger + popover) is
+               wrapped in a single hover region so the popover stays open
+               while the cursor crosses the small gap. -->
+          <nav aria-label="Breadcrumb" class="mb-6 flex justify-center">
+            <div id="breadcrumb-root" class="relative inline-flex">
+              <button
+                id="breadcrumb-trigger"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span>AI Workbench</span>
+                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
+              </button>
+
+              <!-- Floating popover — bridged with pt-2 so the hover doesn't
+                   drop when the cursor crosses the small gap. -->
+              <div
+                id="breadcrumb-popover"
+                class="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-0 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+              >
+                <div
+                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
+                >
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Recent visits
+                  </p>
+                  <ul id="breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
+
+                  <p
+                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    Suggested by your role
+                  </p>
+                  <ul id="breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          <!-- ── Greeting + ask input ────────────────────────────────── -->
+          <section class="text-center">
+            <h1
+              id="greeting"
+              class="mb-6 text-3xl font-semibold tracking-tight sm:text-4xl"
+            ></h1>
+
+            <form
+              id="ask-form"
+              class="mx-auto w-full max-w-[640px] rounded-2xl border border-border bg-card p-3 text-left transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+              autocomplete="off"
+            >
+              <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
+              <div class="relative">
+                <textarea
+                  id="ask-input"
+                  rows="1"
+                  class="block w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"
+                ></textarea>
+                <!-- Custom rolling placeholder overlay. Hidden once the
+                     textarea has any value (handled by JS toggling the
+                     `hidden` class). -->
+                <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
+                  <span class="roll-track">How can I help you today?</span>
+                </div>
+              </div>
+
+              <div class="mt-1 flex items-center justify-between px-1">
+                <label
+                  for="scope-toggle"
+                  class="inline-flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"
+                >
+                  <!-- Switch (shadcn-style: bg-secondary off / bg-primary on) -->
+                  <span class="relative inline-flex">
+                    <input
+                      id="scope-toggle"
+                      type="checkbox"
+                      class="peer sr-only"
+                    />
+                    <span
+                      class="block h-4 w-7 rounded-full bg-secondary transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"
+                    ></span>
+                    <span
+                      class="absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow transition-transform peer-checked:translate-x-3"
+                    ></span>
+                  </span>
+                  <span class="select-none">Search Dev Portal</span>
+                </label>
+
+                <button
+                  id="ask-send"
+                  type="submit"
+                  aria-label="Send"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  disabled
+                >
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </form>
+
+            <!-- ── Action pills (Create / Manage) ────────────────────
+                 Each pill behaves like the breadcrumb chip: hover to
+                 reveal a popover with Recent + Suggested items. The
+                 surrounding `.action-pill` wrapper keeps the popover
+                 open while the cursor crosses the small gap. -->
+            <div class="mx-auto mt-4 flex w-full max-w-[640px] justify-center gap-2">
+              <div class="action-pill relative" data-pill="create">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i data-lucide="plus" class="text-background/80"></i>
+                  <span>Create</span>
+                </button>
+                <div
+                  class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+                >
+                  <div
+                    class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow"
+                  >
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Recent
+                    </p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Paved road
+                    </p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-pill relative" data-pill="manage">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i data-lucide="settings-2" class="text-background/80"></i>
+                  <span>Manage</span>
+                </button>
+                <div
+                  class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+                >
+                  <div
+                    class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow"
+                  >
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Recent
+                    </p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Suggested by your role
+                    </p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-pill relative" data-pill="monitor">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i data-lucide="activity" class="text-background/80"></i>
+                  <span>Monitor</span>
+                </button>
+                <div
+                  class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+                >
+                  <div
+                    class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow"
+                  >
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Recent
+                    </p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Suggested by your role
+                    </p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Customize view — enters edit mode that lets the user drag
+               any section in the customize area to reorder it. -->
+          <div class="mt-6 flex justify-end">
+            <button
+              type="button"
+              id="customize-view"
+              data-mode="idle"
+              class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              Customize view
+            </button>
+          </div>
+
+          <!-- Customize area — every direct child <section> is a
+               reorderable block while edit mode is on. Uses flex-wrap so
+               half-width sections (Action Items, Recent, etc.) pair up
+               on lg screens and full-width sections (Delivery Teams,
+               Continue with Agents) span the whole row. -->
+          <div id="customize-area" class="mt-2 flex flex-wrap items-stretch gap-x-4 gap-y-10">
+
+          <!-- ── Action Items (half-width) ──────────────────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <article
+              class="dashboard-card relative flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
+              draggable="false"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">
+                  Action Items
+                  <span class="ml-1 text-muted-foreground" id="action-items-count">(3)</span>
+                </h2>
+                <a
+                  href="#"
+                  class="inline-flex items-center gap-1 text-xs font-medium text-foreground/80 hover:text-foreground"
+                >
+                  View all on Team Space
+                  <i data-lucide="arrow-right"></i>
+                </a>
+              </header>
+
+              <div class="mb-3 flex items-center gap-2">
+                <label
+                  for="team-select"
+                  class="text-xs text-muted-foreground"
+                >
+                  Team
+                </label>
+                <div class="relative">
+                  <select
+                    id="team-select"
+                    class="appearance-none rounded-md border border-border bg-background bg-none py-1 pl-2.5 pr-7 text-xs font-medium text-foreground outline-none focus:border-foreground/70"
+                  >
+                    <option>Decisions App</option>
+                    <option>Dev Portal</option>
+                    <option>AI Workbench</option>
+                    <option>Platform Infra</option>
+                  </select>
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  ></i>
+                </div>
+              </div>
+
+              <ul id="action-items" class="flex flex-1 flex-col gap-2"></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="action-items-pagination"
+                  aria-label="Action items pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
+            </article>
+          </section>
+
+          <!-- ── Recent (half-width) ────────────────────────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <article
+              class="dashboard-card relative flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
+              draggable="false"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">Recent</h2>
+              </header>
+
+              <div class="mb-3 flex items-center justify-between gap-2">
+                <div
+                  role="tablist"
+                  aria-label="Activity filter"
+                  class="flex items-center gap-1"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    data-recent-tab="activity"
+                    aria-selected="true"
+                    class="recent-tab inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                  >
+                    Activity
+                    <span class="text-muted-foreground" data-recent-count="activity">8</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    data-recent-tab="visited"
+                    aria-selected="false"
+                    class="recent-tab inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                  >
+                    Visited
+                    <span class="text-muted-foreground" data-recent-count="visited">5</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    data-recent-tab="edited"
+                    aria-selected="false"
+                    class="recent-tab inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                  >
+                    Edited
+                    <span class="text-muted-foreground" data-recent-count="edited">4</span>
+                  </button>
+                </div>
+
+                <div id="recent-range" class="relative">
+                  <button
+                    type="button"
+                    id="recent-range-trigger"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  >
+                    <i data-lucide="sliders-horizontal"></i>
+                  </button>
+                  <div
+                    id="recent-range-menu"
+                    role="menu"
+                    aria-labelledby="recent-range-trigger"
+                    class="invisible absolute right-0 top-full z-20 mt-2 w-32 rounded-lg border border-border bg-popover p-1 text-popover-foreground opacity-0 transition-[opacity,transform] duration-150 floating-shadow"
+                  >
+                    <button
+                      type="button"
+                      role="menuitemradio"
+                      data-recent-range="all"
+                      aria-checked="true"
+                      class="recent-range flex w-full items-center justify-between rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                    >
+                      <span>All</span>
+                      <i data-lucide="check" class="range-check"></i>
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitemradio"
+                      data-recent-range="today"
+                      aria-checked="false"
+                      class="recent-range flex w-full items-center justify-between rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                    >
+                      <span>Today</span>
+                      <i data-lucide="check" class="range-check"></i>
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitemradio"
+                      data-recent-range="week"
+                      aria-checked="false"
+                      class="recent-range flex w-full items-center justify-between rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+                    >
+                      <span>Week</span>
+                      <i data-lucide="check" class="range-check"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <ul id="recent-list" class="flex flex-1 flex-col"></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="recent-pagination"
+                  aria-label="Recent pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
+            </article>
+          </section>
+
+          <!-- ── Delivery Teams (full width, no outer container) ────── -->
+          <section class="customize-section relative w-full lg:basis-full">
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <header class="mb-3 flex items-center justify-between">
+              <h2 class="text-base font-semibold tracking-tight">
+                Delivery Teams
+              </h2>
+              <a
+                href="#"
+                class="text-xs font-medium text-foreground/80 hover:text-foreground"
+              >
+                View all
+              </a>
+            </header>
+            <ul
+              id="delivery-teams"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            ></ul>
+          </section>
+
+          <!-- ── Continue with Agents (full width, no outer container) -->
+          <section class="customize-section relative w-full lg:basis-full">
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <header class="mb-3 flex items-center justify-between">
+              <h2 class="text-base font-semibold tracking-tight">
+                Continue with Agents
+              </h2>
+              <a
+                href="#"
+                class="text-xs font-medium text-foreground/80 hover:text-foreground"
+              >
+                View all
+              </a>
+            </header>
+            <ul
+              id="agents-list"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            ></ul>
+          </section>
+
+          <!-- ── Active Incidents & Alerts (half-width) ─────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <article
+              class="flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">
+                  Active Incidents & Alerts
+                </h2>
+              </header>
+              <ul id="incidents-list" class="flex flex-1 flex-col gap-2"></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="incidents-pagination"
+                  aria-label="Incidents pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
+            </article>
+          </section>
+
+          <!-- ── Jira Tickets (half-width) ──────────────────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
+            <article
+              class="flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
+            >
+              <header class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold tracking-tight">
+                  Jira Tickets
+                </h2>
+                <a
+                  href="#"
+                  class="inline-flex items-center gap-1 text-xs font-medium text-foreground/80 underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  View All
+                  <i data-lucide="external-link"></i>
+                </a>
+              </header>
+
+              <div class="mb-3 flex items-center gap-2">
+                <div class="relative flex-1">
+                  <select
+                    id="jira-project"
+                    class="w-full appearance-none rounded-md border border-border bg-background bg-none px-3 py-1.5 pr-8 text-sm font-medium text-foreground outline-none focus:border-foreground/70"
+                  >
+                    <option>Decisions App</option>
+                    <option>AI Code Assistant</option>
+                    <option>Project Execution and Prioritization</option>
+                  </select>
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  ></i>
+                </div>
+                <div class="relative flex-1">
+                  <select
+                    id="jira-board"
+                    class="w-full appearance-none rounded-md border border-border bg-background bg-none px-3 py-1.5 pr-8 text-sm font-medium text-foreground outline-none focus:border-foreground/70"
+                  >
+                    <option>CX Sprint Board</option>
+                    <option>Backlog</option>
+                    <option>Done This Sprint</option>
+                  </select>
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  ></i>
+                </div>
+              </div>
+
+              <ul
+                id="jira-list"
+                class="flex flex-1 flex-col divide-y divide-border border-t border-border"
+              ></ul>
+
+              <footer class="mt-4 flex items-center justify-center text-xs text-muted-foreground">
+                <nav
+                  id="jira-pagination"
+                  aria-label="Jira pagination"
+                  class="flex items-center gap-1"
+                ></nav>
+              </footer>
+            </article>
+          </section>
+
+          </div><!-- /#customize-area -->
+        </div>
+      </main>
+    </div>
+
+    <!-- ────────────────────────────────────────────────────────────────────
+         Data + behavior
+         ──────────────────────────────────────────────────────────────── -->
+    <script>
+      // Top-level menu items. `children` is the list of submenu rows.
+      // `id` on each child is the stable key used for pinning.
+      // `children` is omitted for items that don't open a submenu (Home,
+      // Teams). The renderer only shows the chevron + hover affordance when
+      // a non-empty `children` array is present.
+      // AI Workbench scoped menu. Model Discovery has a submenu; the
+      // rest are flat destinations.
+      const MENU = [
+        {
+          key: "model-discovery",
+          label: "Model Discovery",
+          icon: "search",
+          children: [
+            { id: "md.leaderboard", label: "Leaderboard", icon: "trophy" },
+            { id: "md.model-catalog", label: "Model Catalog", icon: "book-open" },
+            { id: "md.llm-availability", label: "LLM Availability Tracker", icon: "send" },
+            { id: "md.my-models", label: "My models", icon: "bot" },
+          ],
+        },
+        { key: "skill-discovery", label: "Skill Discovery", icon: "glasses" },
+        { key: "prompt-playground", label: "Prompt Playground", icon: "zap" },
+        { key: "my-projects", label: "My Projects", icon: "folder" },
+        { key: "genai-use-cases", label: "GenAI Use Cases", icon: "atom" },
+        { key: "operational-dashboards", label: "Operational Dashboards", icon: "pie-chart" },
+        { key: "leadership-dashboards", label: "Leadership Dashboards", icon: "trending-up" },
+        { key: "feedback", label: "Feedback", icon: "external-link" },
+        { key: "documentation-portal", label: "Documentation Portal", icon: "external-link" },
+      ];
+
+      const STORAGE_KEY = "nav-concept:pinned:v1";
+      const pinned = new Set(loadPinned());
+
+      function loadPinned() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const arr = JSON.parse(raw);
+          return Array.isArray(arr) ? arr : [];
+        } catch {
+          return [];
+        }
+      }
+      function savePinned() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify([...pinned]));
+        } catch {
+          // best-effort; ignore quota errors in a static preview
+        }
+      }
+
+      function findChildById(id) {
+        for (const item of MENU) {
+          if (!Array.isArray(item.children)) continue;
+          const found = item.children.find((c) => c.id === id);
+          if (found) return found;
+        }
+        return null;
+      }
+
+      // Wrap a span in a marquee container. The span becomes the "track".
+      // After insertion into the DOM, call `setupMarquees()` so the
+      // ResizeObserver can measure overflow and set `--scroll`.
+      function makeMarquee(text, extraClass = "") {
+        const wrap = document.createElement("span");
+        wrap.className = `marquee block ${extraClass}`.trim();
+        const track = document.createElement("span");
+        track.className = "marquee-track";
+        track.textContent = text;
+        wrap.appendChild(track);
+        return wrap;
+      }
+
+      // Measures each `.marquee`'s overflow and configures CSS variables
+      // so hover-scroll only triggers when content is actually clipped.
+      // Idempotent — safe to re-run after re-rendering a list.
+      const marqueeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) updateMarquee(entry.target);
+      });
+      function updateMarquee(el) {
+        const track = el.querySelector(".marquee-track");
+        if (!track) return;
+        // Temporarily allow the track its natural width to measure.
+        const prevMaxWidth = track.style.maxWidth;
+        track.style.maxWidth = "none";
+        const containerWidth = el.clientWidth;
+        const trackWidth = track.scrollWidth;
+        track.style.maxWidth = prevMaxWidth;
+        const overflow = trackWidth - containerWidth;
+        if (overflow > 0) {
+          el.dataset.overflow = "true";
+          el.style.setProperty("--scroll", `${-overflow}px`);
+          // 40 px / second feels natural for short rows.
+          const seconds = Math.max(1.5, overflow / 40);
+          el.style.setProperty("--scroll-duration", `${seconds}s`);
+        } else {
+          el.dataset.overflow = "false";
+          el.style.removeProperty("--scroll");
+          el.style.removeProperty("--scroll-duration");
+        }
+      }
+      function setupMarquees(root = document) {
+        root.querySelectorAll(".marquee").forEach((el) => {
+          updateMarquee(el);
+          marqueeObserver.observe(el);
+        });
+      }
+
+      function iconEl(name, extraClass = "") {
+        const i = document.createElement("i");
+        i.setAttribute("data-lucide", name);
+        if (extraClass) i.className = extraClass;
+        return i;
+      }
+
+      function renderMenu() {
+        const ul = document.getElementById("primary-menu");
+        ul.innerHTML = "";
+
+        MENU.forEach((item) => {
+          // Spacer between groups — renders as a hairline rule.
+          if (item.divider) {
+            const sep = document.createElement("li");
+            sep.className = "my-2 border-t border-border";
+            sep.setAttribute("aria-hidden", "true");
+            ul.appendChild(sep);
+            return;
+          }
+
+          const li = document.createElement("li");
+          li.className = "nav-item relative";
+
+          const hasChildren =
+            Array.isArray(item.children) && item.children.length > 0;
+
+          // Trigger row
+          const trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className =
+            "group flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
+          const label = document.createElement("span");
+          label.textContent = item.label;
+          // No flex-1 — let the label hug its text so the chevron lands
+          // exactly `gap-3` (12px) after it, with no extra empty space.
+          label.className = "text-left";
+          trigger.appendChild(label);
+          // Always reserve a chevron-sized slot on the right so rows
+          // align consistently — visible chevron only when the row has
+          // a submenu, invisible spacer otherwise.
+          trigger.appendChild(
+            iconEl(
+              "chevron-right",
+              hasChildren
+                ? "shrink-0 text-muted-foreground"
+                : "shrink-0 invisible"
+            )
+          );
+          li.appendChild(trigger);
+
+          // Submenu — only render for items with children. Anchored to the
+          // right edge of the nav rail; the pl-2 padding on the wrapper
+          // bridges the small gap so the cursor doesn't lose hover.
+          if (hasChildren) {
+            const submenu = document.createElement("div");
+            // The <li> sits inside `nav#menu`'s p-2 (8px) padding, so
+            // left-full lands 8px short of the nav card's right edge.
+            // pl-4 = 16px = 8px to clear the padding + 8px visual gap.
+            submenu.className = "submenu absolute left-full top-0 z-10 pl-4";
+            const panel = document.createElement("div");
+            // Hug-to-content width — the panel sizes to its longest row.
+            // max-w cap prevents very long labels from blowing past the
+            // viewport; max-h + overflow keeps tall lists (Workbenches)
+            // from spilling off-screen.
+            panel.className =
+              "w-max max-w-[22rem] max-h-[70vh] overflow-auto rounded-xl border border-border bg-popover text-popover-foreground floating-shadow p-2";
+            const subUl = document.createElement("ul");
+            subUl.className = "space-y-0.5";
+
+            item.children.forEach((child) => {
+              subUl.appendChild(renderSubmenuRow(child));
+            });
+            panel.appendChild(subUl);
+            submenu.appendChild(panel);
+            li.appendChild(submenu);
+          }
+
+          ul.appendChild(li);
+        });
+
+        renderPinned();
+        // Re-run lucide on freshly inserted icons.
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      function renderSubmenuRow(child) {
+        const row = document.createElement("li");
+        row.className =
+          "submenu-row flex items-center gap-3 whitespace-nowrap rounded-md px-2 py-1.5 text-sm hover:bg-accent";
+
+        const labelBtn = document.createElement("button");
+        labelBtn.type = "button";
+        labelBtn.className =
+          "flex flex-1 items-center gap-2.5 text-left text-foreground focus-visible:outline-none";
+        const span = document.createElement("span");
+        span.textContent = child.label;
+        labelBtn.appendChild(span);
+        if (child.href) {
+          labelBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            window.location.href = child.href;
+          });
+        }
+        row.appendChild(labelBtn);
+
+        const isPinned = pinned.has(child.id);
+        const pinBtn = document.createElement("button");
+        pinBtn.type = "button";
+        pinBtn.setAttribute("aria-label", isPinned ? "Unpin" : "Pin to More");
+        pinBtn.setAttribute("aria-pressed", String(isPinned));
+        // Pinned rows show the pin icon all the time (so the user can unpin).
+        pinBtn.className = [
+          "pin-btn inline-flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+          isPinned ? "!opacity-100 text-foreground" : "",
+        ].join(" ");
+        pinBtn.appendChild(iconEl(isPinned ? "pin-off" : "pin"));
+        pinBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          togglePin(child.id);
+        });
+        row.appendChild(pinBtn);
+
+        return row;
+      }
+
+      function renderPinned() {
+        const section = document.getElementById("pinned-section");
+        const list = document.getElementById("pinned-list");
+        list.innerHTML = "";
+
+        if (pinned.size === 0) {
+          section.classList.add("hidden");
+          return;
+        }
+        section.classList.remove("hidden");
+
+        for (const id of pinned) {
+          const child = findChildById(id);
+          if (!child) continue;
+          const li = document.createElement("li");
+          li.className =
+            "flex items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm hover:bg-accent";
+
+          const labelBtn = document.createElement("button");
+          labelBtn.type = "button";
+          labelBtn.className =
+            "flex flex-1 items-center gap-2.5 text-left text-foreground focus-visible:outline-none";
+          const span = document.createElement("span");
+          span.textContent = child.label;
+          labelBtn.appendChild(span);
+          li.appendChild(labelBtn);
+
+          const unpinBtn = document.createElement("button");
+          unpinBtn.type = "button";
+          unpinBtn.setAttribute("aria-label", "Unpin");
+          unpinBtn.className =
+            "inline-flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50";
+          unpinBtn.appendChild(iconEl("pin-off"));
+          unpinBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            togglePin(id);
+          });
+          li.appendChild(unpinBtn);
+
+          list.appendChild(li);
+        }
+      }
+
+      function togglePin(id) {
+        if (pinned.has(id)) pinned.delete(id);
+        else pinned.add(id);
+        savePinned();
+        renderMenu();
+      }
+
+      renderMenu();
+
+      // ── Weather widget ─────────────────────────────────────────────
+      // Stand-in conditions for the prototype. Each condition has ASCII
+      // glyphs for the left + right sides and a target temperature. In
+      // production this would come from a real feed.
+      const WEATHER_CONDITIONS = {
+        sunny: { left: "\\ | /", right: "/ | \\" },
+        cloudy: { left: "(  ~~", right: "~~  )" },
+        rain: { left: "' : '", right: "' : '" },
+      };
+
+      function setWeather(kind, temp) {
+        const data = WEATHER_CONDITIONS[kind];
+        if (!data) return;
+        const root = document.getElementById("weather");
+        root.classList.remove("weather--sunny", "weather--cloudy", "weather--rain");
+        root.classList.add(`weather--${kind}`);
+
+        const leftEl = root.querySelector(".weather-side.left");
+        const rightEl = root.querySelector(".weather-side.right");
+        leftEl.innerHTML = "";
+        rightEl.innerHTML = "";
+
+        if (kind === "rain") {
+          // 4 staggered droplets per side. x-positions are spread across
+          // the 28px-wide side container; delays are offset so a drop is
+          // always falling somewhere.
+          const dropOffsets = [
+            { x: 2, delay: 0 },
+            { x: 9, delay: 0.3 },
+            { x: 16, delay: 0.6 },
+            { x: 23, delay: 0.9 },
+          ];
+          [leftEl, rightEl].forEach((side, sideIdx) => {
+            dropOffsets.forEach((d) => {
+              const drop = document.createElement("span");
+              drop.className = "drop";
+              drop.style.left = `${d.x}px`;
+              drop.style.animationDelay = `${d.delay + sideIdx * 0.15}s`;
+              drop.textContent = "'";
+              side.appendChild(drop);
+            });
+          });
+        } else {
+          leftEl.textContent = data.left;
+          rightEl.textContent = data.right;
+        }
+
+        document.getElementById("weather-temp").textContent = `${temp}°F`;
+      }
+
+      // Prototype placeholder — rainy at 72°F.
+      setWeather("rain", 72);
+
+      // ── Mini breadcrumb on scroll ──────────────────────────────────
+      // When the page breadcrumb scrolls off-screen, swap the weather
+      // widget out for a compact breadcrumb chip in the top nav so the
+      // user always sees their current location.
+      (function () {
+        const pageBreadcrumb = document.getElementById("breadcrumb-root");
+        const weatherEl = document.getElementById("weather");
+        const miniEl = document.getElementById("mini-breadcrumb");
+        if (!pageBreadcrumb || !weatherEl || !miniEl) return;
+
+        // The page breadcrumb sits inside the scrolling page; the top
+        // nav is 44px tall. When the breadcrumb's bottom edge passes
+        // above the nav, we show the mini.
+        const NAV_HEIGHT = 44;
+        let showingMini = false;
+
+        function setShowingMini(next) {
+          if (next === showingMini) return;
+          showingMini = next;
+
+          if (next) {
+            // Reveal mini, hide weather.
+            miniEl.classList.remove("hidden");
+            miniEl.classList.add("flex");
+            // Force reflow so the opacity transition runs from 0 → 1.
+            void miniEl.offsetWidth;
+            miniEl.classList.remove("opacity-0");
+            weatherEl.classList.add("opacity-0");
+            // Drop weather from the layout after its fade completes.
+            setTimeout(() => {
+              if (showingMini) weatherEl.classList.add("hidden");
+            }, 150);
+          } else {
+            // Reveal weather, hide mini.
+            weatherEl.classList.remove("hidden");
+            void weatherEl.offsetWidth;
+            weatherEl.classList.remove("opacity-0");
+            miniEl.classList.add("opacity-0");
+            setTimeout(() => {
+              if (!showingMini) {
+                miniEl.classList.add("hidden");
+                miniEl.classList.remove("flex");
+              }
+            }, 150);
+          }
+        }
+
+        // Track via IntersectionObserver — fires when the breadcrumb
+        // crosses the top nav boundary. rootMargin's negative top equals
+        // the nav height, so the breadcrumb is considered "out" as soon
+        // as it slides under the nav.
+        const io = new IntersectionObserver(
+          ([entry]) => setShowingMini(!entry.isIntersecting),
+          { rootMargin: `-${NAV_HEIGHT}px 0px 0px 0px`, threshold: 0 }
+        );
+        io.observe(pageBreadcrumb);
+      })();
+
+      // ── Nav search autocomplete ────────────────────────────────────
+      // Suggestions are pulled from every submenu row (their label + the
+      // parent menu's label for context). Renders an overlay below the
+      // search input while the user is typing.
+      const NAV_INDEX = MENU.flatMap((m) => {
+        // Skip dividers — they're visual only.
+        if (m.divider) return [];
+        // Top-level entries without children are themselves destinations.
+        if (!Array.isArray(m.children) || m.children.length === 0) {
+          return [{ id: m.key, label: m.label, icon: m.icon, parent: m.label }];
+        }
+        return m.children.map((c) => ({
+          id: c.id,
+          label: c.label,
+          icon: c.icon,
+          parent: m.label,
+        }));
+      });
+
+      const navSearch = document.getElementById("nav-search");
+      const navResults = document.getElementById("nav-search-results");
+      const navList = document.getElementById("nav-search-list");
+      const navEmpty = document.getElementById("nav-search-empty");
+
+      function renderNavSearch(query) {
+        const q = query.trim().toLowerCase();
+        navList.innerHTML = "";
+        if (q.length === 0) {
+          navResults.classList.add("hidden");
+          return;
+        }
+        const matches = NAV_INDEX.filter(
+          (entry) =>
+            entry.label.toLowerCase().includes(q) ||
+            entry.parent.toLowerCase().includes(q)
+        ).slice(0, 8);
+
+        if (matches.length === 0) {
+          navEmpty.classList.remove("hidden");
+          navResults.classList.remove("hidden");
+          return;
+        }
+        navEmpty.classList.add("hidden");
+
+        matches.forEach((m) => {
+          const li = document.createElement("li");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className =
+            "flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm text-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+          const labelWrap = document.createElement("span");
+          labelWrap.className = "flex flex-1 items-center gap-1.5 truncate";
+          const label = document.createElement("span");
+          label.textContent = m.label;
+          const parent = document.createElement("span");
+          parent.className = "text-xs text-muted-foreground";
+          parent.textContent = `· ${m.parent}`;
+          labelWrap.append(label, parent);
+          btn.appendChild(labelWrap);
+          btn.addEventListener("click", () => {
+            navSearch.value = m.label;
+            navResults.classList.add("hidden");
+          });
+          li.appendChild(btn);
+          navList.appendChild(li);
+        });
+        navResults.classList.remove("hidden");
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      navSearch.addEventListener("input", (e) => renderNavSearch(e.target.value));
+      navSearch.addEventListener("focus", (e) => {
+        if (e.target.value.trim().length > 0) renderNavSearch(e.target.value);
+      });
+      document.addEventListener("click", (e) => {
+        if (!navResults.contains(e.target) && e.target !== navSearch) {
+          navResults.classList.add("hidden");
+        }
+      });
+      navSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          navResults.classList.add("hidden");
+          navSearch.blur();
+        }
+      });
+
+      // ── Smart breadcrumb ───────────────────────────────────────────
+      // Hover-only popover. Open while the cursor is inside the root
+      // (trigger + popover sit in the same wrapper so the small gap is
+      // bridged by the pt-2 padding on the popover).
+      const SUGGESTIONS = [
+        { label: "AI Workbench", icon: "sparkles", href: "#" },
+        { label: "Data Discovery", icon: "database", href: "#" },
+        { label: "Design Workbench", icon: "palette", href: "#" },
+        { label: "Experiments", icon: "flask-conical", href: "#" },
+        { label: "Documentation", icon: "book-open", href: "#" },
+      ];
+
+      // Recent pages — stand-in data for the History section. Each entry
+      // carries a path so users can scan where they were, not just the
+      // page title.
+      const HISTORY = [
+        { label: "Cloud IDE", path: "Workbenches", when: "2m ago", href: "#" },
+        { label: "MCP Marketplace", path: "Workbenches", when: "18m ago", href: "#" },
+        { label: "API & Docs", path: "Explore", when: "1h ago", href: "#" },
+        { label: "Data Discovery", path: "Workbenches", when: "Yesterday", href: "#" },
+        { label: "Feature Flag", path: "Workbenches", when: "2d ago", href: "#" },
+      ];
+
+      function renderSuggestions(ul) {
+        if (!ul) return;
+        ul.innerHTML = "";
+        SUGGESTIONS.forEach((s) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = s.href;
+          a.className =
+            "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50";
+          const span = document.createElement("span");
+          span.textContent = s.label;
+          a.append(span);
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      }
+
+      function renderHistory(ul) {
+        if (!ul) return;
+        ul.innerHTML = "";
+        HISTORY.forEach((h) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = h.href;
+          a.className =
+            "flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+
+          const main = document.createElement("span");
+          main.className = "flex flex-1 items-baseline gap-1.5 truncate";
+          const label = document.createElement("span");
+          label.textContent = h.label;
+          label.className = "font-medium";
+          const path = document.createElement("span");
+          path.textContent = `· ${h.path}`;
+          path.className = "text-xs text-muted-foreground";
+          main.append(label, path);
+
+          const when = document.createElement("span");
+          when.textContent = h.when;
+          when.className = "shrink-0 text-xs text-muted-foreground";
+
+          a.append(main, when);
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      }
+
+      // Populate both the page breadcrumb and the mini breadcrumb (which
+      // takes over the top nav when the page breadcrumb scrolls offscreen).
+      renderSuggestions(document.getElementById("breadcrumb-suggestions"));
+      renderHistory(document.getElementById("breadcrumb-history"));
+      renderSuggestions(document.getElementById("mini-breadcrumb-suggestions"));
+      renderHistory(document.getElementById("mini-breadcrumb-history"));
+
+      // ── Action pills (Create / Manage) ─────────────────────────────
+      // Both pills mirror the breadcrumb's Recent + Suggested pattern.
+      // Suggested items come straight from the screenshots, alphabetized
+      // for Create; Recent is stand-in data.
+      const ACTION_DATA = {
+        create: {
+          recent: [
+            { label: "Web App", path: "UX Fabric", when: "12m ago" },
+            { label: "Service", path: "Service Fabric", when: "2h ago" },
+            { label: "AI Experience", path: "Common", when: "Yesterday" },
+          ],
+          suggested: [
+            "AI Experience",
+            "CloudStack",
+            "Data Lake Processing Account",
+            "Data Pipeline",
+            "Data Processor",
+            "Data Store",
+            "Desktop App",
+            "Dev Cloud Account",
+            "Dynamic Experience Feature",
+            "File Transfer Service",
+            "KE Runtime Module",
+            "Learning Cloud Account",
+            "Library",
+            "ML Model",
+            "Mobile App",
+            "Mobile Library",
+            "Offline Job Purpose",
+            "Prod Cloud Account",
+            "Serverless App",
+            "Service",
+            "Test Client",
+            "Tool",
+            "Web App",
+            "Web Plugin",
+          ],
+        },
+        manage: {
+          recent: [
+            { label: "Dev Portal", path: "Teams", when: "5m ago" },
+            { label: "Prod Cloud Account", path: "Cloud Accounts", when: "Yesterday" },
+            { label: "Sandbox Workspace", path: "Cloud Workspaces", when: "3d ago" },
+          ],
+          suggested: ["Teams", "Cloud Accounts", "Cloud Workspaces", "Privileged Access"],
+        },
+        monitor: {
+          recent: [
+            { label: "Ecosystem Health", path: "Observability", when: "8m ago" },
+            { label: "ML Model API incident", path: "Incident Management", when: "1h ago" },
+            { label: "checkout-service deploy", path: "Change Management", when: "Yesterday" },
+          ],
+          suggested: [
+            "Ecosystem Health",
+            "Incident Management",
+            "Change Management",
+            "Observability",
+          ],
+        },
+      };
+
+      function renderActionPill(root) {
+        const kind = root.dataset.pill;
+        const data = ACTION_DATA[kind];
+        if (!data) return;
+
+        const recentUl = root.querySelector(".action-recent");
+        const suggestedUl = root.querySelector(".action-suggested");
+
+        recentUl.innerHTML = "";
+        data.recent.forEach((r) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = "#";
+          a.className =
+            "flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+
+          const main = document.createElement("span");
+          main.className = "flex flex-1 items-baseline gap-1.5 truncate";
+          const label = document.createElement("span");
+          label.textContent = r.label;
+          label.className = "font-medium";
+          const path = document.createElement("span");
+          path.textContent = `· ${r.path}`;
+          path.className = "text-xs text-muted-foreground";
+          main.append(label, path);
+
+          const when = document.createElement("span");
+          when.textContent = r.when;
+          when.className = "shrink-0 text-xs text-muted-foreground";
+
+          a.append(main, when);
+          li.appendChild(a);
+          recentUl.appendChild(li);
+        });
+
+        suggestedUl.innerHTML = "";
+        data.suggested.forEach((label) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = "#";
+          a.className =
+            "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50";
+          const span = document.createElement("span");
+          span.textContent = label;
+          a.appendChild(span);
+          li.appendChild(a);
+          suggestedUl.appendChild(li);
+        });
+      }
+
+      // ── Action Items + Recent panels ───────────────────────────────
+      // Stand-in data for the two dashboard cards below the chat input.
+      // Action items are scoped to the selected team; Recent items are
+      // filtered by tab (activity / visited / edited) and range.
+      const ACTION_ITEMS = {
+        "Decisions App": [
+          {
+            title: "Review API authentication flow for security vulnerabilities",
+            source: "DevOps & Deployment Strategy",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Implement error handling for edge cases in user flow",
+            source: "Architecture Review - Backend Services",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Follow up on customer feedback from product-feedback channel",
+            source: "#product-feedback",
+            sourceKind: "slack",
+          },
+          {
+            title: "Document the new decision-routing service contract",
+            source: "Service Design Review",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Refactor decision audit log to use new event schema",
+            source: "Tech Debt Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Triage open bugs flagged by support last week",
+            source: "#decisions-support",
+            sourceKind: "slack",
+          },
+          {
+            title: "Pair with QA on regression suite for v3 rollout",
+            source: "#decisions-qa",
+            sourceKind: "slack",
+          },
+          {
+            title: "Update runbook for incident response procedures",
+            source: "Oncall Handoff",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Define rollout milestones for new policy engine",
+            source: "Product Planning",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Reply to compliance review thread",
+            source: "#compliance",
+            sourceKind: "slack",
+          },
+          {
+            title: "Schedule architecture deep-dive with platform team",
+            source: "Platform Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Audit feature flag usage across decisions services",
+            source: "Cleanup Sprint",
+            sourceKind: "meeting",
+          },
+        ],
+        "Dev Portal": [
+          {
+            title: "Draft new onboarding doc for IDS components",
+            source: "Design Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Reply to migration thread",
+            source: "#dev-portal",
+            sourceKind: "slack",
+          },
+          {
+            title: "Add search analytics dashboard to homepage",
+            source: "Roadmap Review",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Spec the Workbenches submenu IA",
+            source: "IA Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Review accessibility audit findings",
+            source: "#a11y",
+            sourceKind: "slack",
+          },
+          {
+            title: "Coordinate beta launch comms",
+            source: "#dev-portal-launch",
+            sourceKind: "slack",
+          },
+          {
+            title: "Sync with research on Q2 user interviews",
+            source: "Research Planning",
+            sourceKind: "meeting",
+          },
+        ],
+        "AI Workbench": [
+          {
+            title: "Triage failing eval suite for prompt routing",
+            source: "Eval Review",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Document new model registration flow",
+            source: "Platform Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Reply to questions on prompt template format",
+            source: "#ai-workbench",
+            sourceKind: "slack",
+          },
+          {
+            title: "Investigate latency spikes in evaluation runs",
+            source: "Oncall",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Update guardrails for chat memory test cases",
+            source: "Safety Review",
+            sourceKind: "meeting",
+          },
+        ],
+        "Platform Infra": [
+          {
+            title: "Roll out new IAM policy to dev accounts",
+            source: "Platform Standup",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Update runbook for region failover",
+            source: "#oncall",
+            sourceKind: "slack",
+          },
+          {
+            title: "Migrate legacy services to new VPC topology",
+            source: "Migration Planning",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Review proposed CI/CD pipeline overhaul",
+            source: "Pipeline Sync",
+            sourceKind: "meeting",
+          },
+          {
+            title: "Reply to capacity planning thread",
+            source: "#capacity",
+            sourceKind: "slack",
+          },
+          {
+            title: "Audit secrets rotation across prod services",
+            source: "Security Review",
+            sourceKind: "meeting",
+          },
+        ],
+      };
+
+      const RECENT_DATA = {
+        activity: [
+          {
+            kind: "merge",
+            title: "Merged PR #4821 — Auth token refresh fix",
+            sub: "auth-service → main",
+            status: "MERGED",
+            when: "25m ago",
+          },
+          {
+            kind: "review",
+            title: "Code review approved for payments-api",
+            sub: "Reviewed 14 files, 3 comments resolved",
+            status: "APPROVED",
+            when: "1h ago",
+          },
+          {
+            kind: "deploy",
+            title: "Deployed checkout-service v2.8.1 to staging",
+            sub: "All health checks passing",
+            status: "SUCCESS",
+            when: "2h ago",
+          },
+          {
+            kind: "scaffold",
+            title: "Created new microservice scaffold",
+            sub: "order-processor using Go paved road template",
+            status: "OPEN",
+            when: "3h ago",
+          },
+          {
+            kind: "merge",
+            title: "Merged PR #4815 — Rate limiter middleware",
+            sub: "api-gateway → main",
+            status: "MERGED",
+            when: "5h ago",
+          },
+          {
+            kind: "ci",
+            title: "CI pipeline passed for fraud-detection",
+            sub: "247 tests, 98.2% coverage",
+            status: "PASSED",
+            when: "6h ago",
+          },
+          {
+            kind: "doc",
+            title: "Published API docs for user-profile v3",
+            sub: "OpenAPI 3.1 spec auto-generated",
+            status: "PUBLISHED",
+            when: "1d ago",
+          },
+          {
+            kind: "release",
+            title: "Released @intuit/sdk-core v5.2.0",
+            sub: "Breaking change: removed deprecated auth method",
+            status: "COMPLETE",
+            when: "1d ago",
+          },
+          {
+            kind: "review",
+            title: "Reviewed PR #4810 — Cache invalidation strategy",
+            sub: "edge-cache · 7 files, 2 suggestions",
+            status: "APPROVED",
+            when: "1d ago",
+          },
+          {
+            kind: "ci",
+            title: "CI pipeline passed for checkout-service",
+            sub: "182 tests, 96.4% coverage",
+            status: "PASSED",
+            when: "1d ago",
+          },
+          {
+            kind: "scaffold",
+            title: "Spun up sandbox environment for prompt-routing",
+            sub: "AI Workbench · auto-tear-down in 24h",
+            status: "OPEN",
+            when: "2d ago",
+          },
+          {
+            kind: "merge",
+            title: "Merged PR #4803 — Telemetry sampling rules",
+            sub: "platform-obs → main",
+            status: "MERGED",
+            when: "2d ago",
+          },
+          {
+            kind: "deploy",
+            title: "Promoted notifications-service v4.1.0 to prod",
+            sub: "Canary 10% → 100% in 22 minutes",
+            status: "SUCCESS",
+            when: "2d ago",
+          },
+          {
+            kind: "doc",
+            title: "Updated runbook: payments dual-write strategy",
+            sub: "Operations · v2",
+            status: "PUBLISHED",
+            when: "3d ago",
+          },
+          {
+            kind: "release",
+            title: "Released @intuit/ui-toolkit v8.6.2",
+            sub: "Bug fixes for Combobox + Listbox",
+            status: "COMPLETE",
+            when: "3d ago",
+          },
+        ],
+        visited: [
+          {
+            kind: "doc",
+            title: "Migration guide — IDS v4 → v5",
+            sub: "Visited from #dev-portal",
+            status: "DOC",
+            when: "40m ago",
+          },
+          {
+            kind: "scaffold",
+            title: "Cloud IDE — onboarding",
+            sub: "Workbenches",
+            status: "PAGE",
+            when: "2h ago",
+          },
+          {
+            kind: "doc",
+            title: "MCP Marketplace — concepts",
+            sub: "Workbenches",
+            status: "DOC",
+            when: "Yesterday",
+          },
+          {
+            kind: "review",
+            title: "Decisions App — sprint board",
+            sub: "Teams",
+            status: "PAGE",
+            when: "Yesterday",
+          },
+          {
+            kind: "ci",
+            title: "fraud-detection · CI runs",
+            sub: "Last 24h",
+            status: "PAGE",
+            when: "2d ago",
+          },
+          {
+            kind: "doc",
+            title: "AI Workbench — eval framework overview",
+            sub: "Workbenches · Docs",
+            status: "DOC",
+            when: "2d ago",
+          },
+          {
+            kind: "deploy",
+            title: "Deployments dashboard — checkout-service",
+            sub: "Last 7 days",
+            status: "PAGE",
+            when: "3d ago",
+          },
+          {
+            kind: "doc",
+            title: "Service registry — auth-service",
+            sub: "Service Fabric",
+            status: "PAGE",
+            when: "3d ago",
+          },
+          {
+            kind: "review",
+            title: "Quarterly access review — eng tools",
+            sub: "Privileged Access",
+            status: "PAGE",
+            when: "4d ago",
+          },
+          {
+            kind: "ci",
+            title: "Feature flag dashboard — payments-flow",
+            sub: "Feature Flag",
+            status: "PAGE",
+            when: "5d ago",
+          },
+          {
+            kind: "doc",
+            title: "Paved road catalog — Go services",
+            sub: "Service Fabric",
+            status: "DOC",
+            when: "5d ago",
+          },
+          {
+            kind: "doc",
+            title: "Component library — IDS Combobox",
+            sub: "UX Fabric · Docs",
+            status: "DOC",
+            when: "6d ago",
+          },
+          {
+            kind: "deploy",
+            title: "Release manager — checkout-service",
+            sub: "Release Engineering",
+            status: "PAGE",
+            when: "6d ago",
+          },
+          {
+            kind: "review",
+            title: "Team space — AI Workbench",
+            sub: "Teams",
+            status: "PAGE",
+            when: "1w ago",
+          },
+          {
+            kind: "doc",
+            title: "Runbook — auth-service oncall",
+            sub: "Operations",
+            status: "DOC",
+            when: "1w ago",
+          },
+          {
+            kind: "ci",
+            title: "Test telemetry — payments-api",
+            sub: "Quality dashboards",
+            status: "PAGE",
+            when: "1w ago",
+          },
+        ],
+        edited: [
+          {
+            kind: "doc",
+            title: "Nav Concept — design notes",
+            sub: "Dev Portal · Research",
+            status: "EDITED",
+            when: "12m ago",
+          },
+          {
+            kind: "scaffold",
+            title: "order-processor README",
+            sub: "Initial commit",
+            status: "EDITED",
+            when: "3h ago",
+          },
+          {
+            kind: "doc",
+            title: "API spec — user-profile",
+            sub: "OpenAPI 3.1",
+            status: "EDITED",
+            when: "1d ago",
+          },
+          {
+            kind: "review",
+            title: "Decisions App — Q2 OKRs",
+            sub: "Teams · Decisions App",
+            status: "EDITED",
+            when: "2d ago",
+          },
+          {
+            kind: "doc",
+            title: "Onboarding checklist for new engineers",
+            sub: "Dev Portal · Docs",
+            status: "EDITED",
+            when: "2d ago",
+          },
+          {
+            kind: "scaffold",
+            title: "platform-obs sampling config",
+            sub: "platform-obs · main",
+            status: "EDITED",
+            when: "3d ago",
+          },
+          {
+            kind: "doc",
+            title: "Service registry — payments-api",
+            sub: "Service Fabric",
+            status: "EDITED",
+            when: "4d ago",
+          },
+          {
+            kind: "review",
+            title: "Architecture proposal — eventing v2",
+            sub: "Architecture Review",
+            status: "EDITED",
+            when: "5d ago",
+          },
+          {
+            kind: "doc",
+            title: "Migration plan — auth library v2 → v3",
+            sub: "Identity Platform",
+            status: "EDITED",
+            when: "5d ago",
+          },
+          {
+            kind: "scaffold",
+            title: "Feature flag config — payments rollout",
+            sub: "Feature Flag",
+            status: "EDITED",
+            when: "6d ago",
+          },
+          {
+            kind: "doc",
+            title: "Postmortem — fraud-detection lag spike",
+            sub: "Incidents",
+            status: "EDITED",
+            when: "6d ago",
+          },
+          {
+            kind: "review",
+            title: "Design critique notes — Nav Concept",
+            sub: "Dev Portal · Design",
+            status: "EDITED",
+            when: "1w ago",
+          },
+          {
+            kind: "doc",
+            title: "Internal blog draft — paved road wins",
+            sub: "Dev Portal · Blog",
+            status: "EDITED",
+            when: "1w ago",
+          },
+          {
+            kind: "scaffold",
+            title: "checkout-service feature flag scaffolding",
+            sub: "checkout-service · main",
+            status: "EDITED",
+            when: "1w ago",
+          },
+          {
+            kind: "doc",
+            title: "Eventing v2 — proposal revisions",
+            sub: "Architecture Review",
+            status: "EDITED",
+            when: "1w ago",
+          },
+        ],
+      };
+
+      // Both cards page through their data so they normalize to the same
+      // height. Action Items rows are taller (multi-line + checkbox), so
+      // 5 fits comfortably; Recent rows are denser, so we show more.
+      const ACTION_ITEMS_PAGE_SIZE = 5;
+      const RECENT_PAGE_SIZE = 6;
+      let actionItemsPage = 0;
+      let recentPage = 0;
+
+      // Shared `< 1 2 3 4 >` renderer. Caller passes the container, the
+      // current page (0-based), the total page count, and a setter that
+      // updates page state and triggers a re-render.
+      function renderPagination(container, currentPage, totalPages, setPage) {
+        container.innerHTML = "";
+        const make = (content, opts = {}) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          const active = !!opts.active;
+          btn.className = [
+            "inline-flex size-7 items-center justify-center rounded-md text-xs transition-colors",
+            active
+              ? "font-semibold text-foreground"
+              : "font-medium text-muted-foreground hover:text-foreground",
+            "disabled:cursor-not-allowed disabled:opacity-40",
+          ].join(" ");
+          if (opts.label) btn.setAttribute("aria-label", opts.label);
+          if (typeof content === "string") btn.textContent = content;
+          else btn.appendChild(content);
+          if (opts.disabled) btn.disabled = true;
+          if (opts.onClick) btn.addEventListener("click", opts.onClick);
+          return btn;
+        };
+
+        // Prev arrow
+        container.appendChild(
+          make(iconEl("chevron-left"), {
+            label: "Previous page",
+            disabled: currentPage === 0,
+            onClick: () => setPage(Math.max(0, currentPage - 1)),
+          })
+        );
+
+        // Numbered buttons (1..totalPages). For small page counts (the
+        // realistic shape here, ≤10) we don't need ellipsis logic.
+        for (let i = 0; i < totalPages; i++) {
+          container.appendChild(
+            make(String(i + 1), {
+              active: i === currentPage,
+              onClick: () => setPage(i),
+            })
+          );
+        }
+
+        // Next arrow
+        container.appendChild(
+          make(iconEl("chevron-right"), {
+            label: "Next page",
+            disabled: currentPage >= totalPages - 1,
+            onClick: () => setPage(Math.min(totalPages - 1, currentPage + 1)),
+          })
+        );
+
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      function renderActionItems() {
+        const team = document.getElementById("team-select").value;
+        const items = ACTION_ITEMS[team] || [];
+        const list = document.getElementById("action-items");
+        const count = document.getElementById("action-items-count");
+        count.textContent = `(${items.length})`;
+        list.innerHTML = "";
+
+        const totalPages = Math.max(1, Math.ceil(items.length / ACTION_ITEMS_PAGE_SIZE));
+        if (actionItemsPage >= totalPages) actionItemsPage = totalPages - 1;
+        const start = actionItemsPage * ACTION_ITEMS_PAGE_SIZE;
+        const pageItems = items.slice(start, start + ACTION_ITEMS_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("action-items-pagination"),
+          actionItemsPage,
+          totalPages,
+          (next) => {
+            actionItemsPage = next;
+            renderActionItems();
+          }
+        );
+
+        pageItems.forEach((item, idx) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-start gap-3 rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/50";
+
+          // Checkbox
+          const box = document.createElement("button");
+          box.type = "button";
+          box.setAttribute("role", "checkbox");
+          box.setAttribute("aria-checked", "false");
+          box.className =
+            "mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:border-foreground/70 aria-checked:border-foreground aria-checked:bg-foreground";
+          box.addEventListener("click", () => {
+            const checked = box.getAttribute("aria-checked") === "true";
+            box.setAttribute("aria-checked", String(!checked));
+            const titleEl = li.querySelector(".action-title");
+            titleEl.classList.toggle("line-through", !checked);
+            titleEl.classList.toggle("text-muted-foreground", !checked);
+            if (!checked) {
+              box.appendChild(iconEl("check", "text-background"));
+            } else {
+              box.innerHTML = "";
+            }
+            if (window.lucide) window.lucide.createIcons();
+          });
+          li.appendChild(box);
+
+          // Body
+          const body = document.createElement("div");
+          body.className = "flex-1 min-w-0";
+
+          const title = makeMarquee(
+            item.title,
+            "action-title text-sm font-medium text-foreground"
+          );
+          body.appendChild(title);
+
+          const sub = makeMarquee(
+            item.source,
+            "mt-1 text-xs text-muted-foreground"
+          );
+          body.appendChild(sub);
+
+          li.appendChild(body);
+          list.appendChild(li);
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+        setupMarquees(document.getElementById("action-items"));
+      }
+
+      document
+        .getElementById("team-select")
+        .addEventListener("change", () => {
+          actionItemsPage = 0;
+          renderActionItems();
+        });
+      renderActionItems();
+
+      // ── Recent activity card ───────────────────────────────────────
+      const RECENT_ICONS = {
+        merge: "git-merge",
+        review: "code",
+        deploy: "rocket",
+        scaffold: "package",
+        ci: "bar-chart-3",
+        doc: "file-text",
+        release: "box",
+      };
+
+      let recentTab = "activity";
+      let recentRange = "all";
+
+      function applyTabState() {
+        document.querySelectorAll(".recent-tab").forEach((btn) => {
+          const active = btn.dataset.recentTab === recentTab;
+          btn.setAttribute("aria-selected", String(active));
+          btn.classList.toggle("bg-foreground", active);
+          btn.classList.toggle("text-background", active);
+          btn.classList.toggle("hover:bg-foreground/85", active);
+          btn.classList.toggle("text-foreground", !active);
+          btn.classList.toggle("hover:bg-accent", !active);
+          btn.querySelector("span").classList.toggle("text-background/70", active);
+          btn.querySelector("span").classList.toggle("text-muted-foreground", !active);
+        });
+        document.querySelectorAll(".recent-range").forEach((btn) => {
+          const active = btn.dataset.recentRange === recentRange;
+          btn.setAttribute("aria-checked", String(active));
+          btn.classList.toggle("text-foreground", active);
+          btn.classList.toggle("font-semibold", active);
+          btn.classList.toggle("text-muted-foreground", !active);
+          btn.classList.toggle("hover:bg-accent", true);
+          const check = btn.querySelector(".range-check");
+          if (check) check.classList.toggle("invisible", !active);
+        });
+      }
+
+      function renderRecent() {
+        const items = RECENT_DATA[recentTab] || [];
+        const filtered = items.filter((r) => {
+          if (recentRange === "all") return true;
+          if (recentRange === "today")
+            return /ago$/i.test(r.when) && !/d ago/i.test(r.when);
+          if (recentRange === "week") return !/^\d+w ago/i.test(r.when);
+          return true;
+        });
+
+        // Refresh per-tab counts (use the unfiltered list so counts are stable).
+        Object.entries(RECENT_DATA).forEach(([key, arr]) => {
+          const el = document.querySelector(`[data-recent-count="${key}"]`);
+          if (el) el.textContent = arr.length;
+        });
+
+        const list = document.getElementById("recent-list");
+        list.innerHTML = "";
+
+        const totalPages = Math.max(1, Math.ceil(filtered.length / RECENT_PAGE_SIZE));
+        if (recentPage >= totalPages) recentPage = totalPages - 1;
+        const start = recentPage * RECENT_PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + RECENT_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("recent-pagination"),
+          recentPage,
+          totalPages,
+          (next) => {
+            recentPage = next;
+            renderRecent();
+          }
+        );
+
+        if (filtered.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "px-2 py-8 text-center text-xs text-muted-foreground";
+          empty.textContent = "Nothing here yet.";
+          list.appendChild(empty);
+          return;
+        }
+
+        pageItems.forEach((r, idx) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-center gap-3 border-b border-border/60 px-1 py-2.5 last:border-b-0 hover:bg-accent/40";
+
+          const body = document.createElement("div");
+          body.className = "min-w-0 flex-1";
+          const title = makeMarquee(
+            r.title,
+            "text-sm font-medium text-foreground"
+          );
+          const sub = makeMarquee(r.sub, "text-xs text-muted-foreground");
+          body.append(title, sub);
+          li.appendChild(body);
+
+          const meta = document.createElement("div");
+          meta.className = "flex shrink-0 items-center gap-3";
+          const status = document.createElement("span");
+          status.className =
+            "rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground";
+          status.textContent = r.status;
+          const when = document.createElement("span");
+          when.className = "text-xs text-muted-foreground";
+          when.textContent = r.when;
+          meta.append(status, when);
+          li.appendChild(meta);
+
+          list.appendChild(li);
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+        setupMarquees(list);
+      }
+
+      document.querySelectorAll(".recent-tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          recentTab = btn.dataset.recentTab;
+          recentPage = 0;
+          applyTabState();
+          renderRecent();
+        });
+      });
+      const rangeTrigger = document.getElementById("recent-range-trigger");
+      const rangeMenu = document.getElementById("recent-range-menu");
+
+      function openRangeMenu() {
+        rangeMenu.classList.remove("invisible", "opacity-0");
+        rangeMenu.classList.add("opacity-100");
+        rangeTrigger.setAttribute("aria-expanded", "true");
+      }
+      function closeRangeMenu() {
+        rangeMenu.classList.add("opacity-0");
+        rangeMenu.classList.remove("opacity-100");
+        rangeTrigger.setAttribute("aria-expanded", "false");
+        setTimeout(() => rangeMenu.classList.add("invisible"), 160);
+      }
+      rangeTrigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const expanded = rangeTrigger.getAttribute("aria-expanded") === "true";
+        if (expanded) closeRangeMenu();
+        else openRangeMenu();
+      });
+      document.addEventListener("click", (e) => {
+        if (!document.getElementById("recent-range").contains(e.target)) {
+          closeRangeMenu();
+        }
+      });
+      document.querySelectorAll(".recent-range").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          recentRange = btn.dataset.recentRange;
+          recentPage = 0;
+          applyTabState();
+          renderRecent();
+          closeRangeMenu();
+        });
+      });
+      applyTabState();
+      renderRecent();
+
+      // ── Delivery Teams ─────────────────────────────────────────────
+      // Three placeholder teams the user belongs to. Each shows their
+      // function (role), member/asset counts, and any action-required
+      // badge.
+      const DELIVERY_TEAMS = [
+        {
+          name: "Decisions App",
+          fn: "Developer",
+          members: 12,
+          assets: 24,
+          actions: 3,
+        },
+        {
+          name: "AI Code Assistant",
+          fn: "Collaborator",
+          members: 8,
+          assets: 18,
+          actions: 0,
+        },
+        {
+          name: "Project Execution and Prioritization",
+          fn: "Leader",
+          members: 10,
+          assets: 31,
+          actions: 1,
+        },
+      ];
+
+      function renderDeliveryTeams() {
+        const ul = document.getElementById("delivery-teams");
+        if (!ul) return;
+        ul.innerHTML = "";
+        DELIVERY_TEAMS.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex flex-col rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-foreground/40";
+
+          const name = document.createElement("h3");
+          name.className = "text-base font-semibold tracking-tight";
+          name.textContent = t.name;
+          li.appendChild(name);
+
+          const fn = document.createElement("p");
+          fn.className = "mt-1 text-xs text-muted-foreground";
+          const fnLabel = document.createElement("span");
+          fnLabel.textContent = "Your Function: ";
+          const fnVal = document.createElement("span");
+          fnVal.className = "font-medium text-foreground";
+          fnVal.textContent = t.fn;
+          fn.append(fnLabel, fnVal);
+          li.appendChild(fn);
+
+          const stats = document.createElement("dl");
+          stats.className = "mt-4 grid grid-cols-2 gap-y-1 text-sm";
+          [
+            ["Members", t.members],
+            ["Assets", t.assets],
+          ].forEach(([label, val]) => {
+            const dt = document.createElement("dt");
+            dt.className = "text-muted-foreground";
+            dt.textContent = label;
+            const dd = document.createElement("dd");
+            dd.className = "text-right tabular-nums text-foreground";
+            dd.textContent = val;
+            stats.append(dt, dd);
+          });
+          li.appendChild(stats);
+
+          if (t.actions > 0) {
+            const actions = document.createElement("div");
+            actions.className =
+              "mt-3 flex items-center justify-between border-t border-border pt-3 text-sm";
+            const left = document.createElement("span");
+            left.className = "inline-flex items-center gap-1.5 text-foreground";
+            left.appendChild(iconEl("circle-alert", "text-foreground"));
+            const leftText = document.createElement("span");
+            leftText.textContent = "Action Required";
+            left.appendChild(leftText);
+            const count = document.createElement("span");
+            count.className =
+              "inline-flex size-5 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background";
+            count.textContent = t.actions;
+            actions.append(left, count);
+            li.appendChild(actions);
+          }
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderDeliveryTeams();
+
+      // ── Continue with Agents ───────────────────────────────────────
+      const AGENT_TASKS = [
+        {
+          name: "Code Review Agent",
+          desc: "Reviewed PR #4821 — 3 suggestions pending your approval",
+          status: "AWAITING REVIEW",
+          urgent: false,
+          when: "12m ago",
+        },
+        {
+          name: "CI/CD Agent",
+          desc: "Build pipeline optimized — deploy ready for staging",
+          status: "READY",
+          urgent: false,
+          when: "34m ago",
+        },
+        {
+          name: "Security Agent",
+          desc: "Dependency scan complete — 2 vulnerabilities flagged",
+          status: "ACTION NEEDED",
+          urgent: true,
+          when: "1h ago",
+        },
+        {
+          name: "Test Agent",
+          desc: "Generated 14 unit tests for auth-service module",
+          status: "COMPLETE",
+          urgent: false,
+          when: "2h ago",
+        },
+      ];
+
+      function renderAgents() {
+        const ul = document.getElementById("agents-list");
+        if (!ul) return;
+        ul.innerHTML = "";
+        // Show only the top 3 agents — the rest live behind "View all".
+        AGENT_TASKS.slice(0, 3).forEach((a) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex flex-col gap-2 rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground/40";
+
+          const top = document.createElement("div");
+          top.className = "flex items-start justify-between gap-2";
+          const name = document.createElement("h3");
+          name.className = "flex-1 text-sm font-semibold text-foreground";
+          name.textContent = a.name;
+          const when = document.createElement("span");
+          when.className = "shrink-0 text-xs text-muted-foreground";
+          when.textContent = a.when;
+          top.append(name, when);
+          li.appendChild(top);
+
+          const desc = document.createElement("p");
+          desc.className = "text-xs text-muted-foreground";
+          desc.textContent = a.desc;
+          li.appendChild(desc);
+
+          const footer = document.createElement("div");
+          footer.className = "mt-1 flex items-center justify-between";
+          const status = document.createElement("span");
+          status.className = a.urgent
+            ? "inline-flex items-center rounded-md bg-foreground px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-background"
+            : "inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground";
+          status.textContent = a.status;
+          footer.append(status);
+          li.appendChild(footer);
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderAgents();
+
+      // ── Active Incidents & Alerts ──────────────────────────────────
+      const INCIDENTS = [
+        {
+          title: "High latency in ML Model API",
+          service: "ML Model API",
+          severity: "high",
+          state: "investigating",
+          icon: "circle-alert",
+          when: "Reported: 15 min ago",
+        },
+        {
+          title: "Mobile Gateway connection issues",
+          service: "Mobile Gateway",
+          severity: "critical",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 45 min ago",
+        },
+        {
+          title: "Cache service intermittent failures",
+          service: "Cache Service",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 2 hours ago",
+        },
+        {
+          title: "Auth service elevated 401 rate",
+          service: "Auth Service",
+          severity: "high",
+          state: "investigating",
+          icon: "circle-alert",
+          when: "Reported: 3 hours ago",
+        },
+        {
+          title: "Email delivery queue backlog growing",
+          service: "Notification Service",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 5 hours ago",
+        },
+        {
+          title: "Region us-west-2 increased error budget burn",
+          service: "Platform Infra",
+          severity: "high",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 6 hours ago",
+        },
+        {
+          title: "Search relevance regression in v3 ranker",
+          service: "Search Service",
+          severity: "medium",
+          state: "investigating",
+          icon: "info",
+          when: "Reported: 8 hours ago",
+        },
+        {
+          title: "Recommendations API timeouts under load",
+          service: "Recommendations",
+          severity: "critical",
+          state: "identified",
+          icon: "triangle-alert",
+          when: "Reported: 10 hours ago",
+        },
+        {
+          title: "Telemetry sampling drop in metrics-obs",
+          service: "Observability",
+          severity: "medium",
+          state: "monitoring",
+          icon: "info",
+          when: "Reported: 12 hours ago",
+        },
+      ];
+
+      const SEVERITY_STYLES = {
+        critical:
+          "inline-flex items-center rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold tracking-wide text-background",
+        high:
+          "inline-flex items-center rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-background",
+        medium:
+          "inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground",
+      };
+
+      const INCIDENTS_PAGE_SIZE = 5;
+      let incidentsPage = 0;
+
+      function renderIncidents() {
+        const ul = document.getElementById("incidents-list");
+        if (!ul) return;
+        ul.innerHTML = "";
+
+        const totalPages = Math.max(
+          1,
+          Math.ceil(INCIDENTS.length / INCIDENTS_PAGE_SIZE)
+        );
+        if (incidentsPage >= totalPages) incidentsPage = totalPages - 1;
+        const start = incidentsPage * INCIDENTS_PAGE_SIZE;
+        const pageItems = INCIDENTS.slice(start, start + INCIDENTS_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("incidents-pagination"),
+          incidentsPage,
+          totalPages,
+          (next) => {
+            incidentsPage = next;
+            renderIncidents();
+          }
+        );
+
+        pageItems.forEach((i) => {
+          const li = document.createElement("li");
+          li.className =
+            "rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground/40";
+
+          const top = document.createElement("div");
+          top.className = "flex items-start justify-between gap-2";
+
+          const left = document.createElement("div");
+          left.className = "flex items-start gap-2 min-w-0";
+          const iconWrap = document.createElement("span");
+          iconWrap.className = "mt-0.5 shrink-0 text-foreground";
+          iconWrap.appendChild(iconEl(i.icon));
+          const body = document.createElement("div");
+          body.className = "min-w-0";
+          const title = document.createElement("h3");
+          title.className = "text-sm font-semibold text-foreground";
+          title.textContent = i.title;
+          body.appendChild(title);
+          const tags = document.createElement("div");
+          tags.className = "mt-1 flex flex-wrap items-center gap-1.5";
+          const sev = document.createElement("span");
+          sev.className = SEVERITY_STYLES[i.severity];
+          sev.textContent = i.severity;
+          const state = document.createElement("span");
+          state.className =
+            "inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-secondary-foreground";
+          state.textContent = i.state;
+          tags.append(sev, state);
+          body.appendChild(tags);
+          left.append(iconWrap, body);
+
+          const when = document.createElement("span");
+          when.className = "shrink-0 text-xs text-muted-foreground";
+          when.textContent = i.when;
+
+          top.append(left, when);
+          li.appendChild(top);
+
+          const svc = document.createElement("p");
+          svc.className = "mt-2 text-xs text-muted-foreground";
+          const svcLabel = document.createElement("span");
+          svcLabel.textContent = "Service: ";
+          const svcVal = document.createElement("span");
+          svcVal.className = "text-foreground";
+          svcVal.textContent = i.service;
+          svc.append(svcLabel, svcVal);
+          li.appendChild(svc);
+
+          ul.appendChild(li);
+        });
+        if (window.lucide) window.lucide.createIcons();
+      }
+      renderIncidents();
+
+      // ── Jira Tickets ───────────────────────────────────────────────
+      // Per-project/board ticket lists. The user picks a project + board
+      // from the two selects; the list rerenders with that subset. Each
+      // row links out to the actual ticket.
+      const JIRA_TICKETS = {
+        "Decisions App": {
+          "CX Sprint Board": [
+            { id: "CX-1234", priority: "High", title: "Implement new customer onboarding flow", assignee: "Sarah Chen" },
+            { id: "CX-1235", priority: "High", title: "Fix payment processing bug", assignee: "Michael Torres" },
+            { id: "CX-1236", priority: "Medium", title: "Update user profile UI components", assignee: "Jessica Lee" },
+            { id: "CX-1237", priority: "Medium", title: "Add filter controls to decisions table", assignee: "Will Wang" },
+            { id: "CX-1238", priority: "Low", title: "Polish copy on confirmation modal", assignee: "Priya Patel" },
+            { id: "CX-1239", priority: "Medium", title: "Add audit log export for compliance", assignee: "Sarah Chen" },
+            { id: "CX-1240", priority: "High", title: "Resolve race condition in rule cache invalidation", assignee: "Michael Torres" },
+            { id: "CX-1241", priority: "Low", title: "Refresh empty-state illustrations", assignee: "Jessica Lee" },
+            { id: "CX-1242", priority: "Medium", title: "Add bulk-edit action to policy list", assignee: "Will Wang" },
+            { id: "CX-1243", priority: "Medium", title: "Improve form validation messaging", assignee: "Priya Patel" },
+          ],
+          Backlog: [
+            { id: "CX-1301", priority: "Medium", title: "Investigate slow rule evaluation in prod", assignee: "Sarah Chen" },
+            { id: "CX-1302", priority: "Low", title: "Document new policy import format", assignee: "Will Wang" },
+            { id: "CX-1303", priority: "Medium", title: "Audit unused feature flags in decisions", assignee: "Michael Torres" },
+            { id: "CX-1304", priority: "Low", title: "Add keyboard shortcuts to rule editor", assignee: "Jessica Lee" },
+            { id: "CX-1305", priority: "Medium", title: "Backfill missing audit events from Q1", assignee: "Priya Patel" },
+            { id: "CX-1306", priority: "Low", title: "Add tooltip explanations for advanced fields", assignee: "Will Wang" },
+            { id: "CX-1307", priority: "Medium", title: "Bench new rule evaluation engine", assignee: "Sarah Chen" },
+          ],
+          "Done This Sprint": [
+            { id: "CX-1199", priority: "High", title: "Migrate decisions service to new auth library", assignee: "Michael Torres" },
+            { id: "CX-1200", priority: "Medium", title: "Hook up new analytics dashboard", assignee: "Jessica Lee" },
+            { id: "CX-1201", priority: "Medium", title: "Add SSO support for partner accounts", assignee: "Will Wang" },
+            { id: "CX-1202", priority: "Low", title: "Bump dependencies to latest minor versions", assignee: "Sarah Chen" },
+            { id: "CX-1203", priority: "High", title: "Patch CVE-2026-4017 in policy parser", assignee: "Priya Patel" },
+          ],
+        },
+        "AI Code Assistant": {
+          "CX Sprint Board": [
+            { id: "AI-220", priority: "High", title: "Add streaming responses to chat endpoint", assignee: "Will Wang" },
+            { id: "AI-221", priority: "Medium", title: "Trim prompt cache when memory pressure is high", assignee: "Jessica Lee" },
+            { id: "AI-222", priority: "Medium", title: "Add structured logging to inference router", assignee: "Sarah Chen" },
+            { id: "AI-223", priority: "High", title: "Fix timeouts in evaluation worker", assignee: "Michael Torres" },
+            { id: "AI-224", priority: "Low", title: "Polish settings UI for prompt templates", assignee: "Priya Patel" },
+            { id: "AI-225", priority: "Medium", title: "Add cost summaries per workspace", assignee: "Will Wang" },
+          ],
+          Backlog: [
+            { id: "AI-260", priority: "Medium", title: "Investigate eval suite flakiness", assignee: "Priya Patel" },
+            { id: "AI-261", priority: "Low", title: "Add dark mode polish to chat UI", assignee: "Jessica Lee" },
+            { id: "AI-262", priority: "Medium", title: "Wire up evaluation rubric versioning", assignee: "Sarah Chen" },
+            { id: "AI-263", priority: "High", title: "Add red-team scenarios to safety suite", assignee: "Michael Torres" },
+            { id: "AI-264", priority: "Medium", title: "Document model deprecation policy", assignee: "Will Wang" },
+          ],
+          "Done This Sprint": [
+            { id: "AI-180", priority: "High", title: "Ship new evaluation rubric editor", assignee: "Sarah Chen" },
+            { id: "AI-181", priority: "Medium", title: "Add per-model cost reporting", assignee: "Will Wang" },
+            { id: "AI-182", priority: "Low", title: "Tidy up chat UI empty states", assignee: "Priya Patel" },
+            { id: "AI-183", priority: "Medium", title: "Migrate evaluation runner to k8s", assignee: "Michael Torres" },
+            { id: "AI-184", priority: "High", title: "Patch prompt injection regression", assignee: "Jessica Lee" },
+          ],
+        },
+        "Project Execution and Prioritization": {
+          "CX Sprint Board": [
+            { id: "PEP-410", priority: "High", title: "Roll out new roadmap view to leadership", assignee: "Michael Torres" },
+            { id: "PEP-411", priority: "Medium", title: "Add OKR rollup view for VPs", assignee: "Sarah Chen" },
+            { id: "PEP-412", priority: "Medium", title: "Wire up Linear bidirectional sync", assignee: "Jessica Lee" },
+            { id: "PEP-413", priority: "Low", title: "Polish empty-state copy in roadmap", assignee: "Will Wang" },
+            { id: "PEP-414", priority: "High", title: "Add risk badges to roadmap items", assignee: "Priya Patel" },
+            { id: "PEP-415", priority: "Medium", title: "Add timeline view for milestones", assignee: "Michael Torres" },
+          ],
+          Backlog: [
+            { id: "PEP-455", priority: "Low", title: "Add filters to OKR dashboard", assignee: "Will Wang" },
+            { id: "PEP-456", priority: "Medium", title: "Add Slack reminders for stale OKRs", assignee: "Jessica Lee" },
+            { id: "PEP-457", priority: "Medium", title: "Wire up Confluence export", assignee: "Sarah Chen" },
+            { id: "PEP-458", priority: "Low", title: "Add inline editing to roadmap rows", assignee: "Priya Patel" },
+            { id: "PEP-459", priority: "Medium", title: "Add team capacity overlay to roadmap", assignee: "Michael Torres" },
+          ],
+          "Done This Sprint": [
+            { id: "PEP-400", priority: "Medium", title: "Wire up Linear bidirectional sync", assignee: "Jessica Lee" },
+            { id: "PEP-401", priority: "High", title: "Ship roadmap export to PDF", assignee: "Will Wang" },
+            { id: "PEP-402", priority: "Medium", title: "Refresh empty-state illustrations", assignee: "Priya Patel" },
+            { id: "PEP-403", priority: "Low", title: "Add color presets for milestones", assignee: "Sarah Chen" },
+            { id: "PEP-404", priority: "Medium", title: "Migrate OKR data store to v2 schema", assignee: "Michael Torres" },
+          ],
+        },
+      };
+
+      // Lightweight pill style keyed by priority. We keep colors muted
+      // (secondary fill, foreground text) so the chip reads as a tag,
+      // not a destructive badge.
+      const JIRA_PRIORITY_STYLES = {
+        High: "bg-secondary text-secondary-foreground",
+        Medium: "bg-secondary text-secondary-foreground",
+        Low: "bg-secondary text-secondary-foreground",
+      };
+
+      const JIRA_PAGE_SIZE = 5;
+      let jiraPage = 0;
+
+      function renderJiraTickets() {
+        const project = document.getElementById("jira-project").value;
+        const board = document.getElementById("jira-board").value;
+        const ul = document.getElementById("jira-list");
+        if (!ul) return;
+        const tickets = (JIRA_TICKETS[project] || {})[board] || [];
+        ul.innerHTML = "";
+
+        const totalPages = Math.max(1, Math.ceil(tickets.length / JIRA_PAGE_SIZE));
+        if (jiraPage >= totalPages) jiraPage = totalPages - 1;
+        const start = jiraPage * JIRA_PAGE_SIZE;
+        const pageItems = tickets.slice(start, start + JIRA_PAGE_SIZE);
+
+        renderPagination(
+          document.getElementById("jira-pagination"),
+          jiraPage,
+          totalPages,
+          (next) => {
+            jiraPage = next;
+            renderJiraTickets();
+          }
+        );
+
+        if (tickets.length === 0) {
+          const empty = document.createElement("li");
+          empty.className =
+            "px-2 py-8 text-center text-xs text-muted-foreground";
+          empty.textContent = "No tickets on this board.";
+          ul.appendChild(empty);
+          return;
+        }
+
+        pageItems.forEach((t) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-start justify-between gap-3 py-3 hover:bg-accent/40";
+
+          const body = document.createElement("div");
+          body.className = "min-w-0 flex-1";
+
+          const top = document.createElement("div");
+          top.className = "flex items-center gap-2";
+          const id = document.createElement("span");
+          id.className = "text-sm font-semibold text-foreground";
+          id.textContent = t.id;
+          const priority = document.createElement("span");
+          priority.className = `inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${
+            JIRA_PRIORITY_STYLES[t.priority] ||
+            "bg-secondary text-secondary-foreground"
+          }`;
+          priority.textContent = t.priority;
+          top.append(id, priority);
+          body.appendChild(top);
+
+          const title = document.createElement("p");
+          title.className = "mt-1 truncate text-sm text-foreground";
+          title.textContent = t.title;
+          body.appendChild(title);
+
+          const assignee = document.createElement("p");
+          assignee.className = "mt-0.5 text-xs text-muted-foreground";
+          const aLabel = document.createElement("span");
+          aLabel.textContent = "Assignee: ";
+          const aVal = document.createElement("span");
+          aVal.textContent = t.assignee;
+          assignee.append(aLabel, aVal);
+          body.appendChild(assignee);
+
+          li.appendChild(body);
+
+          const linkBtn = document.createElement("a");
+          linkBtn.href = "#";
+          linkBtn.setAttribute("aria-label", `Open ${t.id}`);
+          linkBtn.className =
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground";
+          linkBtn.appendChild(iconEl("external-link"));
+          li.appendChild(linkBtn);
+
+          ul.appendChild(li);
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      document.getElementById("jira-project").addEventListener("change", () => {
+        jiraPage = 0;
+        renderJiraTickets();
+      });
+      document.getElementById("jira-board").addEventListener("change", () => {
+        jiraPage = 0;
+        renderJiraTickets();
+      });
+      renderJiraTickets();
+
+      // ── Customize view: drag-to-reorder whole sections ─────────────
+      // Clicking "Customize view" puts every section under the action
+      // pills into edit mode. Each section becomes draggable; dropping
+      // one over another reorders the DOM. Clicking "Done" exits.
+      (function () {
+        const trigger = document.getElementById("customize-view");
+        const area = document.getElementById("customize-area");
+        if (!trigger || !area) return;
+
+        const sections = Array.from(area.querySelectorAll(".customize-section"));
+        let dragged = null;
+
+        function setMode(mode) {
+          trigger.dataset.mode = mode;
+          const editing = mode === "editing";
+          area.classList.toggle("customize-area--editing", editing);
+          trigger.textContent = editing ? "Done" : "Customize view";
+          trigger.classList.toggle("text-foreground", editing);
+          trigger.classList.toggle("text-muted-foreground", !editing);
+          sections.forEach((s) => {
+            s.draggable = editing;
+            if (!editing) s.classList.remove("is-dragging", "is-drop-target");
+          });
+        }
+
+        trigger.addEventListener("click", () => {
+          setMode(trigger.dataset.mode === "editing" ? "idle" : "editing");
+        });
+
+        sections.forEach((section) => {
+          section.addEventListener("dragstart", (e) => {
+            if (trigger.dataset.mode !== "editing") {
+              e.preventDefault();
+              return;
+            }
+            dragged = section;
+            section.classList.add("is-dragging");
+            // Required for Firefox; payload itself isn't used.
+            e.dataTransfer.setData("text/plain", "");
+            e.dataTransfer.effectAllowed = "move";
+          });
+
+          section.addEventListener("dragend", () => {
+            section.classList.remove("is-dragging");
+            sections.forEach((s) => s.classList.remove("is-drop-target"));
+            dragged = null;
+          });
+
+          section.addEventListener("dragover", (e) => {
+            if (!dragged || section === dragged) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            sections.forEach((s) =>
+              s === section
+                ? s.classList.add("is-drop-target")
+                : s.classList.remove("is-drop-target")
+            );
+          });
+
+          section.addEventListener("dragleave", (e) => {
+            // Only clear when the cursor actually leaves the section
+            // (not a child element).
+            if (!section.contains(e.relatedTarget)) {
+              section.classList.remove("is-drop-target");
+            }
+          });
+
+          section.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (!dragged || section === dragged) return;
+            // Insert before or after the drop target based on which
+            // half of the section the cursor is in (vertically).
+            const rect = section.getBoundingClientRect();
+            const isAfter = e.clientY > rect.top + rect.height / 2;
+            if (isAfter) section.after(dragged);
+            else section.before(dragged);
+            section.classList.remove("is-drop-target");
+          });
+        });
+      })();
+
+      document.querySelectorAll(".action-pill").forEach((root) => {
+        renderActionPill(root);
+
+        const trigger = root.querySelector("button");
+        const popover = root.querySelector(".action-popover");
+        let closeTimer = null;
+
+        function open() {
+          clearTimeout(closeTimer);
+          popover.classList.remove("invisible", "opacity-0");
+          popover.classList.add("opacity-100");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+        function close() {
+          popover.classList.add("opacity-0");
+          popover.classList.remove("opacity-100");
+          trigger.setAttribute("aria-expanded", "false");
+          closeTimer = setTimeout(() => {
+            popover.classList.add("invisible");
+          }, 160);
+        }
+
+        root.addEventListener("mouseenter", open);
+        root.addEventListener("mouseleave", () => {
+          closeTimer = setTimeout(close, 80);
+        });
+        trigger.addEventListener("focus", open);
+        root.addEventListener("focusout", (e) => {
+          if (!root.contains(e.relatedTarget)) close();
+        });
+      });
+
+      // Wire up both the page breadcrumb (in the main canvas) and the
+      // mini breadcrumb (in the top nav). They share identical
+      // interaction behavior — hover to open, click toggles, click
+      // outside or blur to close.
+      function wireBreadcrumb(rootId, triggerId, popoverId) {
+        const root = document.getElementById(rootId);
+        const trigger = document.getElementById(triggerId);
+        const popover = document.getElementById(popoverId);
+        if (!root || !trigger || !popover) return;
+        let closeTimer = null;
+
+        function open() {
+          clearTimeout(closeTimer);
+          popover.classList.remove("invisible", "opacity-0");
+          popover.classList.add("opacity-100");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+        function close() {
+          popover.classList.add("opacity-0");
+          popover.classList.remove("opacity-100");
+          trigger.setAttribute("aria-expanded", "false");
+          // Wait for the transition before applying `invisible` so the
+          // hover region of the popover doesn't disappear mid-animation.
+          closeTimer = setTimeout(() => {
+            popover.classList.add("invisible");
+          }, 160);
+        }
+        root.addEventListener("mouseenter", open);
+        root.addEventListener("mouseleave", () => {
+          closeTimer = setTimeout(close, 80);
+        });
+        trigger.addEventListener("focus", open);
+        // Click on the trigger just guarantees the popover is open — never
+        // toggle to close. (Hover already opens it via mouseenter, so a
+        // click-to-toggle would race with hover and require the user to
+        // click twice. mouseleave + outside-click are the close paths.)
+        trigger.addEventListener("click", (e) => {
+          open();
+          e.stopPropagation();
+        });
+        root.addEventListener("focusout", (e) => {
+          if (!root.contains(e.relatedTarget)) close();
+        });
+        // Click outside the root closes the popover.
+        document.addEventListener("click", (e) => {
+          if (!root.contains(e.target)) close();
+        });
+      }
+
+      wireBreadcrumb("breadcrumb-root", "breadcrumb-trigger", "breadcrumb-popover");
+      wireBreadcrumb(
+        "mini-breadcrumb-root",
+        "mini-breadcrumb-trigger",
+        "mini-breadcrumb-popover"
+      );
+
+      // ── Greeting ───────────────────────────────────────────────────
+      // Fixed motivational line.
+      document.getElementById("greeting").textContent = "Let's get job done!";
+
+      // ── Ask input: enable send only when there's text ──────────────
+      const askInput = document.getElementById("ask-input");
+      const askSend = document.getElementById("ask-send");
+      const askForm = document.getElementById("ask-form");
+
+      // Rolling placeholders — cycle every 5s with an ease-in-out roll.
+      // We render our own placeholder overlay (#ask-placeholder) because
+      // the native <textarea> placeholder can't be animated.
+      const PLACEHOLDERS = [
+        "How can I help you today?",
+        "Continue my work from Terminal by / resume",
+        "Show me all the to-dos for my Teams",
+      ];
+      let placeholderIdx = 0;
+      const placeholderHost = document.getElementById("ask-placeholder");
+      const placeholderTrack = placeholderHost.querySelector(".roll-track");
+      placeholderTrack.textContent = PLACEHOLDERS[0];
+
+      function rollToNext() {
+        const next = (placeholderIdx + 1) % PLACEHOLDERS.length;
+        const outgoing = placeholderTrack;
+        // Animate the outgoing label up + fade out.
+        outgoing.classList.add("roll-out");
+
+        outgoing.addEventListener(
+          "animationend",
+          () => {
+            // Swap text, prep for incoming animation.
+            outgoing.classList.remove("roll-out");
+            outgoing.textContent = PLACEHOLDERS[next];
+            // Force a reflow so the browser picks up the class change
+            // as a fresh animation rather than skipping it.
+            void outgoing.offsetWidth;
+            outgoing.classList.add("roll-in");
+            outgoing.addEventListener(
+              "animationend",
+              () => outgoing.classList.remove("roll-in"),
+              { once: true }
+            );
+            placeholderIdx = next;
+          },
+          { once: true }
+        );
+      }
+
+      setInterval(() => {
+        // Pause while the user is interacting with the field.
+        if (document.activeElement === askInput) return;
+        if (askInput.value.length > 0) return;
+        rollToNext();
+      }, 3000);
+
+      function updatePlaceholderVisibility() {
+        if (askInput.value.length > 0) placeholderHost.classList.add("hidden");
+        else placeholderHost.classList.remove("hidden");
+      }
+
+      function syncSendState() {
+        askSend.disabled = askInput.value.trim().length === 0;
+        updatePlaceholderVisibility();
+      }
+      askInput.addEventListener("input", syncSendState);
+      askInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!askSend.disabled) askForm.requestSubmit();
+        }
+      });
+      askForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        // In the prototype we just clear the input — a real send would go
+        // here. Keep the placeholder in place for the screenshot.
+        askInput.value = "";
+        syncSendState();
+        askInput.focus();
+      });
+      syncSendState();
+
+      if (window.lucide) window.lucide.createIcons();
+    </script>
+  </body>
+</html>

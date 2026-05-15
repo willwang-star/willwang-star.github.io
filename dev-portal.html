@@ -241,30 +241,33 @@
       }
 
       /* Customize-view edit mode. While active:
-         - Each card gets a dashed outline and a drag cursor.
-         - A grab handle appears in the top-right corner.
-         - The card being dragged dims; the drop target gets a stronger
-           outline so it's clear where it'll land. */
-      .dashboard-row--editing .dashboard-card {
+         - Every section in the customize area gets a dashed outline
+           and a grab cursor.
+         - A grab handle chip appears at the top-right of each section.
+         - The section being dragged dims; the section the cursor is
+           over picks up a solid outline so the drop target is clear. */
+      .customize-area--editing .customize-section {
+        position: relative;
         cursor: grab;
-        outline: 2px dashed hsl(var(--foreground) / 0.4);
-        outline-offset: -2px;
+        outline: 2px dashed hsl(var(--foreground) / 0.35);
+        outline-offset: 4px;
+        border-radius: 0.75rem;
       }
-      .dashboard-row--editing .dashboard-card:active {
+      .customize-area--editing .customize-section:active {
         cursor: grabbing;
       }
-      .dashboard-card .drag-handle {
+      .customize-section .section-drag-handle {
         display: none;
       }
-      .dashboard-row--editing .dashboard-card .drag-handle {
+      .customize-area--editing .customize-section .section-drag-handle {
         display: inline-flex;
       }
-      .dashboard-card.is-dragging {
+      .customize-section.is-dragging {
         opacity: 0.4;
       }
-      .dashboard-card.is-drop-target {
+      .customize-section.is-drop-target {
         outline: 2px solid hsl(var(--foreground));
-        outline-offset: -2px;
+        outline-offset: 4px;
       }
 
       /* Soft drop shadow used by the floating nav, matches shadcn `shadow-lg`
@@ -498,7 +501,7 @@
       <!-- Floating left nav -->
       <aside
         id="nav"
-        class="fixed left-6 top-[68px] z-20 w-max min-w-[11rem] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        class="fixed left-6 top-[68px] z-20 w-max min-w-[9rem] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
         aria-label="Primary"
       >
         <!-- Search -->
@@ -699,7 +702,7 @@
                     <p
                       class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
                     >
-                      Suggested by your role
+                      Paved road
                     </p>
                     <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
                   </div>
@@ -737,11 +740,43 @@
                   </div>
                 </div>
               </div>
+
+              <div class="action-pill relative" data-pill="monitor">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i data-lucide="activity" class="text-background/80"></i>
+                  <span>Monitor</span>
+                </button>
+                <div
+                  class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+                >
+                  <div
+                    class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow"
+                  >
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Recent
+                    </p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p
+                      class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Suggested by your role
+                    </p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
-          <!-- Customize view — toggles drag-reorder mode for the
-               dashboard cards. Swaps to Done while editing. -->
+          <!-- Customize view — enters edit mode that lets the user drag
+               any section in the customize area to reorder it. -->
           <div class="mt-6 flex justify-end">
             <button
               type="button"
@@ -753,25 +788,27 @@
             </button>
           </div>
 
-          <!-- ── Action Items + Recent (side-by-side) ─────────────────
-               Two-column dashboard row below the chat input. Each card
-               uses the same border/radius/padding system as the rest of
-               the page so they read as part of the same surface. -->
+          <!-- Customize area — every direct child <section> is a
+               reorderable block while edit mode is on. Uses flex-wrap so
+               half-width sections (Action Items, Recent, etc.) pair up
+               on lg screens and full-width sections (Delivery Teams,
+               Continue with Agents) span the whole row. -->
+          <div id="customize-area" class="mt-2 flex flex-wrap items-stretch gap-x-4 gap-y-10">
+
+          <!-- ── Action Items (half-width) ──────────────────────────── -->
           <section
-            id="dashboard-row"
-            class="mt-2 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2"
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
           >
-            <!-- Action Items ── mini to-do list -->
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <article
-              class="dashboard-card relative flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="dashboard-card relative flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
               draggable="false"
             >
-              <span
-                class="drag-handle pointer-events-none absolute right-3 top-3 inline-flex size-6 items-center justify-center rounded-md bg-background text-muted-foreground"
-                aria-hidden="true"
-              >
-                <i data-lucide="grip-vertical"></i>
-              </span>
               <header class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold tracking-tight">
                   Action Items
@@ -820,18 +857,22 @@
                 ></nav>
               </footer>
             </article>
+          </section>
 
-            <!-- Recent ── activity table -->
+          <!-- ── Recent (half-width) ────────────────────────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <article
-              class="dashboard-card relative flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="dashboard-card relative flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
               draggable="false"
             >
-              <span
-                class="drag-handle pointer-events-none absolute right-3 top-3 inline-flex size-6 items-center justify-center rounded-md bg-background text-muted-foreground"
-                aria-hidden="true"
-              >
-                <i data-lucide="grip-vertical"></i>
-              </span>
               <header class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold tracking-tight">Recent</h2>
               </header>
@@ -937,7 +978,13 @@
           </section>
 
           <!-- ── Delivery Teams (full width, no outer container) ────── -->
-          <section class="mt-10">
+          <section class="customize-section relative w-full lg:basis-full">
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <header class="mb-3 flex items-center justify-between">
               <h2 class="text-base font-semibold tracking-tight">
                 Delivery Teams
@@ -956,7 +1003,13 @@
           </section>
 
           <!-- ── Continue with Agents (full width, no outer container) -->
-          <section class="mt-10">
+          <section class="customize-section relative w-full lg:basis-full">
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <header class="mb-3 flex items-center justify-between">
               <h2 class="text-base font-semibold tracking-tight">
                 Continue with Agents
@@ -974,10 +1027,18 @@
             ></ul>
           </section>
 
-          <!-- ── Active Incidents & Alerts + Jira Tickets (side-by-side) -->
-          <section class="mt-10 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <!-- ── Active Incidents & Alerts (half-width) ─────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <article
-              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
             >
               <header class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold tracking-tight">
@@ -994,10 +1055,20 @@
                 ></nav>
               </footer>
             </article>
+          </section>
 
-            <!-- Jira Tickets ── In Progress -->
+          <!-- ── Jira Tickets (half-width) ──────────────────────────── -->
+          <section
+            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+          >
+            <span
+              class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-background text-muted-foreground floating-shadow"
+              aria-hidden="true"
+            >
+              <i data-lucide="grip-vertical"></i>
+            </span>
             <article
-              class="flex flex-col rounded-xl border border-border bg-card p-4 text-left"
+              class="flex h-full flex-col rounded-xl border border-border bg-card p-4 text-left"
             >
               <header class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold tracking-tight">
@@ -1057,6 +1128,8 @@
               </footer>
             </article>
           </section>
+
+          </div><!-- /#customize-area -->
         </div>
       </main>
     </div>
@@ -1088,7 +1161,7 @@
           children: [
             // Alphabetical, pulled from the reference image.
             { id: "wb.agent", label: "Agent", icon: "bot" },
-            { id: "wb.ai-workbench", label: "AI Workbench", icon: "brain-circuit" },
+            { id: "wb.ai-workbench", label: "AI Workbench", icon: "brain-circuit", href: "ai-workbench.html" },
             { id: "wb.api-explorer", label: "API Explorer", icon: "globe" },
             { id: "wb.app-intelligence", label: "App Intelligence", icon: "bar-chart-3" },
             { id: "wb.cloud-ide", label: "Cloud IDE", icon: "code" },
@@ -1232,10 +1305,12 @@
           const trigger = document.createElement("button");
           trigger.type = "button";
           trigger.className =
-            "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
+            "group flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
           const label = document.createElement("span");
           label.textContent = item.label;
-          label.className = "flex-1 text-left";
+          // No flex-1 — let the label hug its text so the chevron lands
+          // exactly `gap-3` (12px) after it, with no extra empty space.
+          label.className = "text-left";
           trigger.appendChild(label);
           if (hasChildren) {
             trigger.appendChild(
@@ -1291,6 +1366,12 @@
         const span = document.createElement("span");
         span.textContent = child.label;
         labelBtn.appendChild(span);
+        if (child.href) {
+          labelBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            window.location.href = child.href;
+          });
+        }
         row.appendChild(labelBtn);
 
         const isPinned = pinned.has(child.id);
@@ -1683,6 +1764,19 @@
             { label: "Sandbox Workspace", path: "Cloud Workspaces", when: "3d ago" },
           ],
           suggested: ["Teams", "Cloud Accounts", "Cloud Workspaces", "Privileged Access"],
+        },
+        monitor: {
+          recent: [
+            { label: "Ecosystem Health", path: "Observability", when: "8m ago" },
+            { label: "ML Model API incident", path: "Incident Management", when: "1h ago" },
+            { label: "checkout-service deploy", path: "Change Management", when: "Yesterday" },
+          ],
+          suggested: [
+            "Ecosystem Health",
+            "Incident Management",
+            "Change Management",
+            "Observability",
+          ],
         },
       };
 
@@ -3060,28 +3154,28 @@
       });
       renderJiraTickets();
 
-      // ── Customize view: drag-to-reorder dashboard cards ────────────
-      // Clicking "Customize view" enters edit mode — each card gets a
-      // dashed outline + grab handle, and HTML5 drag-and-drop swaps the
-      // cards' DOM order on drop. Clicking "Done" exits the mode.
+      // ── Customize view: drag-to-reorder whole sections ─────────────
+      // Clicking "Customize view" puts every section under the action
+      // pills into edit mode. Each section becomes draggable; dropping
+      // one over another reorders the DOM. Clicking "Done" exits.
       (function () {
         const trigger = document.getElementById("customize-view");
-        const row = document.getElementById("dashboard-row");
-        if (!trigger || !row) return;
+        const area = document.getElementById("customize-area");
+        if (!trigger || !area) return;
 
-        const cards = Array.from(row.querySelectorAll(".dashboard-card"));
-        let draggedCard = null;
+        const sections = Array.from(area.querySelectorAll(".customize-section"));
+        let dragged = null;
 
         function setMode(mode) {
           trigger.dataset.mode = mode;
           const editing = mode === "editing";
-          row.classList.toggle("dashboard-row--editing", editing);
+          area.classList.toggle("customize-area--editing", editing);
           trigger.textContent = editing ? "Done" : "Customize view";
           trigger.classList.toggle("text-foreground", editing);
           trigger.classList.toggle("text-muted-foreground", !editing);
-          cards.forEach((card) => {
-            card.draggable = editing;
-            if (!editing) card.classList.remove("is-dragging", "is-drop-target");
+          sections.forEach((s) => {
+            s.draggable = editing;
+            if (!editing) s.classList.remove("is-dragging", "is-drop-target");
           });
         }
 
@@ -3089,56 +3183,54 @@
           setMode(trigger.dataset.mode === "editing" ? "idle" : "editing");
         });
 
-        cards.forEach((card) => {
-          card.addEventListener("dragstart", (e) => {
+        sections.forEach((section) => {
+          section.addEventListener("dragstart", (e) => {
             if (trigger.dataset.mode !== "editing") {
               e.preventDefault();
               return;
             }
-            draggedCard = card;
-            card.classList.add("is-dragging");
+            dragged = section;
+            section.classList.add("is-dragging");
             // Required for Firefox; payload itself isn't used.
             e.dataTransfer.setData("text/plain", "");
             e.dataTransfer.effectAllowed = "move";
           });
 
-          card.addEventListener("dragend", () => {
-            card.classList.remove("is-dragging");
-            cards.forEach((c) => c.classList.remove("is-drop-target"));
-            draggedCard = null;
+          section.addEventListener("dragend", () => {
+            section.classList.remove("is-dragging");
+            sections.forEach((s) => s.classList.remove("is-drop-target"));
+            dragged = null;
           });
 
-          card.addEventListener("dragover", (e) => {
-            if (!draggedCard || card === draggedCard) return;
+          section.addEventListener("dragover", (e) => {
+            if (!dragged || section === dragged) return;
             e.preventDefault();
             e.dataTransfer.dropEffect = "move";
-            cards.forEach((c) =>
-              c === card
-                ? c.classList.add("is-drop-target")
-                : c.classList.remove("is-drop-target")
+            sections.forEach((s) =>
+              s === section
+                ? s.classList.add("is-drop-target")
+                : s.classList.remove("is-drop-target")
             );
           });
 
-          card.addEventListener("dragleave", (e) => {
-            // Only clear when the cursor actually leaves the card (not a
-            // child element).
-            if (!card.contains(e.relatedTarget)) {
-              card.classList.remove("is-drop-target");
+          section.addEventListener("dragleave", (e) => {
+            // Only clear when the cursor actually leaves the section
+            // (not a child element).
+            if (!section.contains(e.relatedTarget)) {
+              section.classList.remove("is-drop-target");
             }
           });
 
-          card.addEventListener("drop", (e) => {
+          section.addEventListener("drop", (e) => {
             e.preventDefault();
-            if (!draggedCard || card === draggedCard) return;
-            // Insert the dragged card before or after the drop target
-            // based on which half the cursor is in. For a 2-card row this
-            // simplifies to a swap, but the math generalizes if more
-            // cards are added later.
-            const rect = card.getBoundingClientRect();
-            const isAfter = e.clientX > rect.left + rect.width / 2;
-            if (isAfter) card.after(draggedCard);
-            else card.before(draggedCard);
-            card.classList.remove("is-drop-target");
+            if (!dragged || section === dragged) return;
+            // Insert before or after the drop target based on which
+            // half of the section the cursor is in (vertically).
+            const rect = section.getBoundingClientRect();
+            const isAfter = e.clientY > rect.top + rect.height / 2;
+            if (isAfter) section.after(dragged);
+            else section.before(dragged);
+            section.classList.remove("is-drop-target");
           });
         });
       })();
@@ -3231,19 +3323,9 @@
         "mini-breadcrumb-popover"
       );
 
-      // ── Dynamic greeting ───────────────────────────────────────────
-      // Time-of-day greeting + first name. Defaults to "Will" so this
-      // static preview works without any auth context.
-      function greetingFor(date = new Date()) {
-        const h = date.getHours();
-        if (h < 5) return "Working late";
-        if (h < 12) return "Good morning";
-        if (h < 18) return "Good afternoon";
-        return "Good evening";
-      }
-      const FIRST_NAME = "Will";
-      document.getElementById("greeting").textContent =
-        `${greetingFor()}, ${FIRST_NAME}`;
+      // ── Greeting ───────────────────────────────────────────────────
+      // Fixed motivational line.
+      document.getElementById("greeting").textContent = "Let's get job done!";
 
       // ── Ask input: enable send only when there's text ──────────────
       const askInput = document.getElementById("ask-input");
