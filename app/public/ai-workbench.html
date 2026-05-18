@@ -1670,8 +1670,6 @@
         renderMenu();
       }
 
-      renderMenu();
-
       // ── Weather widget ─────────────────────────────────────────────
       // Stand-in conditions for the prototype. Each condition has ASCII
       // glyphs for the left + right sides and a target temperature. In
@@ -1848,6 +1846,10 @@
       ];
 
       const NAV_INDEX = GLOBAL_NAV_INDEX;
+
+      // renderMenu() is called here (not earlier) so that GLOBAL_NAV_INDEX
+      // is fully initialised before findChildById() tries to read it.
+      renderMenu();
 
       const navSearch = document.getElementById("nav-search");
       const navResults = document.getElementById("nav-search-results");
