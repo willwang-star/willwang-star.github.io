@@ -263,103 +263,69 @@
   </head>
 
   <body class="min-h-screen bg-background text-foreground antialiased">
-    <!-- ────────────────────────────────────────────────────────────────────
-         Top nav
-         ──────────────────────────────────────────────────────────────── -->
-    <header
-      class="sticky top-0 z-30 flex h-11 items-center justify-between gap-4 border-b border-border bg-background/85 px-6 backdrop-blur"
-    >
-      <div class="flex items-center gap-2">
-        <span class="text-sm font-semibold tracking-tight">Dev Portal</span>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FLOATING TOP NAV — fixed, floating pill centered at top
+         Single centered cluster: breadcrumb + bell + avatar
+         ═══════════════════════════════════════════════════════════════ -->
+    <header class="pointer-events-none fixed inset-x-0 top-4 z-30 flex justify-center pl-[240px] pr-10">
+      <div class="pointer-events-auto flex items-center gap-1 rounded-full border border-border bg-card floating-shadow px-2 py-1.5">
 
-      <!-- Weather widget — horizontally centered above the breadcrumb.
-           The breadcrumb lives inside `main`'s content envelope:
-           pl-[240px] + pr-10 + max-w-[1000px] mx-auto. We mirror that
-           same envelope here with absolute positioning so the widget
-           sits on the same vertical centerline as the breadcrumb. -->
-      <div
-        class="pointer-events-none absolute inset-0 flex items-center pl-[240px] pr-10"
-        aria-hidden="false"
-      >
-        <div class="pointer-events-auto mx-auto w-full max-w-[1000px]">
-          <!-- Mini breadcrumb — hidden by default. The script swaps it
-               in for the weather widget once the page breadcrumb has
-               scrolled past the top nav. Carries its own Recent visits
-               + Suggested popover, just like the page breadcrumb. -->
-          <div
-            id="mini-breadcrumb"
-            class="mx-auto flex w-fit items-center"
+        <!-- Breadcrumb trigger -->
+        <div id="mini-breadcrumb-root" class="relative inline-flex">
+          <button
+            id="mini-breadcrumb-trigger"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            aria-haspopup="true"
+            aria-expanded="false"
           >
-            <div id="mini-breadcrumb-root" class="relative inline-flex">
-              <button
-                id="mini-breadcrumb-trigger"
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span>Data Discovery</span>
-                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
-              </button>
+            <span>Data Discovery</span>
+            <i data-lucide="chevron-down" class="size-3.5 text-muted-foreground"></i>
+          </button>
 
-              <div
-                id="mini-breadcrumb-popover"
-                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
-              >
-                <div
-                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
-                >
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Path
-                  </p>
-                  <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
-                    <a href="ltv-dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
-                    <i data-lucide="chevron-right" class="text-muted-foreground"></i>
-                    <a href="ltv-data-discovery.html" class="font-medium text-foreground hover:underline">Data Discovery</a>
-                  </div>
-
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Recent visits
-                  </p>
-                  <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
-
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Suggested by your role
-                  </p>
-                  <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
-                </div>
+          <div
+            id="mini-breadcrumb-popover"
+            class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+          >
+            <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
+              <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Path</p>
+              <div class="mb-4 flex items-center gap-1.5 px-1 text-sm">
+                <a href="ltv-dev-portal.html" class="font-medium text-foreground hover:underline">Dev Portal</a>
+                <i data-lucide="chevron-right" class="text-muted-foreground"></i>
+                <a href="ltv-data-discovery.html" class="font-medium text-foreground hover:underline">Data Discovery</a>
               </div>
+              <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                Recent visits
+              </p>
+              <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
+              <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                Suggested by your role
+              </p>
+              <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="flex items-center gap-1">
+        <!-- Bell -->
         <button
           type="button"
-          class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           aria-label="Notifications"
         >
-          <i data-lucide="bell"></i>
+          <i data-lucide="bell" class="size-4"></i>
         </button>
+
+        <!-- Avatar -->
         <button
           type="button"
           class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           aria-label="Profile"
         >
-          <span
-            class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground"
-          >
+          <span class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
             WW
           </span>
         </button>
+
       </div>
     </header>
 
@@ -372,14 +338,14 @@
       <!-- Floating left nav -->
       <aside
         id="nav"
-        class="fixed left-6 top-[68px] z-20 w-max min-w-[160px] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
+        class="fixed left-6 top-4 z-20 w-max min-w-[160px] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow"
         aria-label="Primary"
       >
         <!-- Search -->
         <div class="relative p-2">
           <label
             id="nav-search-wrap"
-            class="relative flex h-9 w-full items-center rounded-md border border-border bg-background transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+            class="relative flex h-9 w-full items-center rounded-full border border-border bg-background transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
           >
             <span class="sr-only">Go to</span>
             <i
@@ -392,7 +358,7 @@
               placeholder="Go to"
               autocomplete="off"
               size="1"
-              class="h-full w-full min-w-0 rounded-md border-0 bg-transparent py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-muted-foreground focus:ring-0"
+              class="h-full w-full min-w-0 rounded-full border-0 bg-transparent py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-muted-foreground focus:ring-0"
             />
           </label>
           <!-- Suggestion popover sits just below the input, anchored to the
@@ -445,7 +411,7 @@
            breathing room. pt-6 (24px) aligns the breadcrumb's top with
            the floating nav; pb-16 (64px) leaves room before page content
            starts to feel cramped against the viewport bottom. -->
-      <main class="pb-40 pt-6 pl-[240px] pr-10">
+      <main class="pb-40 pt-20 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
 
 
@@ -2939,38 +2905,32 @@
       // Fixed motivational line.
       document.getElementById("greeting").textContent = "Let's get job done!";
 
-      // ── Ask input: enable send only when there's text ──────────────
-      const askInput = document.getElementById("ask-input");
-      const askSend = document.getElementById("ask-send");
-      const askForm = document.getElementById("ask-form");
+      // ── Ask input — deferred so floating bar HTML is in the DOM ────
+      // The floating bar is rendered AFTER this <script> block, so we
+      // defer wiring until the browser has parsed the rest of the body.
+      window.addEventListener("DOMContentLoaded", () => {
+        const askInput = document.getElementById("ask-input");
+        const askForm = document.getElementById("ask-form");
+        const placeholderHost = document.getElementById("ask-placeholder");
+        if (!askInput || !askForm || !placeholderHost) return;
 
-      // Rolling placeholders — cycle every 5s with an ease-in-out roll.
-      // We render our own placeholder overlay (#ask-placeholder) because
-      // the native <textarea> placeholder can't be animated.
-      const PLACEHOLDERS = [
-        "How can I help you today?",
-        "Continue my work from Terminal by / resume",
-        "Show me all the to-dos for my Teams",
-      ];
-      let placeholderIdx = 0;
-      const placeholderHost = document.getElementById("ask-placeholder");
-      const placeholderTrack = placeholderHost.querySelector(".roll-track");
-      placeholderTrack.textContent = PLACEHOLDERS[0];
+        const placeholderTrack = placeholderHost.querySelector(".roll-track");
 
-      function rollToNext() {
-        const next = (placeholderIdx + 1) % PLACEHOLDERS.length;
-        const outgoing = placeholderTrack;
-        // Animate the outgoing label up + fade out.
-        outgoing.classList.add("roll-out");
+        const PLACEHOLDERS = [
+          "How can I help you today?",
+          "Continue my work from Terminal by / resume",
+          "Show me all the to-dos for my Teams",
+        ];
+        let placeholderIdx = 0;
+        placeholderTrack.textContent = PLACEHOLDERS[0];
 
-        outgoing.addEventListener(
-          "animationend",
-          () => {
-            // Swap text, prep for incoming animation.
+        function rollToNext() {
+          const next = (placeholderIdx + 1) % PLACEHOLDERS.length;
+          const outgoing = placeholderTrack;
+          outgoing.classList.add("roll-out");
+          outgoing.addEventListener("animationend", () => {
             outgoing.classList.remove("roll-out");
             outgoing.textContent = PLACEHOLDERS[next];
-            // Force a reflow so the browser picks up the class change
-            // as a fresh animation rather than skipping it.
             void outgoing.offsetWidth;
             outgoing.classList.add("roll-in");
             outgoing.addEventListener(
@@ -2979,79 +2939,138 @@
               { once: true }
             );
             placeholderIdx = next;
-          },
-          { once: true }
-        );
-      }
-
-      setInterval(() => {
-        // Pause while the user is interacting with the field.
-        if (document.activeElement === askInput) return;
-        if (askInput.value.length > 0) return;
-        rollToNext();
-      }, 3000);
-
-      function updatePlaceholderVisibility() {
-        if (askInput.value.length > 0) placeholderHost.classList.add("hidden");
-        else placeholderHost.classList.remove("hidden");
-      }
-
-      function syncSendState() {
-        askSend.disabled = askInput.value.trim().length === 0;
-        updatePlaceholderVisibility();
-      }
-      askInput.addEventListener("input", syncSendState);
-      askInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          if (!askSend.disabled) askForm.requestSubmit();
+          }, { once: true });
         }
+
+        setInterval(() => {
+          if (document.activeElement === askInput) return;
+          if (askInput.value.length > 0) return;
+          rollToNext();
+        }, 3000);
+
+        function updatePlaceholderVisibility() {
+          if (askInput.value.length > 0) placeholderHost.classList.add("hidden");
+          else placeholderHost.classList.remove("hidden");
+        }
+
+        askInput.addEventListener("input", updatePlaceholderVisibility);
+        askInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            askForm.requestSubmit();
+          }
+        });
+        askForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          askInput.value = "";
+          updatePlaceholderVisibility();
+          askInput.focus();
+        });
+        updatePlaceholderVisibility();
+
+        // Re-run icon rendering for the floating bar (rendered after script)
+        if (window.lucide) window.lucide.createIcons();
+
+        // Wire hover popovers for the 3 action pills in the floating bar
+        document.querySelectorAll(".pointer-events-none.fixed.bottom-10 .action-pill").forEach((root) => {
+          renderActionPill(root);
+          const trigger = root.querySelector("button");
+          const popover = root.querySelector(".action-popover");
+          let closeTimer = null;
+          function open() {
+            clearTimeout(closeTimer);
+            popover.classList.remove("invisible", "opacity-0");
+            popover.classList.add("opacity-100");
+            trigger.setAttribute("aria-expanded", "true");
+          }
+          function close() {
+            popover.classList.add("opacity-0");
+            popover.classList.remove("opacity-100");
+            trigger.setAttribute("aria-expanded", "false");
+            closeTimer = setTimeout(() => popover.classList.add("invisible"), 160);
+          }
+          root.addEventListener("mouseenter", open);
+          root.addEventListener("mouseleave", () => { closeTimer = setTimeout(close, 80); });
+          trigger.addEventListener("focus", open);
+          root.addEventListener("focusout", (e) => { if (!root.contains(e.relatedTarget)) close(); });
+        });
       });
-      askForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        // In the prototype we just clear the input — a real send would go
-        // here. Keep the placeholder in place for the screenshot.
-        askInput.value = "";
-        syncSendState();
-        askInput.focus();
-      });
-      syncSendState();
 
       if (window.lucide) window.lucide.createIcons();
     </script>
 
     <!-- ═══════════════════════════════════════════════════════════════════
-         FLOATING CHAT BAR — fixed 40px above bottom, left-nav offset
+         FLOATING SPOTLIGHT BAR — fixed 40px above bottom, left-nav offset
+         Single row: search input (left) + 3 icon buttons (right)
          ═══════════════════════════════════════════════════════════════ -->
-    <div class="pointer-events-none fixed inset-x-0 bottom-10 z-40 flex justify-center pl-[240px] pr-10">
-      <div class="pointer-events-auto w-full max-w-[640px] rounded-2xl border border-border bg-card floating-shadow">
-        <form id="ask-form"
-          class="w-full p-3 text-left"
-          autocomplete="off">
+    <div class="pointer-events-none fixed inset-x-0 bottom-10 z-40 flex justify-center pl-[208px] pr-10">
+      <div class="pointer-events-auto w-full max-w-[680px] rounded-full border border-border bg-card floating-shadow flex items-center gap-2 pl-5 pr-5 py-2.5">
+
+        <!-- Search / chat input -->
+        <form id="ask-form" class="relative flex-1 min-w-0" autocomplete="off">
           <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
-          <div class="relative">
-            <textarea id="ask-input" rows="1"
-              class="block w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"></textarea>
-            <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
-              <span class="roll-track">How can I help you today?</span>
-            </div>
-          </div>
-          <div class="mt-1 flex items-center justify-between px-1">
-            <label for="scope-toggle" class="inline-flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
-              <span class="relative inline-flex">
-                <input id="scope-toggle" type="checkbox" class="peer sr-only" />
-                <span class="block h-4 w-7 rounded-full bg-secondary transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"></span>
-                <span class="absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow transition-transform peer-checked:translate-x-3"></span>
-              </span>
-              <span class="select-none">Search Data Discovery</span>
-            </label>
-            <button id="ask-send" type="submit" aria-label="Send"
-              class="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              disabled>
-              <i data-lucide="arrow-right"></i>
-            </button>
+          <textarea id="ask-input" rows="1"
+            class="block w-full resize-none border-0 bg-transparent px-0 py-1 text-sm leading-5 text-foreground outline-none focus:ring-0"></textarea>
+          <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
+            <span class="roll-track">How can I help you today?</span>
           </div>
         </form>
+
+        <!-- Divider -->
+        <div class="h-5 w-px shrink-0 bg-border"></div>
+
+        <!-- 3 dark icon-only action buttons, each with an upward popover on hover -->
+        <div class="flex items-center gap-1.5 ml-3">
+
+          <!-- Create -->
+          <div class="action-pill relative" data-pill="create">
+            <button type="button" aria-label="Create" aria-haspopup="true" aria-expanded="false"
+              class="inline-flex size-8 items-center justify-center rounded-full bg-foreground text-background transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+              <i data-lucide="plus" class="size-4"></i>
+            </button>
+            <div class="action-popover invisible absolute right-0 bottom-full z-20 pb-2 opacity-0 transition-[opacity,transform] duration-150">
+              <div class="w-[400px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Paved road</p>
+                <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manage -->
+          <div class="action-pill relative" data-pill="manage">
+            <button type="button" aria-label="Manage" aria-haspopup="true" aria-expanded="false"
+              class="inline-flex size-8 items-center justify-center rounded-full bg-foreground text-background transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+              <i data-lucide="settings-2" class="size-4"></i>
+            </button>
+            <div class="action-popover invisible absolute right-0 bottom-full z-20 pb-2 opacity-0 transition-[opacity,transform] duration-150">
+              <div class="w-[400px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Suggested by your role</p>
+                <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monitor -->
+          <div class="action-pill relative" data-pill="monitor">
+            <button type="button" aria-label="Monitor" aria-haspopup="true" aria-expanded="false"
+              class="inline-flex size-8 items-center justify-center rounded-full bg-foreground text-background transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+              <i data-lucide="activity" class="size-4"></i>
+            </button>
+            <div class="action-popover invisible absolute right-0 bottom-full z-20 pb-2 opacity-0 transition-[opacity,transform] duration-150">
+              <div class="w-[400px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                <p class="mb-2 px-1 text-left text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Suggested by your role</p>
+                <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </body>
