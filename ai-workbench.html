@@ -125,119 +125,6 @@
         transform: translateX(var(--scroll, 0px));
       }
 
-      /* ──────────────────────────────────────────────────────────────
-         Weather widget (top nav, centered)
-         Pure ASCII glyphs with soothing keyframe animations. Three
-         distinct conditions: sunny, cloudy, rain. The widget reserves
-         100px total width with the temperature locked in the center;
-         the condition art floats on either side and animates softly. */
-      .weather {
-        font-variant-numeric: tabular-nums;
-        line-height: 1;
-      }
-      .weather-side {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 11px;
-        letter-spacing: 1px;
-        color: hsl(var(--muted-foreground));
-        white-space: pre;
-      }
-
-      /* Sunny — radiating glyphs that gently breathe in/out. */
-      .weather--sunny .weather-side {
-        animation: weather-sun 4s ease-in-out infinite;
-      }
-      .weather--sunny .weather-side.right {
-        animation-delay: 0.4s;
-      }
-      @keyframes weather-sun {
-        0%,
-        100% {
-          opacity: 0.55;
-          transform: translateX(0);
-        }
-        50% {
-          opacity: 1;
-          transform: translateX(-2px);
-        }
-      }
-      .weather--sunny .weather-side.right {
-        animation-name: weather-sun-right;
-      }
-      @keyframes weather-sun-right {
-        0%,
-        100% {
-          opacity: 0.55;
-          transform: translateX(0);
-        }
-        50% {
-          opacity: 1;
-          transform: translateX(2px);
-        }
-      }
-
-      /* Cloudy — clouds drifting left to right and back. */
-      .weather--cloudy .weather-side {
-        animation: weather-cloud 6s ease-in-out infinite;
-      }
-      .weather--cloudy .weather-side.right {
-        animation-delay: 1.5s;
-      }
-      @keyframes weather-cloud {
-        0%,
-        100% {
-          transform: translateX(-4px);
-          opacity: 0.65;
-        }
-        50% {
-          transform: translateX(4px);
-          opacity: 1;
-        }
-      }
-
-      /* Rain — multiple staggered droplets falling per side. Each side
-         is a positioning anchor; .drop spans inside it loop vertically
-         with offset delays so the shower reads as a steady downpour. */
-      .weather--rain .weather-side {
-        position: relative;
-        display: inline-block;
-        width: 28px;
-        height: 14px;
-        overflow: hidden;
-      }
-      .weather--rain .drop {
-        position: absolute;
-        top: -8px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 11px;
-        line-height: 1;
-        color: hsl(var(--muted-foreground));
-        animation: weather-rain-fall 1.2s linear infinite;
-      }
-      @keyframes weather-rain-fall {
-        0% {
-          transform: translateY(-2px);
-          opacity: 0;
-        }
-        15% {
-          opacity: 1;
-        }
-        85% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(18px);
-          opacity: 0;
-        }
-      }
-
-      /* Respect reduced-motion preferences. */
-      @media (prefers-reduced-motion: reduce) {
-        .weather-side {
-          animation: none !important;
-          opacity: 0.8;
-          transform: none !important;
-        }
       }
 
       /* Customize-view edit mode. While active:
@@ -396,33 +283,6 @@
         aria-hidden="false"
       >
         <div class="pointer-events-auto mx-auto w-full max-w-[1000px]">
-          <!-- Weather widget — shown by default; hidden when the page
-               breadcrumb scrolls offscreen so the mini breadcrumb can
-               take its place. -->
-          <div
-            id="weather"
-            class="weather group relative mx-auto flex w-fit items-center"
-            aria-label="Current weather"
-          >
-            <span class="weather-side left" aria-hidden="true"></span>
-            <span
-              id="weather-temp"
-              class="mx-2 text-xs font-medium tabular-nums text-foreground"
-            >
-              —
-            </span>
-            <span class="weather-side right" aria-hidden="true"></span>
-
-            <!-- Hover tooltip — content is set per condition by setWeather. -->
-            <div
-              id="weather-tooltip"
-              role="tooltip"
-              class="invisible absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-popover px-2.5 py-1 text-xs text-popover-foreground opacity-0 transition-opacity duration-150 floating-shadow group-hover:visible group-hover:opacity-100"
-            >
-              Raining at your location!
-            </div>
-          </div>
-
           <!-- Mini breadcrumb — hidden by default. The script swaps it
                in for the weather widget once the page breadcrumb has
                scrolled past the top nav. Carries its own Recent visits
@@ -1669,72 +1529,15 @@
         renderMenu();
       }
 
-      // ── Weather widget ─────────────────────────────────────────────
-      // Stand-in conditions for the prototype. Each condition has ASCII
-      // glyphs for the left + right sides and a target temperature. In
-      // production this would come from a real feed.
-      const WEATHER_CONDITIONS = {
-        sunny: { left: "\\ | /", right: "/ | \\" },
-        cloudy: { left: "(  ~~", right: "~~  )" },
-        rain: { left: "' : '", right: "' : '" },
-      };
-
-      function setWeather(kind, temp) {
-        const data = WEATHER_CONDITIONS[kind];
-        if (!data) return;
-        const root = document.getElementById("weather");
-        root.classList.remove("weather--sunny", "weather--cloudy", "weather--rain");
-        root.classList.add(`weather--${kind}`);
-
-        const leftEl = root.querySelector(".weather-side.left");
-        const rightEl = root.querySelector(".weather-side.right");
-        leftEl.innerHTML = "";
-        rightEl.innerHTML = "";
-
-        if (kind === "rain") {
-          // 4 staggered droplets per side. x-positions are spread across
-          // the 28px-wide side container; delays are offset so a drop is
-          // always falling somewhere.
-          const dropOffsets = [
-            { x: 2, delay: 0 },
-            { x: 9, delay: 0.3 },
-            { x: 16, delay: 0.6 },
-            { x: 23, delay: 0.9 },
-          ];
-          [leftEl, rightEl].forEach((side, sideIdx) => {
-            dropOffsets.forEach((d) => {
-              const drop = document.createElement("span");
-              drop.className = "drop";
-              drop.style.left = `${d.x}px`;
-              drop.style.animationDelay = `${d.delay + sideIdx * 0.15}s`;
-              drop.textContent = "'";
-              side.appendChild(drop);
-            });
-          });
-        } else {
-          leftEl.textContent = data.left;
-          rightEl.textContent = data.right;
-        }
-
-        document.getElementById("weather-temp").textContent = `${temp}°F`;
-      }
-
-      // Prototype placeholder — rainy at 72°F.
-      setWeather("rain", 72);
 
       // ── Mini breadcrumb on scroll ──────────────────────────────────
-      // When the page breadcrumb scrolls off-screen, swap the weather
-      // widget out for a compact breadcrumb chip in the top nav so the
-      // user always sees their current location.
+      // When the page breadcrumb scrolls off-screen, show the compact
+      // breadcrumb chip in the top nav so the user always sees their location.
       (function () {
         const pageBreadcrumb = document.getElementById("breadcrumb-root");
-        const weatherEl = document.getElementById("weather");
         const miniEl = document.getElementById("mini-breadcrumb");
-        if (!pageBreadcrumb || !weatherEl || !miniEl) return;
+        if (!pageBreadcrumb || !miniEl) return;
 
-        // The page breadcrumb sits inside the scrolling page; the top
-        // nav is 44px tall. When the breadcrumb's bottom edge passes
-        // above the nav, we show the mini.
         const NAV_HEIGHT = 44;
         let showingMini = false;
 
@@ -1743,22 +1546,11 @@
           showingMini = next;
 
           if (next) {
-            // Reveal mini, hide weather.
             miniEl.classList.remove("hidden");
             miniEl.classList.add("flex");
-            // Force reflow so the opacity transition runs from 0 → 1.
             void miniEl.offsetWidth;
             miniEl.classList.remove("opacity-0");
-            weatherEl.classList.add("opacity-0");
-            // Drop weather from the layout after its fade completes.
-            setTimeout(() => {
-              if (showingMini) weatherEl.classList.add("hidden");
-            }, 150);
           } else {
-            // Reveal weather, hide mini.
-            weatherEl.classList.remove("hidden");
-            void weatherEl.offsetWidth;
-            weatherEl.classList.remove("opacity-0");
             miniEl.classList.add("opacity-0");
             setTimeout(() => {
               if (!showingMini) {
@@ -1769,10 +1561,6 @@
           }
         }
 
-        // Track via IntersectionObserver — fires when the breadcrumb
-        // crosses the top nav boundary. rootMargin's negative top equals
-        // the nav height, so the breadcrumb is considered "out" as soon
-        // as it slides under the nav.
         const io = new IntersectionObserver(
           ([entry]) => setShowingMini(!entry.isIntersecting),
           { rootMargin: `-${NAV_HEIGHT}px 0px 0px 0px`, threshold: 0 }
