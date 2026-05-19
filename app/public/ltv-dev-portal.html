@@ -171,16 +171,15 @@
          animate it between values with an ease-in-out roll. */
       .placeholder-roll {
         position: absolute;
-        left: 0; /* sits flush with textarea left edge */
-        top: 50%;
-        transform: translateY(-50%);
+        left: 0;
+        top: 0.25rem; /* matches textarea py-1 */
         pointer-events: none;
         color: hsl(var(--muted-foreground));
         font-size: 0.875rem; /* text-sm */
-        line-height: 1.25rem;
+        line-height: 1.25rem; /* leading-5 */
         white-space: nowrap;
         overflow: hidden;
-        max-width: calc(100% - 1rem);
+        max-width: 100%;
       }
       .placeholder-roll .roll-track {
         display: inline-block;
@@ -2920,37 +2919,34 @@
       // ── Greeting ───────────────────────────────────────────────────
       // Fixed motivational line.
 
-      // ── Ask input ──────────────────────────────────────────────────
-      const askInput = document.getElementById("ask-input");
-      const askForm = document.getElementById("ask-form");
+      if (window.lucide) window.lucide.createIcons();
 
-      // Rolling placeholders — cycle every 5s with an ease-in-out roll.
-      // We render our own placeholder overlay (#ask-placeholder) because
-      // the native <textarea> placeholder can't be animated.
-      const PLACEHOLDERS = [
-        "How can I help you today?",
-        "Continue my work from Terminal by / resume",
-        "Show me all the to-dos for my Teams",
-      ];
-      let placeholderIdx = 0;
-      const placeholderHost = document.getElementById("ask-placeholder");
-      const placeholderTrack = placeholderHost.querySelector(".roll-track");
-      placeholderTrack.textContent = PLACEHOLDERS[0];
+      // ── Ask input — deferred so floating bar HTML is in the DOM ────
+      // The floating bar is rendered AFTER this <script> block, so we
+      // defer wiring until the browser has parsed the rest of the body.
+      window.addEventListener("DOMContentLoaded", () => {
+        const askInput = document.getElementById("ask-input");
+        const askForm = document.getElementById("ask-form");
+        const placeholderHost = document.getElementById("ask-placeholder");
+        if (!askInput || !askForm || !placeholderHost) return;
 
-      function rollToNext() {
-        const next = (placeholderIdx + 1) % PLACEHOLDERS.length;
-        const outgoing = placeholderTrack;
-        // Animate the outgoing label up + fade out.
-        outgoing.classList.add("roll-out");
+        const placeholderTrack = placeholderHost.querySelector(".roll-track");
 
-        outgoing.addEventListener(
-          "animationend",
-          () => {
-            // Swap text, prep for incoming animation.
+        const PLACEHOLDERS = [
+          "How can I help you today?",
+          "Continue my work from Terminal by / resume",
+          "Show me all the to-dos for my Teams",
+        ];
+        let placeholderIdx = 0;
+        placeholderTrack.textContent = PLACEHOLDERS[0];
+
+        function rollToNext() {
+          const next = (placeholderIdx + 1) % PLACEHOLDERS.length;
+          const outgoing = placeholderTrack;
+          outgoing.classList.add("roll-out");
+          outgoing.addEventListener("animationend", () => {
             outgoing.classList.remove("roll-out");
             outgoing.textContent = PLACEHOLDERS[next];
-            // Force a reflow so the browser picks up the class change
-            // as a fresh animation rather than skipping it.
             void outgoing.offsetWidth;
             outgoing.classList.add("roll-in");
             outgoing.addEventListener(
@@ -2959,39 +2955,35 @@
               { once: true }
             );
             placeholderIdx = next;
-          },
-          { once: true }
-        );
-      }
-
-      setInterval(() => {
-        // Pause while the user is interacting with the field.
-        if (document.activeElement === askInput) return;
-        if (askInput.value.length > 0) return;
-        rollToNext();
-      }, 3000);
-
-      function updatePlaceholderVisibility() {
-        if (askInput.value.length > 0) placeholderHost.classList.add("hidden");
-        else placeholderHost.classList.remove("hidden");
-      }
-
-      askInput.addEventListener("input", updatePlaceholderVisibility);
-      askInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          askForm.requestSubmit();
+          }, { once: true });
         }
-      });
-      askForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        askInput.value = "";
-        updatePlaceholderVisibility();
-        askInput.focus();
-      });
-      updatePlaceholderVisibility();
 
-      if (window.lucide) window.lucide.createIcons();
+        setInterval(() => {
+          if (document.activeElement === askInput) return;
+          if (askInput.value.length > 0) return;
+          rollToNext();
+        }, 3000);
+
+        function updatePlaceholderVisibility() {
+          if (askInput.value.length > 0) placeholderHost.classList.add("hidden");
+          else placeholderHost.classList.remove("hidden");
+        }
+
+        askInput.addEventListener("input", updatePlaceholderVisibility);
+        askInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            askForm.requestSubmit();
+          }
+        });
+        askForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          askInput.value = "";
+          updatePlaceholderVisibility();
+          askInput.focus();
+        });
+        updatePlaceholderVisibility();
+      });
     </script>
 
     <!-- ═══════════════════════════════════════════════════════════════════
@@ -3005,7 +2997,7 @@
         <form id="ask-form" class="relative flex-1 min-w-0" autocomplete="off">
           <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
           <textarea id="ask-input" rows="1"
-            class="block w-full resize-none border-0 bg-transparent py-0 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"></textarea>
+            class="block w-full resize-none border-0 bg-transparent px-0 py-1 text-sm leading-5 text-foreground outline-none focus:ring-0"></textarea>
           <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
             <span class="roll-track">How can I help you today?</span>
           </div>
