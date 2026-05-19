@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Leaderboard — AI Workbench — Dev Portal</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --radius: 0.5rem;
+      }
+
+      body {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      [data-lucide] { width: 1rem; height: 1rem; stroke-width: 1.75; }
+
+      /* Submenu hover bridge */
+      .nav-item:hover > .submenu,
+      .nav-item:focus-within > .submenu {
+        opacity: 1; transform: translateX(0); pointer-events: auto;
+      }
+      .submenu {
+        opacity: 0; transform: translateX(-4px);
+        transition: opacity 120ms ease, transform 120ms ease;
+        pointer-events: none;
+      }
+
+      /* Pin icon */
+      .submenu-row .pin-btn { opacity: 0; transition: opacity 100ms ease; }
+      .submenu-row:hover .pin-btn,
+      .submenu-row:focus-within .pin-btn { opacity: 1; }
+
+      input[type="search"] { appearance: none; -webkit-appearance: none; box-shadow: none; }
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration { display: none; }
+
+      /* Marquee */
+      .marquee { position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .marquee .marquee-track { display: inline-block; max-width: 100%; transition: transform var(--scroll-duration, 0s) linear; }
+      .marquee[data-overflow="true"]:hover .marquee-track,
+      .marquee[data-overflow="true"]:focus-within .marquee-track { transform: translateX(var(--scroll, 0px)); }
+
+      /* Floating shadow */
+      .floating-shadow {
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 8px 24px -4px rgb(0 0 0 / 0.08);
+      }
+
+      /* Rolling placeholder */
+      .placeholder-roll {
+        position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%);
+        pointer-events: none; color: hsl(var(--muted-foreground));
+        font-size: 0.875rem; line-height: 1.25rem; white-space: nowrap;
+        overflow: hidden; max-width: calc(100% - 1rem);
+      }
+      .placeholder-roll .roll-track { display: inline-block; will-change: transform, opacity; }
+      .placeholder-roll .roll-out { animation: roll-out 360ms cubic-bezier(0.65,0,0.35,1) forwards; }
+      .placeholder-roll .roll-in  { animation: roll-in  360ms cubic-bezier(0.65,0,0.35,1) forwards; }
+      @keyframes roll-out { 0% { transform:translateY(0);    opacity:1; } 100% { transform:translateY(-110%); opacity:0; } }
+      @keyframes roll-in  { 0% { transform:translateY(110%); opacity:0; } 100% { transform:translateY(0);    opacity:1; } }
+
+      /* ── Leaderboard table styles ─────────────────────────────────── */
+
+      /* Sticky first two columns */
+      .lb-table th:nth-child(1),
+      .lb-table td:nth-child(1) { position: sticky; left: 0; z-index: 2; background: hsl(var(--card)); }
+      .lb-table th:nth-child(2),
+      .lb-table td:nth-child(2) { position: sticky; left: 220px; z-index: 2; background: hsl(var(--card)); }
+      .lb-table th:nth-child(1),
+      .lb-table th:nth-child(2) { z-index: 3; background: hsl(var(--card)); }
+
+      /* Sticky header row */
+      .lb-table thead th { position: sticky; top: 0; z-index: 2; background: hsl(var(--card)); }
+      .lb-table thead th:nth-child(1),
+      .lb-table thead th:nth-child(2) { z-index: 4; }
+
+      /* Right-align score columns */
+      .lb-table td.score { text-align: right; font-variant-numeric: tabular-nums; }
+
+      /* Score heat coloring */
+      .score-high   { color: hsl(142 60% 35%); }
+      .score-mid    { color: hsl(var(--foreground)); }
+      .score-low    { color: hsl(var(--muted-foreground)); }
+
+      /* Row stripe + hover */
+      .lb-table tbody tr:nth-child(even) td { background: hsl(var(--muted) / 0.35); }
+      .lb-table tbody tr:nth-child(even) td:nth-child(1),
+      .lb-table tbody tr:nth-child(even) td:nth-child(2) { background: hsl(var(--muted) / 0.35); }
+      .lb-table tbody tr:hover td { background: hsl(var(--accent)); }
+      .lb-table tbody tr:hover td:nth-child(1),
+      .lb-table tbody tr:hover td:nth-child(2) { background: hsl(var(--accent)); }
+
+      /* Sort indicator */
+      th.sorted-asc  .sort-icon::after { content: " ↑"; }
+      th.sorted-desc .sort-icon::after { content: " ↓"; }
+
+      /* Filter bar chip */
+      .filter-chip {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        border: 1px solid hsl(var(--border)); border-radius: 9999px;
+        padding: 0.25rem 0.625rem; font-size: 0.75rem; font-weight: 500;
+        color: hsl(var(--foreground)); background: hsl(var(--card));
+        cursor: pointer; transition: background 120ms ease, border-color 120ms ease;
+        white-space: nowrap; user-select: none;
+      }
+      .filter-chip:hover { background: hsl(var(--accent)); }
+      .filter-chip.active {
+        background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+        border-color: hsl(var(--primary));
+      }
+      .filter-chip.active:hover { background: hsl(var(--primary) / 0.88); }
+
+      /* Show/hide columns dropdown */
+      .col-toggle-panel {
+        position: absolute; right: 0; top: calc(100% + 0.5rem); z-index: 30;
+        background: hsl(var(--popover)); border: 1px solid hsl(var(--border));
+        border-radius: 0.75rem; padding: 0.5rem; min-width: 11rem;
+      }
+    </style>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              border:     "hsl(var(--border))",
+              input:      "hsl(var(--input))",
+              ring:       "hsl(var(--ring))",
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              primary:    { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+              secondary:  { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+              muted:      { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+              accent:     { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+              card:       { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+              popover:    { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+            },
+            borderRadius: {
+              lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-background text-foreground antialiased">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         TOP NAV
+         ═══════════════════════════════════════════════════════════════ -->
+    <header class="sticky top-0 z-30 flex h-11 items-center justify-between gap-4 border-b border-border bg-background/85 px-6 backdrop-blur">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold tracking-tight">Dev Portal</span>
+      </div>
+
+      <!-- Center: mini breadcrumb -->
+      <div class="pointer-events-none absolute inset-0 flex items-center pl-[240px] pr-10" aria-hidden="false">
+        <div class="pointer-events-auto mx-auto w-full max-w-[1100px]">
+          <div id="mini-breadcrumb" class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150">
+            <div id="mini-breadcrumb-root" class="relative inline-flex">
+              <button id="mini-breadcrumb-trigger" type="button"
+                class="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                aria-haspopup="true" aria-expanded="false">
+                <!-- breadcrumb trail pills -->
+                <a href="dev-portal.html" class="hover:underline text-muted-foreground">Home</a>
+                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
+                <a href="ai-workbench.html" class="hover:underline text-muted-foreground">AI Workbench</a>
+                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
+                <span class="text-muted-foreground">Model Discovery</span>
+                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
+                <span class="font-semibold text-foreground">Leaderboard</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: notifications + avatar -->
+      <div class="flex items-center gap-1">
+        <button type="button" class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-label="Notifications">
+          <i data-lucide="bell"></i>
+        </button>
+        <button type="button" class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-label="Profile">
+          <span class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">WW</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         PAGE LAYOUT
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="relative">
+
+      <!-- ── Left nav ─────────────────────────────────────────────────── -->
+      <aside id="nav" class="fixed left-6 top-[68px] z-20 w-max min-w-[160px] max-w-[20rem] rounded-xl border border-border bg-card text-card-foreground floating-shadow" aria-label="Primary">
+        <!-- Search -->
+        <div class="relative p-2">
+          <label id="nav-search-wrap" class="relative flex h-9 w-full items-center rounded-md border border-border bg-background transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]">
+            <span class="sr-only">Go to</span>
+            <i data-lucide="search" class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+            <input id="nav-search" type="search" placeholder="Go to" autocomplete="off" size="1"
+              class="h-full w-full min-w-0 rounded-md border-0 bg-transparent py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-muted-foreground focus:ring-0" />
+          </label>
+          <div id="nav-search-results" class="absolute left-2 top-[calc(100%-0.25rem)] z-30 hidden max-h-72 w-max max-w-[80vw] overflow-auto whitespace-nowrap rounded-lg border border-border bg-popover text-popover-foreground p-1 floating-shadow">
+            <ul id="nav-search-list" class="space-y-0.5"></ul>
+            <div id="nav-search-empty" class="hidden px-3 py-2 text-xs text-muted-foreground">No matches</div>
+          </div>
+        </div>
+
+        <!-- Menu -->
+        <nav id="menu" class="p-2" aria-label="Sections">
+          <ul id="primary-menu" class="space-y-0.5"></ul>
+          <div id="pinned-section" class="hidden">
+            <div class="my-2 flex items-center gap-2 border-t border-border px-2 pt-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              <span>Pinned menu</span>
+            </div>
+            <ul id="pinned-list" class="space-y-0.5"></ul>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- ── Main content ──────────────────────────────────────────────── -->
+      <main class="pb-16 pt-6 pl-[240px] pr-10">
+        <div class="mx-auto w-full max-w-[1100px]">
+
+          <!-- Breadcrumb trail -->
+          <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-1.5 text-sm">
+            <a href="dev-portal.html" class="text-muted-foreground hover:text-foreground transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
+            <a href="ai-workbench.html" class="text-muted-foreground hover:text-foreground transition-colors">AI Workbench</a>
+            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
+            <span class="text-muted-foreground">Model Discovery</span>
+            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
+            <span class="font-medium text-foreground">Leaderboard</span>
+          </nav>
+
+          <!-- Chat input + action buttons -->
+          <section class="mb-10 text-center">
+            <h1 id="greeting" class="mb-6 text-3xl font-semibold tracking-tight sm:text-4xl"></h1>
+
+            <form id="ask-form"
+              class="mx-auto w-full max-w-[640px] rounded-2xl border border-border bg-card p-3 text-left transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+              autocomplete="off">
+              <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
+              <div class="relative">
+                <textarea id="ask-input" rows="1"
+                  class="block w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"></textarea>
+                <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
+                  <span class="roll-track">Compare models by benchmark score…</span>
+                </div>
+              </div>
+              <div class="mt-1 flex items-center justify-between px-1">
+                <label for="scope-toggle" class="inline-flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+                  <span class="relative inline-flex">
+                    <input id="scope-toggle" type="checkbox" class="peer sr-only" />
+                    <span class="block h-4 w-7 rounded-full bg-secondary transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"></span>
+                    <span class="absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow transition-transform peer-checked:translate-x-3"></span>
+                  </span>
+                  <span class="select-none">Search Dev Portal</span>
+                </label>
+                <button id="ask-send" type="submit" aria-label="Send"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  disabled>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </form>
+
+            <!-- Action buttons -->
+            <div class="mx-auto mt-4 flex w-full max-w-[640px] justify-center gap-2">
+              <div class="action-pill relative" data-pill="create">
+                <button type="button" class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-haspopup="true" aria-expanded="false">
+                  <i data-lucide="plus" class="text-background/80"></i><span>Create</span>
+                </button>
+                <div class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150">
+                  <div class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Paved road</p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-pill relative" data-pill="manage">
+                <button type="button" class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-haspopup="true" aria-expanded="false">
+                  <i data-lucide="settings-2" class="text-background/80"></i><span>Manage</span>
+                </button>
+                <div class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150">
+                  <div class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Suggested by your role</p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-pill relative" data-pill="monitor">
+                <button type="button" class="inline-flex items-center gap-1.5 rounded-full border border-foreground bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-haspopup="true" aria-expanded="false">
+                  <i data-lucide="activity" class="text-background/80"></i><span>Monitor</span>
+                </button>
+                <div class="action-popover invisible absolute left-1/2 top-full z-20 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150">
+                  <div class="w-[600px] rounded-xl border border-border bg-popover text-popover-foreground p-4 text-left floating-shadow">
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Recent</p>
+                    <ul class="action-recent mb-4 flex flex-col gap-0"></ul>
+                    <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Suggested by your role</p>
+                    <ul class="action-suggested flex flex-wrap gap-1.5"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               LEADERBOARD TABLE
+               ═══════════════════════════════════════════════════════ -->
+          <div class="rounded-xl border border-border bg-card overflow-hidden">
+
+            <!-- Toolbar -->
+            <div class="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
+              <!-- Search -->
+              <div class="relative flex-1 min-w-[180px] max-w-xs">
+                <i data-lucide="search" class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground size-3.5"></i>
+                <input id="lb-search" type="search" placeholder="Search by model name"
+                  class="h-8 w-full rounded-md border border-border bg-background pl-8 pr-3 text-xs outline-none placeholder:text-muted-foreground focus:border-foreground/60 focus:ring-0 appearance-none" />
+              </div>
+
+              <!-- Filter chips -->
+              <div class="flex flex-wrap items-center gap-1.5" id="filter-chips">
+                <button class="filter-chip" data-filter="availability">Availability <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="type">Type <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="fine-tuneable">Fine-tuneable <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="external-use">External use <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="model-size">Model Size <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="context">Context window <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="cost">Cost <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="latency">Latency <i data-lucide="chevron-down" class="size-3"></i></button>
+                <button class="filter-chip" data-filter="biz-unit">Business Unit <i data-lucide="chevron-down" class="size-3"></i></button>
+              </div>
+
+              <!-- Show columns toggle -->
+              <div class="relative ml-auto" id="col-toggle-root">
+                <button id="col-toggle-btn" type="button"
+                  class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent">
+                  Show: <span id="col-toggle-label">All Columns</span>
+                  <i data-lucide="chevron-down" class="size-3 text-muted-foreground"></i>
+                </button>
+                <div id="col-toggle-panel" class="col-toggle-panel floating-shadow hidden">
+                  <!-- populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Scrollable table -->
+            <div class="overflow-x-auto">
+              <table class="lb-table w-full border-collapse text-sm" id="lb-table">
+                <thead id="lb-thead"></thead>
+                <tbody id="lb-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SCRIPTS
+         ═══════════════════════════════════════════════════════════════ -->
+    <script>
+      // ── AI Workbench scoped left nav menu ─────────────────────────────
+      const MENU = [
+        { key: "section-label", label: "AI Workbench", sectionLabel: true },
+        { key: "home", label: "Home", icon: "house", href: "ai-workbench.html" },
+        {
+          key: "model-discovery",
+          label: "Model Discovery",
+          icon: "search",
+          children: [
+            { id: "aiw.md.leaderboard",      label: "Leaderboard",             icon: "trophy",    href: "leaderboard.html" },
+            { id: "aiw.md.model-catalog",    label: "Model Catalog",           icon: "book-open" },
+            { id: "aiw.md.llm-availability", label: "LLM Availability Tracker",icon: "send" },
+            { id: "aiw.md.my-models",        label: "My models",               icon: "bot" },
+          ],
+        },
+        { key: "skill-discovery",         label: "Skill Discovery",         icon: "glasses" },
+        { key: "prompt-playground",        label: "Prompt Playground",       icon: "zap" },
+        { key: "my-projects",              label: "My Projects",             icon: "folder" },
+        { key: "genai-use-cases",          label: "GenAI Use Cases",         icon: "atom" },
+        { key: "operational-dashboards",   label: "Operational Dashboards",  icon: "pie-chart" },
+        { key: "leadership-dashboards",    label: "Leadership Dashboards",   icon: "trending-up" },
+        { key: "feedback",                 label: "Feedback",                icon: "external-link" },
+        { key: "documentation-portal",     label: "Documentation Portal",    icon: "external-link" },
+      ];
+
+      const STORAGE_KEY = "nav-concept:pinned:v1";
+      const pinned = new Set(loadPinned());
+
+      function loadPinned() {
+        try { const r = localStorage.getItem(STORAGE_KEY); if (!r) return []; const a = JSON.parse(r); return Array.isArray(a) ? a : []; } catch { return []; }
+      }
+      function savePinned() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...pinned])); } catch {}
+      }
+
+      function findChildById(id) {
+        for (const item of MENU) {
+          if (!Array.isArray(item.children)) continue;
+          const f = item.children.find(c => c.id === id);
+          if (f) return f;
+        }
+        if (typeof GLOBAL_NAV_INDEX !== "undefined") {
+          const f = GLOBAL_NAV_INDEX.find(e => e.id === id);
+          if (f) return { id: f.id, label: f.label, href: f.href };
+        }
+        return null;
+      }
+
+      const marqueeObserver = new ResizeObserver(entries => { for (const e of entries) updateMarquee(e.target); });
+      function updateMarquee(el) {
+        const track = el.querySelector(".marquee-track"); if (!track) return;
+        const prev = track.style.maxWidth; track.style.maxWidth = "none";
+        const cw = el.clientWidth, tw = track.scrollWidth; track.style.maxWidth = prev;
+        const ov = tw - cw;
+        if (ov > 0) { el.dataset.overflow = "true"; el.style.setProperty("--scroll", `${-ov}px`); el.style.setProperty("--scroll-duration", `${Math.max(1.5, ov/40)}s`); }
+        else { el.dataset.overflow = "false"; el.style.removeProperty("--scroll"); el.style.removeProperty("--scroll-duration"); }
+      }
+
+      function iconEl(name, extraClass = "") {
+        const i = document.createElement("i"); i.setAttribute("data-lucide", name); if (extraClass) i.className = extraClass; return i;
+      }
+
+      // ── Menu renderer ──────────────────────────────────────────────────
+      function renderMenu() {
+        const ul = document.getElementById("primary-menu");
+        ul.innerHTML = "";
+
+        MENU.forEach(item => {
+          if (item.sectionLabel) {
+            const li = document.createElement("li");
+            li.className = "px-2.5 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground";
+            li.textContent = item.label;
+            ul.appendChild(li);
+            return;
+          }
+
+          const li = document.createElement("li");
+          li.className = "nav-item relative";
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+
+          const trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className = "group flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-foreground whitespace-nowrap transition-colors hover:bg-accent focus-visible:outline-none focus-visible:bg-accent";
+          // Active state for Leaderboard's parent (Model Discovery)
+          if (item.key === "model-discovery") trigger.className += " bg-accent/60";
+          const label = document.createElement("span"); label.textContent = item.label; label.className = "text-left";
+          trigger.appendChild(label);
+          if (item.href) trigger.addEventListener("click", () => { window.location.href = item.href; });
+          li.appendChild(trigger);
+
+          if (hasChildren) {
+            const submenu = document.createElement("div");
+            submenu.className = "submenu absolute left-full top-0 z-10 pl-4";
+            const panel = document.createElement("div");
+            panel.className = "w-max max-w-[22rem] max-h-[70vh] overflow-auto rounded-xl border border-border bg-popover text-popover-foreground floating-shadow p-2";
+            const subUl = document.createElement("ul"); subUl.className = "space-y-0.5";
+            item.children.forEach(child => { subUl.appendChild(renderSubmenuRow(child)); });
+            panel.appendChild(subUl); submenu.appendChild(panel); li.appendChild(submenu);
+          }
+          ul.appendChild(li);
+        });
+
+        renderPinned();
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      function renderSubmenuRow(child) {
+        const row = document.createElement("li");
+        const isActive = child.id === "aiw.md.leaderboard";
+        row.className = "submenu-row flex items-center gap-2 whitespace-nowrap rounded-md px-2 py-1.5 text-sm hover:bg-accent" + (isActive ? " bg-accent font-medium" : "");
+
+        const labelBtn = document.createElement("button");
+        labelBtn.type = "button";
+        labelBtn.className = "flex flex-1 items-center gap-2.5 text-left text-foreground focus-visible:outline-none";
+        const span = document.createElement("span"); span.textContent = child.label; labelBtn.appendChild(span);
+        if (child.href) labelBtn.addEventListener("click", e => { e.stopPropagation(); window.location.href = child.href; });
+        row.appendChild(labelBtn);
+
+        const isPinned = pinned.has(child.id);
+        const pinBtn = document.createElement("button");
+        pinBtn.type = "button";
+        pinBtn.setAttribute("aria-label", isPinned ? "Unpin" : "Pin");
+        pinBtn.setAttribute("aria-pressed", String(isPinned));
+        pinBtn.className = ["pin-btn inline-flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none", isPinned ? "!opacity-100 text-foreground" : ""].join(" ");
+        pinBtn.appendChild(iconEl(isPinned ? "pin-off" : "pin"));
+        pinBtn.addEventListener("click", e => { e.stopPropagation(); togglePin(child.id); });
+        row.appendChild(pinBtn);
+        return row;
+      }
+
+      function renderPinned() {
+        const section = document.getElementById("pinned-section");
+        const list = document.getElementById("pinned-list");
+        list.innerHTML = "";
+        let rendered = 0;
+        for (const id of pinned) {
+          const child = findChildById(id); if (!child) continue; rendered++;
+          const li = document.createElement("li");
+          li.className = "flex items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm hover:bg-accent";
+          const labelBtn = document.createElement("button");
+          labelBtn.type = "button"; labelBtn.className = "flex flex-1 items-center gap-2.5 text-left text-foreground focus-visible:outline-none";
+          const span = document.createElement("span"); span.textContent = child.label; labelBtn.appendChild(span);
+          if (child.href && child.href !== "#") labelBtn.addEventListener("click", () => { window.location.href = child.href; });
+          li.appendChild(labelBtn);
+          const unpinBtn = document.createElement("button");
+          unpinBtn.type = "button"; unpinBtn.setAttribute("aria-label", "Unpin");
+          unpinBtn.className = "inline-flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none";
+          unpinBtn.appendChild(iconEl("pin-off"));
+          unpinBtn.addEventListener("click", e => { e.stopPropagation(); togglePin(id); });
+          li.appendChild(unpinBtn);
+          list.appendChild(li);
+        }
+        section.classList.toggle("hidden", rendered === 0);
+      }
+
+      function togglePin(id) { if (pinned.has(id)) pinned.delete(id); else pinned.add(id); savePinned(); renderMenu(); }
+
+      // ── Mini breadcrumb scroll ─────────────────────────────────────────
+      (function () {
+        const pageBreadcrumb = document.querySelector("nav[aria-label='Breadcrumb']");
+        const miniEl = document.getElementById("mini-breadcrumb");
+        if (!pageBreadcrumb || !miniEl) return;
+        let showingMini = false;
+        function setShowingMini(next) {
+          if (next === showingMini) return; showingMini = next;
+          if (next) { miniEl.classList.remove("hidden"); miniEl.classList.add("flex"); void miniEl.offsetWidth; miniEl.classList.remove("opacity-0"); }
+          else { miniEl.classList.add("opacity-0"); setTimeout(() => { if (!showingMini) { miniEl.classList.add("hidden"); miniEl.classList.remove("flex"); } }, 150); }
+        }
+        const io = new IntersectionObserver(([e]) => setShowingMini(!e.isIntersecting), { rootMargin: "-44px 0px 0px 0px", threshold: 0 });
+        io.observe(pageBreadcrumb);
+      })();
+
+      // ── Global nav index ───────────────────────────────────────────────
+      const GLOBAL_NAV_INDEX = [
+        { id: "home",  label: "Home",  parent: "Dev Portal", href: "dev-portal.html" },
+        { id: "teams", label: "Teams", parent: "Dev Portal", href: "dev-portal.html" },
+        { id: "wb.ai-workbench",         label: "AI Workbench",        parent: "Workbenches", href: "ai-workbench.html" },
+        { id: "wb.data-discovery",       label: "Data Discovery",      parent: "Workbenches", href: "data-discovery.html" },
+        { id: "aiw.model-discovery",     label: "Model Discovery",         parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.md.leaderboard",      label: "Leaderboard",             parent: "Model Discovery", href: "leaderboard.html" },
+        { id: "aiw.md.model-catalog",    label: "Model Catalog",           parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.md.llm-availability", label: "LLM Availability Tracker",parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.md.my-models",        label: "My models",               parent: "Model Discovery", href: "ai-workbench.html" },
+        { id: "aiw.skill-discovery",     label: "Skill Discovery",         parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.prompt-playground",   label: "Prompt Playground",       parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.my-projects",         label: "My Projects",             parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.genai-use-cases",     label: "GenAI Use Cases",         parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.operational-dashboards",label:"Operational Dashboards",  parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "aiw.leadership-dashboards", label:"Leadership Dashboards",   parent: "AI Workbench",    href: "ai-workbench.html" },
+        { id: "dd.data-map",             label: "Data Map",                parent: "Data Discovery", href: "data-discovery.html" },
+        { id: "more.docs",     label: "Documentation", parent: "More", href: "#" },
+        { id: "more.support",  label: "Support",       parent: "More", href: "#" },
+        { id: "more.settings", label: "Settings",      parent: "More", href: "#" },
+        { id: "more.feedback", label: "Send feedback", parent: "More", href: "#" },
+      ];
+
+      const NAV_INDEX = GLOBAL_NAV_INDEX;
+      renderMenu();
+
+      // ── Nav search ─────────────────────────────────────────────────────
+      const navSearch  = document.getElementById("nav-search");
+      const navResults = document.getElementById("nav-search-results");
+      const navList    = document.getElementById("nav-search-list");
+      const navEmpty   = document.getElementById("nav-search-empty");
+
+      function renderNavSearch(query) {
+        const q = query.trim().toLowerCase(); navList.innerHTML = "";
+        if (!q) { navResults.classList.add("hidden"); return; }
+        const matches = NAV_INDEX.filter(e => e.label.toLowerCase().includes(q) || e.parent.toLowerCase().includes(q)).slice(0, 8);
+        if (!matches.length) { navEmpty.classList.remove("hidden"); navResults.classList.remove("hidden"); return; }
+        navEmpty.classList.add("hidden");
+        matches.forEach(m => {
+          const li = document.createElement("li");
+          const btn = document.createElement("button"); btn.type = "button";
+          btn.className = "flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm text-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+          const lw = document.createElement("span"); lw.className = "flex flex-1 items-center gap-1.5 truncate";
+          const lbl = document.createElement("span"); lbl.textContent = m.label;
+          const par = document.createElement("span"); par.className = "text-xs text-muted-foreground"; par.textContent = `· ${m.parent}`;
+          lw.append(lbl, par); btn.appendChild(lw);
+          btn.addEventListener("click", () => { if (m.href && m.href !== "#") { window.location.href = m.href; return; } navSearch.value = m.label; navResults.classList.add("hidden"); });
+          li.appendChild(btn); navList.appendChild(li);
+        });
+        navResults.classList.remove("hidden");
+        if (window.lucide) window.lucide.createIcons();
+      }
+      navSearch.addEventListener("input",   e => renderNavSearch(e.target.value));
+      navSearch.addEventListener("focus",   e => { if (e.target.value.trim()) renderNavSearch(e.target.value); });
+      navSearch.addEventListener("keydown", e => { if (e.key === "Escape") { navResults.classList.add("hidden"); navSearch.blur(); } });
+      document.addEventListener("click",    e => { if (!navResults.contains(e.target) && e.target !== navSearch) navResults.classList.add("hidden"); });
+
+      // ── Action pills ───────────────────────────────────────────────────
+      const ACTION_DATA = {
+        create:  { recent: [{label:"Web App",path:"UX Fabric",when:"12m ago"},{label:"Service",path:"Service Fabric",when:"2h ago"},{label:"AI Experience",path:"Common",when:"Yesterday"}], suggested:["AI Experience","CloudStack","Data Lake Processing Account","Data Pipeline","ML Model","Mobile App","Service","Web App"] },
+        manage:  { recent: [{label:"Dev Portal",path:"Teams",when:"5m ago"},{label:"Prod Cloud Account",path:"Cloud Accounts",when:"Yesterday"},{label:"Sandbox Workspace",path:"Cloud Workspaces",when:"3d ago"}], suggested:["Teams","Cloud Accounts","Cloud Workspaces","Privileged Access"] },
+        monitor: { recent: [{label:"Ecosystem Health",path:"Observability",when:"8m ago"},{label:"ML Model API incident",path:"Incident Management",when:"1h ago"},{label:"checkout-service deploy",path:"Change Management",when:"Yesterday"}], suggested:["Ecosystem Health","Incident Management","Change Management","Observability"] },
+      };
+      function renderActionPill(root) {
+        const kind = root.dataset.pill, data = ACTION_DATA[kind]; if (!data) return;
+        const recentUl = root.querySelector(".action-recent"), sugUl = root.querySelector(".action-suggested");
+        recentUl.innerHTML = "";
+        data.recent.forEach(r => {
+          const li = document.createElement("li"), a = document.createElement("a"); a.href = "#";
+          a.className = "flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent";
+          const main = document.createElement("span"); main.className = "flex flex-1 items-baseline gap-1.5 truncate";
+          const lbl = document.createElement("span"); lbl.textContent = r.label; lbl.className = "font-medium";
+          const path = document.createElement("span"); path.textContent = `· ${r.path}`; path.className = "text-xs text-muted-foreground";
+          main.append(lbl, path);
+          const when = document.createElement("span"); when.textContent = r.when; when.className = "shrink-0 text-xs text-muted-foreground";
+          a.append(main, when); li.appendChild(a); recentUl.appendChild(li);
+        });
+        sugUl.innerHTML = "";
+        data.suggested.forEach(label => {
+          const li = document.createElement("li"), a = document.createElement("a"); a.href = "#";
+          a.className = "inline-flex items-center rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent";
+          a.textContent = label; li.appendChild(a); sugUl.appendChild(li);
+        });
+      }
+      document.querySelectorAll(".action-pill").forEach(root => {
+        renderActionPill(root);
+        const trigger = root.querySelector("button"), popover = root.querySelector(".action-popover");
+        let t = null;
+        const open  = () => { clearTimeout(t); popover.classList.remove("invisible","opacity-0"); popover.classList.add("opacity-100"); trigger.setAttribute("aria-expanded","true"); };
+        const close = () => { popover.classList.add("opacity-0"); popover.classList.remove("opacity-100"); trigger.setAttribute("aria-expanded","false"); t = setTimeout(() => popover.classList.add("invisible"), 160); };
+        root.addEventListener("mouseenter", open);
+        root.addEventListener("mouseleave", () => { t = setTimeout(close, 80); });
+        trigger.addEventListener("focus", open);
+        root.addEventListener("focusout", e => { if (!root.contains(e.relatedTarget)) close(); });
+      });
+
+      // ── Greeting ───────────────────────────────────────────────────────
+      document.getElementById("greeting").textContent = "Model Leaderboard";
+
+      // ── Ask input ──────────────────────────────────────────────────────
+      const askInput = document.getElementById("ask-input");
+      const askSend  = document.getElementById("ask-send");
+      const askForm  = document.getElementById("ask-form");
+      const PLACEHOLDERS = [
+        "Compare models by benchmark score…",
+        "Which model has the best IRS Enrollment score?",
+        "Show me fine-tuneable models under 400K context",
+      ];
+      let phIdx = 0;
+      const phHost  = document.getElementById("ask-placeholder");
+      const phTrack = phHost.querySelector(".roll-track");
+      phTrack.textContent = PLACEHOLDERS[0];
+      function rollToNext() {
+        const next = (phIdx + 1) % PLACEHOLDERS.length;
+        phTrack.classList.add("roll-out");
+        phTrack.addEventListener("animationend", () => {
+          phTrack.classList.remove("roll-out"); phTrack.textContent = PLACEHOLDERS[next];
+          void phTrack.offsetWidth; phTrack.classList.add("roll-in");
+          phTrack.addEventListener("animationend", () => phTrack.classList.remove("roll-in"), { once: true });
+          phIdx = next;
+        }, { once: true });
+      }
+      setInterval(() => { if (document.activeElement === askInput || askInput.value.length) return; rollToNext(); }, 3000);
+      function syncSend() { askSend.disabled = !askInput.value.trim(); if (askInput.value.length) phHost.classList.add("hidden"); else phHost.classList.remove("hidden"); }
+      askInput.addEventListener("input", syncSend);
+      askInput.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!askSend.disabled) askForm.requestSubmit(); } });
+      askForm.addEventListener("submit", e => { e.preventDefault(); askInput.value = ""; syncSend(); askInput.focus(); });
+      syncSend();
+
+
+      // ══════════════════════════════════════════════════════════════════
+      //  LEADERBOARD TABLE
+      // ══════════════════════════════════════════════════════════════════
+
+      // Column definitions
+      const COLS = [
+        { key: "model",       label: "Model Info",         sticky: true,  width: 220 },
+        { key: "type",        label: "Type",               sticky: true,  width: 90 },
+        { key: "meta",        label: "Model Size",         width: 130 },
+        { key: "cost",        label: "Cost",               width: 60,  score: false },
+        { key: "latency",     label: "Latency",            width: 70,  score: false },
+        { key: "basicRea",    label: "Basic Rea…",         width: 90,  score: true,  tip: "Basic Reasoning" },
+        { key: "transact",    label: "Transacti…",         width: 90,  score: true,  tip: "Transactions" },
+        { key: "accounti",    label: "Accounti…",          width: 90,  score: true,  tip: "Accounting" },
+        { key: "usTaxF",      label: "U.S Tax F…",         width: 90,  score: true,  tip: "U.S. Tax Filing" },
+        { key: "irsEnroll",   label: "IRS Enroll…",        width: 90,  score: true,  tip: "IRS Enrollment" },
+        { key: "taxGene",     label: "Tax Gene…",          width: 90,  score: true,  tip: "Tax Generation" },
+        { key: "intuitTax",   label: "Intuit Tax …",       width: 90,  score: true,  tip: "Intuit Tax" },
+        { key: "personal",    label: "Personal …",         width: 90,  score: true,  tip: "Personal Finance" },
+        { key: "advance",     label: "Advance…",           width: 90,  score: true,  tip: "Advanced Reasoning" },
+        { key: "logicalR",    label: "Logical R…",         width: 90,  score: true,  tip: "Logical Reasoning" },
+        { key: "financial",   label: "Financial …",        width: 90,  score: true,  tip: "Financial Analysis" },
+      ];
+
+      // Row data — extracted from screenshot
+      const ROWS = [
+        { model:"gpt-5.5-2026-04-23",        tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:78.57, transact:76.90, accounti:95.59, usTaxF:89.77, irsEnroll:100.00, taxGene:97.17, intuitTax:95.11, personal:94.12, advance:91.63, logicalR:86.39, financial:96.27 },
+        { model:"gemini-3-pro-preview",       tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:["ext"],    basicRea:75.00, transact:77.90, accounti:94.12, usTaxF:88.10, irsEnroll:98.33,  taxGene:95.55, intuitTax:94.74, personal:94.12, advance:92.78, logicalR:86.45, financial:97.68 },
+        { model:"anthropic.claude-opus-4-7",  tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:69.71, transact:78.10, accounti:95.59, usTaxF:89.14, irsEnroll:98.33,  taxGene:95.14, intuitTax:94.83, personal:94.29, advance:91.00, logicalR:83.59, financial:95.27 },
+        { model:"gemini-3-flash-preview",     tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:77.65, transact:78.20, accounti:94.12, usTaxF:88.52, irsEnroll:100.00, taxGene:91.50, intuitTax:96.21, personal:94.29, advance:79.85, logicalR:83.65, financial:94.46 },
+        { model:"anthropic.claude-opus-4-6-v1",tier:"PRETRAINED",type:"TEXT", ctx:"1M",  modelSize:"—",   cost:"—",  latency:"—",  badges:["ext"],    basicRea:72.22, transact:77.70, accounti:94.12, usTaxF:88.52, irsEnroll:90.00,  taxGene:94.33, intuitTax:94.18, personal:94.45, advance:91.25, logicalR:85.37, financial:96.17 },
+        { model:"o3-2025-04-16",              tier:"PRETRAINED", type:"TEXT", ctx:"128K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view"],   basicRea:72.77, transact:82.97, accounti:93.77, usTaxF:85.00, irsEnroll:98.50,  taxGene:92.50, intuitTax:92.43, personal:91.23, advance:87.77, logicalR:83.97, financial:95.70 },
+        { model:"gpt-5-2025-08-07",           tier:"PRETRAINED", type:"TEXT", ctx:"400K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view"],   basicRea:66.67, transact:75.89, accounti:94.12, usTaxF:85.91, irsEnroll:99.00,  taxGene:95.34, intuitTax:92.11, personal:94.45, advance:90.54, logicalR:85.10, financial:97.23 },
+        { model:"gpt-5.3-chat-latest",        tier:"PRETRAINED", type:"TEXT", ctx:"128K", modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:62.83, transact:75.70, accounti:95.59, usTaxF:87.68, irsEnroll:95.00,  taxGene:93.52, intuitTax:93.63, personal:93.95, advance:88.47, logicalR:81.49, financial:96.27 },
+        { model:"film-f1-llama3.3-70b-v1.0",  tier:"PRETRAINED", type:"TEXT", ctx:"8K",   modelSize:"70B", cost:"—",  latency:"—",  badges:["view","ft","ext"], basicRea:85.19, transact:77.30, accounti:95.59, usTaxF:81.63, irsEnroll:88.33, taxGene:93.12, intuitTax:85.23, personal:91.09, advance:82.89, logicalR:76.40, financial:92.55 },
+        { model:"gpt-5.2-pro-2025-12-11",     tier:"PRETRAINED", type:"TEXT", ctx:"400K", modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:68.78, transact:76.60, accounti:94.12, usTaxF:85.59, irsEnroll:95.00,  taxGene:92.71, intuitTax:91.87, personal:94.12, advance:87.33, logicalR:82.12, financial:93.66 },
+        { model:"o1-2024-12-17",              tier:"PRETRAINED", type:"TEXT", ctx:"200K", modelSize:"—",   cost:"—",  latency:"—",  badges:["ext"],    basicRea:67.37, transact:80.27, accounti:94.26, usTaxF:84.63, irsEnroll:98.00,  taxGene:92.27, intuitTax:93.47, personal:91.60, advance:83.87, logicalR:83.37, financial:90.73 },
+        { model:"gpt-5-mini-2025-08-07",      tier:"PRETRAINED", type:"TEXT", ctx:"400K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view"],   basicRea:66.80, transact:75.00, accounti:93.63, usTaxF:82.88, irsEnroll:97.00,  taxGene:92.31, intuitTax:90.40, personal:94.20, advance:87.95, logicalR:80.28, financial:97.03 },
+        { model:"gemini-2.5-flash-preview-05-20",tier:"PRETRAINED",type:"TEXT",ctx:"1M", modelSize:"—",   cost:"—",  latency:"—",  badges:["ext","view"], basicRea:71.57, transact:85.37, accounti:93.48, usTaxF:82.53, irsEnroll:94.78, taxGene:91.87, intuitTax:87.30, personal:92.93, advance:79.83, logicalR:84.03, financial:91.93 },
+        { model:"anthropic.claude-sonnet-4-6",tier:"PRETRAINED", type:"TEXT", ctx:"200K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view"],   basicRea:64.15, transact:76.90, accounti:91.18, usTaxF:87.89, irsEnroll:90.00,  taxGene:92.71, intuitTax:92.06, personal:94.29, advance:88.97, logicalR:81.11, financial:94.76 },
+        { model:"gemini-2.5-pro",             tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:["view","ext"], basicRea:73.43, transact:80.97, accounti:95.29, usTaxF:84.37, irsEnroll:97.78, taxGene:94.67, intuitTax:89.83, personal:91.40, advance:84.17, logicalR:81.83, financial:93.17 },
+        { model:"gpt-5.4-2026-03-05",         tier:"PRETRAINED", type:"TEXT", ctx:"1M",   modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:60.19, transact:75.20, accounti:94.12, usTaxF:85.80, irsEnroll:96.67,  taxGene:94.33, intuitTax:89.47, personal:94.45, advance:83.90, logicalR:80.09, financial:94.06 },
+        { model:"o4-mini-2025-04-16",         tier:"PRETRAINED", type:"TEXT", ctx:"128K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view","ext"], basicRea:70.33, transact:80.57, accounti:95.25, usTaxF:80.47, irsEnroll:92.83, taxGene:87.50, intuitTax:87.97, personal:93.27, advance:84.83, logicalR:78.23, financial:96.97 },
+        { model:"o3-mini-2025-01-31",         tier:"PRETRAINED", type:"TEXT", ctx:"200K", modelSize:"—",   cost:"—",  latency:"—",  badges:["view","ext"], basicRea:61.83, transact:72.67, accounti:92.65, usTaxF:80.80, irsEnroll:90.44, taxGene:88.20, intuitTax:88.93, personal:94.87, advance:85.70, logicalR:74.53, financial:94.77 },
+        { model:"gpt-5.2-2025-12-11",         tier:"PRETRAINED", type:"TEXT", ctx:"256K", modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:60.19, transact:74.10, accounti:97.06, usTaxF:83.92, irsEnroll:93.33,  taxGene:91.50, intuitTax:89.38, personal:94.29, advance:83.27, logicalR:78.44, financial:92.35 },
+        { model:"gpt-51-2025-11-13",          tier:"PRETRAINED", type:"TEXT", ctx:"128K", modelSize:"—",   cost:"—",  latency:"—",  badges:[],         basicRea:61.64, transact:72.80, accounti:97.06, usTaxF:85.39, irsEnroll:93.33,  taxGene:89.07, intuitTax:89.10, personal:94.12, advance:81.50, logicalR:76.21, financial:90.84 },
+      ];
+
+      // Visible columns state
+      let visibleCols = new Set(COLS.map(c => c.key));
+      // Sort state
+      let sortKey = null, sortDir = 1;
+      // Search filter
+      let searchQ = "";
+
+      function scoreClass(v) {
+        if (v === null || v === undefined || v === "—") return "";
+        if (v >= 95) return "score-high";
+        if (v >= 80) return "score-mid";
+        return "score-low";
+      }
+
+      function renderTable() {
+        const thead = document.getElementById("lb-thead");
+        const tbody = document.getElementById("lb-tbody");
+        const shownCols = COLS.filter(c => visibleCols.has(c.key));
+
+        // Header
+        thead.innerHTML = "";
+        const tr = document.createElement("tr");
+        shownCols.forEach(col => {
+          const th = document.createElement("th");
+          th.className = "border-b border-border px-3 py-2.5 text-left text-xs font-medium text-muted-foreground whitespace-nowrap cursor-pointer select-none";
+          if (col.score) th.className += " text-right";
+          if (sortKey === col.key) th.classList.add(sortDir === 1 ? "sorted-asc" : "sorted-desc");
+          th.style.minWidth = (col.width || 80) + "px";
+
+          const inner = document.createElement("span");
+          inner.className = "inline-flex items-center gap-1";
+          const lbl = document.createElement("span"); lbl.className = "sort-icon"; lbl.textContent = col.label;
+          inner.appendChild(lbl);
+          if (col.tip) {
+            const info = document.createElement("i"); info.setAttribute("data-lucide","circle-help"); info.className = "size-3 text-muted-foreground/60";
+            inner.appendChild(info);
+          }
+          th.appendChild(inner);
+          th.addEventListener("click", () => {
+            if (sortKey === col.key) sortDir = -sortDir;
+            else { sortKey = col.key; sortDir = -1; }
+            renderTable();
+          });
+          tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+
+        // Filter + sort rows
+        let rows = ROWS.filter(r => !searchQ || r.model.toLowerCase().includes(searchQ));
+        if (sortKey) {
+          rows = [...rows].sort((a, b) => {
+            const av = a[sortKey] ?? -Infinity, bv = b[sortKey] ?? -Infinity;
+            if (typeof av === "number" && typeof bv === "number") return (av - bv) * sortDir;
+            return String(av).localeCompare(String(bv)) * sortDir;
+          });
+        }
+
+        tbody.innerHTML = "";
+        rows.forEach(row => {
+          const tr = document.createElement("tr");
+          shownCols.forEach(col => {
+            const td = document.createElement("td");
+            td.className = "border-b border-border px-3 py-2.5 text-xs";
+
+            if (col.key === "model") {
+              // Model name + tier badge
+              const wrap = document.createElement("div"); wrap.className = "flex flex-col gap-0.5 min-w-0";
+              const nameA = document.createElement("a"); nameA.href = "#"; nameA.className = "text-blue-600 hover:underline font-medium truncate block"; nameA.textContent = row.model;
+              const badge = document.createElement("span"); badge.className = "inline-flex items-center gap-1 text-[10px] text-muted-foreground font-medium";
+              const dotIcon = document.createElement("i"); dotIcon.setAttribute("data-lucide","git-commit-horizontal"); dotIcon.className = "size-3";
+              badge.append(dotIcon, document.createTextNode(row.tier));
+              wrap.append(nameA, badge);
+              td.appendChild(wrap);
+
+            } else if (col.key === "type") {
+              // Type + badges
+              const wrap = document.createElement("div"); wrap.className = "flex flex-col gap-1";
+              const typeRow = document.createElement("div"); typeRow.className = "flex items-center gap-1 text-muted-foreground";
+              const typeIcon = document.createElement("i"); typeIcon.setAttribute("data-lucide","search"); typeIcon.className = "size-3";
+              typeRow.append(typeIcon, document.createTextNode(row.type));
+              wrap.appendChild(typeRow);
+              if (row.badges.length) {
+                const badgeRow = document.createElement("div"); badgeRow.className = "flex items-center gap-1";
+                row.badges.forEach(b => {
+                  const icon = document.createElement("i"); icon.className = "size-3 text-muted-foreground";
+                  if (b === "view") icon.setAttribute("data-lucide","eye");
+                  else if (b === "ft") icon.setAttribute("data-lucide","sliders-horizontal");
+                  else if (b === "ext") icon.setAttribute("data-lucide","circle-dot");
+                  badgeRow.appendChild(icon);
+                });
+                wrap.appendChild(badgeRow);
+              }
+              td.appendChild(wrap);
+
+            } else if (col.key === "meta") {
+              const wrap = document.createElement("div"); wrap.className = "flex flex-col gap-0.5 text-muted-foreground";
+              wrap.innerHTML = `<span>Context: ${row.ctx}</span><span>Model Size: ${row.modelSize}</span>`;
+              td.appendChild(wrap);
+
+            } else if (col.key === "cost" || col.key === "latency") {
+              td.textContent = row[col.key] ?? "—";
+              td.className += " text-center text-muted-foreground";
+
+            } else if (col.score) {
+              const v = row[col.key];
+              td.className += " score";
+              td.textContent = (v !== undefined && v !== null) ? v.toFixed(2) : "—";
+              if (typeof v === "number") td.className += " " + scoreClass(v);
+            }
+
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      // ── Column toggle panel ────────────────────────────────────────────
+      function renderColTogglePanel() {
+        const panel = document.getElementById("col-toggle-panel");
+        panel.innerHTML = "";
+        COLS.forEach(col => {
+          if (col.sticky) return; // always show sticky cols
+          const label = document.createElement("label");
+          label.className = "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs cursor-pointer hover:bg-accent";
+          const cb = document.createElement("input"); cb.type = "checkbox"; cb.className = "rounded border-border";
+          cb.checked = visibleCols.has(col.key);
+          cb.addEventListener("change", () => {
+            if (cb.checked) visibleCols.add(col.key); else visibleCols.delete(col.key);
+            renderTable();
+            const allVisible = COLS.every(c => c.sticky || visibleCols.has(c.key));
+            document.getElementById("col-toggle-label").textContent = allVisible ? "All Columns" : "Custom";
+          });
+          label.append(cb, document.createTextNode(col.tip || col.label));
+          panel.appendChild(label);
+        });
+      }
+
+      const colToggleBtn   = document.getElementById("col-toggle-btn");
+      const colTogglePanel = document.getElementById("col-toggle-panel");
+      const colToggleRoot  = document.getElementById("col-toggle-root");
+      colToggleBtn.addEventListener("click", e => { e.stopPropagation(); colTogglePanel.classList.toggle("hidden"); });
+      document.addEventListener("click", e => { if (!colToggleRoot.contains(e.target)) colTogglePanel.classList.add("hidden"); });
+      renderColTogglePanel();
+
+      // ── Search ─────────────────────────────────────────────────────────
+      document.getElementById("lb-search").addEventListener("input", e => { searchQ = e.target.value.toLowerCase(); renderTable(); });
+
+      // ── Filter chips (cosmetic toggle for prototype) ───────────────────
+      document.querySelectorAll(".filter-chip").forEach(btn => {
+        btn.addEventListener("click", () => btn.classList.toggle("active"));
+      });
+
+      // Initial render
+      renderTable();
+
+      if (window.lucide) window.lucide.createIcons();
+    </script>
+  </body>
+</html>
