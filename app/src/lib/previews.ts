@@ -72,6 +72,15 @@ export const previews: Preview[] = [
     description:
       "Sandbox for exploring a new Dev Portal navigation pattern — left rail with section switching.",
   },
+  {
+    slug: "long-term-vision",
+    platform: "Dev Portal",
+    title: "Long-term Vision",
+    file: "",
+    tags: ["Prototype", "Dev Portal", "Navigation"],
+    description:
+      "Long-term iteration on the Dev Portal navigation concept — full site sandbox for future exploration.",
+  },
 ]
 
 export function allTags(items: Preview[]): string[] {
