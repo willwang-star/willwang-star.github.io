@@ -3045,11 +3045,11 @@
          FLOATING CHAT BAR — fixed 40px above bottom, left-nav offset
          ═══════════════════════════════════════════════════════════════ -->
     <div class="pointer-events-none fixed inset-x-0 bottom-10 z-40 flex justify-center pl-[240px] pr-10">
-      <div class="pointer-events-auto w-full max-w-[640px]">
+      <div class="pointer-events-auto w-full max-w-[640px] rounded-2xl border border-border bg-card floating-shadow">
 
         <!-- Chat form -->
         <form id="ask-form"
-          class="w-full rounded-2xl border border-border bg-card p-3 text-left floating-shadow transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+          class="w-full p-3 text-left"
           autocomplete="off">
           <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
           <div class="relative">
