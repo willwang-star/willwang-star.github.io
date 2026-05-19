@@ -186,17 +186,26 @@
           <div id="mini-breadcrumb" class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150">
             <div id="mini-breadcrumb-root" class="relative inline-flex">
               <button id="mini-breadcrumb-trigger" type="button"
-                class="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 aria-haspopup="true" aria-expanded="false">
-                <!-- breadcrumb trail pills -->
-                <a href="dev-portal.html" class="hover:underline text-muted-foreground">Home</a>
-                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
-                <a href="ai-workbench.html" class="hover:underline text-muted-foreground">AI Workbench</a>
-                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
-                <span class="text-muted-foreground">Model Discovery</span>
-                <i data-lucide="chevron-right" class="size-3 text-muted-foreground/60 mx-0.5"></i>
-                <span class="font-semibold text-foreground">Leaderboard</span>
+                <span>Leaderboard</span>
+                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
               </button>
+
+              <div id="mini-breadcrumb-popover"
+                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150">
+                <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
+                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">You are here</p>
+                  <ol class="mb-4 flex flex-col gap-0">
+                    <li><a href="dev-portal.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent"><span class="font-medium">Home</span><span class="text-xs text-muted-foreground">· Dev Portal</span></a></li>
+                    <li><a href="ai-workbench.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent"><span class="font-medium">AI Workbench</span><span class="text-xs text-muted-foreground">· Workbenches</span></a></li>
+                    <li><span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-muted-foreground"><span>Model Discovery</span></span></li>
+                    <li><span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm font-medium text-foreground"><span>Leaderboard</span><span class="text-xs text-muted-foreground">· current page</span></span></li>
+                  </ol>
+                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Suggested by your role</p>
+                  <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -250,15 +259,61 @@
       <main class="pb-16 pt-6 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1100px]">
 
-          <!-- Breadcrumb trail -->
-          <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-1.5 text-sm">
-            <a href="dev-portal.html" class="text-muted-foreground hover:text-foreground transition-colors">Home</a>
-            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
-            <a href="ai-workbench.html" class="text-muted-foreground hover:text-foreground transition-colors">AI Workbench</a>
-            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
-            <span class="text-muted-foreground">Model Discovery</span>
-            <i data-lucide="chevron-right" class="size-3.5 text-muted-foreground/60"></i>
-            <span class="font-medium text-foreground">Leaderboard</span>
+          <!-- Smart breadcrumb — pill button + hover popover, matches all other pages -->
+          <nav aria-label="Breadcrumb" class="mb-6 flex justify-center">
+            <div id="breadcrumb-root" class="relative inline-flex">
+              <button
+                id="breadcrumb-trigger"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span>Leaderboard</span>
+                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
+              </button>
+
+              <div
+                id="breadcrumb-popover"
+                class="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-0 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+              >
+                <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
+                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    You are here
+                  </p>
+                  <ol class="mb-4 flex flex-col gap-0">
+                    <li>
+                      <a href="dev-portal.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent">
+                        <span class="font-medium">Home</span>
+                        <span class="text-xs text-muted-foreground">· Dev Portal</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="ai-workbench.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent">
+                        <span class="font-medium">AI Workbench</span>
+                        <span class="text-xs text-muted-foreground">· Workbenches</span>
+                      </a>
+                    </li>
+                    <li>
+                      <span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-muted-foreground">
+                        <span>Model Discovery</span>
+                      </span>
+                    </li>
+                    <li>
+                      <span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm font-medium text-foreground">
+                        <span>Leaderboard</span>
+                        <span class="text-xs text-muted-foreground">· current page</span>
+                      </span>
+                    </li>
+                  </ol>
+
+                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Suggested by your role
+                  </p>
+                  <ul id="breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+                </div>
+              </div>
+            </div>
           </nav>
 
           <!-- Chat input + action buttons -->
@@ -901,6 +956,46 @@
       document.querySelectorAll(".filter-chip").forEach(btn => {
         btn.addEventListener("click", () => btn.classList.toggle("active"));
       });
+
+      // ── Breadcrumb suggestions ─────────────────────────────────────────
+      const SUGGESTIONS = [
+        { label: "AI Workbench",    href: "ai-workbench.html" },
+        { label: "Data Discovery",  href: "data-discovery.html" },
+        { label: "Model Catalog",   href: "#" },
+        { label: "Prompt Playground", href: "#" },
+        { label: "My Projects",     href: "#" },
+      ];
+      function renderSuggestions(ul) {
+        if (!ul) return;
+        ul.innerHTML = "";
+        SUGGESTIONS.forEach(s => {
+          const li = document.createElement("li");
+          const a  = document.createElement("a"); a.href = s.href;
+          a.className = "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50";
+          a.textContent = s.label; li.appendChild(a); ul.appendChild(li);
+        });
+      }
+      renderSuggestions(document.getElementById("breadcrumb-suggestions"));
+      renderSuggestions(document.getElementById("mini-breadcrumb-suggestions"));
+
+      // ── Breadcrumb + mini-breadcrumb popover wiring ────────────────────
+      function wireBreadcrumb(rootId, triggerId, popoverId) {
+        const root    = document.getElementById(rootId);
+        const trigger = document.getElementById(triggerId);
+        const popover = document.getElementById(popoverId);
+        if (!root || !trigger || !popover) return;
+        let t = null;
+        const open  = () => { clearTimeout(t); popover.classList.remove("invisible","opacity-0"); popover.classList.add("opacity-100"); trigger.setAttribute("aria-expanded","true"); };
+        const close = () => { popover.classList.add("opacity-0"); popover.classList.remove("opacity-100"); trigger.setAttribute("aria-expanded","false"); t = setTimeout(() => popover.classList.add("invisible"), 160); };
+        root.addEventListener("mouseenter", open);
+        root.addEventListener("mouseleave", () => { t = setTimeout(close, 80); });
+        trigger.addEventListener("focus", open);
+        trigger.addEventListener("click", e => { open(); e.stopPropagation(); });
+        root.addEventListener("focusout", e => { if (!root.contains(e.relatedTarget)) close(); });
+        document.addEventListener("click", e => { if (!root.contains(e.target)) close(); });
+      }
+      wireBreadcrumb("breadcrumb-root",      "breadcrumb-trigger",      "breadcrumb-popover");
+      wireBreadcrumb("mini-breadcrumb-root", "mini-breadcrumb-trigger", "mini-breadcrumb-popover");
 
       // Initial render
       renderTable();
