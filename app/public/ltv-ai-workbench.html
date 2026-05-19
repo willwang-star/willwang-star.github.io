@@ -445,70 +445,9 @@
            breathing room. pt-6 (24px) aligns the breadcrumb's top with
            the floating nav; pb-16 (64px) leaves room before page content
            starts to feel cramped against the viewport bottom. -->
-      <main class="pb-16 pt-6 pl-[240px] pr-10">
+      <main class="pb-40 pt-6 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
-          <!-- ── Greeting + ask input ────────────────────────────────── -->
-          <section class="text-center">
-            <h1
-              id="greeting"
-              class="mb-6 text-3xl font-semibold tracking-tight sm:text-4xl"
-            ></h1>
 
-            <form
-              id="ask-form"
-              class="mx-auto w-full max-w-[640px] rounded-2xl border border-border bg-card p-3 text-left transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
-              autocomplete="off"
-            >
-              <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
-              <div class="relative">
-                <textarea
-                  id="ask-input"
-                  rows="1"
-                  class="block w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"
-                ></textarea>
-                <!-- Custom rolling placeholder overlay. Hidden once the
-                     textarea has any value (handled by JS toggling the
-                     `hidden` class). -->
-                <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
-                  <span class="roll-track">How can I help you today?</span>
-                </div>
-              </div>
-
-              <div class="mt-1 flex items-center justify-between px-1">
-                <label
-                  for="scope-toggle"
-                  class="inline-flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"
-                >
-                  <!-- Switch (shadcn-style: bg-secondary off / bg-primary on) -->
-                  <span class="relative inline-flex">
-                    <input
-                      id="scope-toggle"
-                      type="checkbox"
-                      class="peer sr-only"
-                    />
-                    <span
-                      class="block h-4 w-7 rounded-full bg-secondary transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"
-                    ></span>
-                    <span
-                      class="absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow transition-transform peer-checked:translate-x-3"
-                    ></span>
-                  </span>
-                  <span class="select-none">Search AI Workbench</span>
-                </label>
-
-                <button
-                  id="ask-send"
-                  type="submit"
-                  aria-label="Send"
-                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                  disabled
-                >
-                  <i data-lucide="arrow-right"></i>
-                </button>
-              </div>
-            </form>
-
-          </section>
 
           <!-- ── AI Workbench landing content ──────────────────────────
                Below the action pills are the AI Workbench specific
@@ -3147,5 +3086,40 @@
 
       if (window.lucide) window.lucide.createIcons();
     </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FLOATING CHAT BAR — fixed 40px above bottom, left-nav offset
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="pointer-events-none fixed inset-x-0 bottom-10 z-40 flex justify-center pl-[240px] pr-10">
+      <div class="pointer-events-auto w-full max-w-[640px]">
+        <form id="ask-form"
+          class="w-full rounded-2xl border border-border bg-card p-3 text-left floating-shadow transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
+          autocomplete="off">
+          <label for="ask-input" class="sr-only">Ask the Dev Portal</label>
+          <div class="relative">
+            <textarea id="ask-input" rows="1"
+              class="block w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-0"></textarea>
+            <div id="ask-placeholder" class="placeholder-roll" aria-hidden="true">
+              <span class="roll-track">How can I help you today?</span>
+            </div>
+          </div>
+          <div class="mt-1 flex items-center justify-between px-1">
+            <label for="scope-toggle" class="inline-flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+              <span class="relative inline-flex">
+                <input id="scope-toggle" type="checkbox" class="peer sr-only" />
+                <span class="block h-4 w-7 rounded-full bg-secondary transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"></span>
+                <span class="absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow transition-transform peer-checked:translate-x-3"></span>
+              </span>
+              <span class="select-none">Search AI Workbench</span>
+            </label>
+            <button id="ask-send" type="submit" aria-label="Send"
+              class="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              disabled>
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
