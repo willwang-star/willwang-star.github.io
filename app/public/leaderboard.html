@@ -244,7 +244,14 @@
         </div>
 
         <!-- Menu -->
-        <nav id="menu" class="p-2" aria-label="Sections">
+        <nav id="menu" class="px-2 pb-2" aria-label="Sections">
+          <a
+            href="dev-portal.html"
+            class="mb-0.5 flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:bg-accent"
+          >
+            <i data-lucide="arrow-left" class="shrink-0"></i>
+            <span class="whitespace-nowrap">Back to Dev Portal</span>
+          </a>
           <ul id="primary-menu" class="space-y-0.5"></ul>
           <div id="pinned-section" class="hidden">
             <div class="my-2 flex items-center gap-2 border-t border-border px-2 pt-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -478,7 +485,7 @@
         MENU.forEach(item => {
           if (item.sectionLabel) {
             const li = document.createElement("li");
-            li.className = "px-2.5 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground";
+            li.className = "px-2.5 pb-1 pt-2 text-sm font-bold text-foreground";
             li.textContent = item.label;
             ul.appendChild(li);
             return;
@@ -640,7 +647,7 @@
 
 
       // ── Greeting ───────────────────────────────────────────────────────
-      document.getElementById("greeting").textContent = "Model Leaderboard";
+      document.getElementById("greeting").textContent = "Let's get job done!";
 
       // ── Ask input ──────────────────────────────────────────────────────
       const askInput = document.getElementById("ask-input");
