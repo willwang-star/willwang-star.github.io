@@ -1550,15 +1550,12 @@
         const list = document.getElementById("pinned-list");
         list.innerHTML = "";
 
-        if (pinned.size === 0) {
-          section.classList.add("hidden");
-          return;
-        }
-        section.classList.remove("hidden");
+        let rendered = 0;
 
         for (const id of pinned) {
           const child = findChildById(id);
           if (!child) continue;
+          rendered++;
           const li = document.createElement("li");
           li.className =
             "flex items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm hover:bg-accent";
@@ -1594,6 +1591,8 @@
 
           list.appendChild(li);
         }
+
+        section.classList.toggle("hidden", rendered === 0);
       }
 
       function togglePin(id) {

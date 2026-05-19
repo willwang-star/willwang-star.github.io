@@ -1410,15 +1410,15 @@
         const list = document.getElementById("pinned-list");
         list.innerHTML = "";
 
-        if (pinned.size === 0) {
-          section.classList.add("hidden");
-          return;
-        }
-        section.classList.remove("hidden");
+        // Build rows first; only show the section if at least one pin
+        // resolves to a known item. This handles both the empty-pinned
+        // case and the case where stored ids no longer exist in the index.
+        let rendered = 0;
 
         for (const id of pinned) {
           const child = findChildById(id);
           if (!child) continue;
+          rendered++;
           const li = document.createElement("li");
           li.className =
             "flex items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm hover:bg-accent";
@@ -1454,6 +1454,9 @@
 
           list.appendChild(li);
         }
+
+        // Show only if at least one row rendered; hide otherwise.
+        section.classList.toggle("hidden", rendered === 0);
       }
 
       function togglePin(id) {
