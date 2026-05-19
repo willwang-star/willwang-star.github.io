@@ -428,11 +428,6 @@
         <div class="mx-auto w-full max-w-[1000px]">
           <!-- ── Greeting + ask input ────────────────────────────────── -->
           <section class="text-center">
-            <h1
-              id="greeting"
-              class="mb-6 text-3xl font-semibold tracking-tight sm:text-4xl"
-            ></h1>
-
             <form
               id="ask-form"
               class="mx-auto w-full max-w-[640px] rounded-2xl border border-border bg-card p-3 text-left transition-[box-shadow,border-color] focus-within:border-foreground/70 focus-within:shadow-[0_0_0_1px_hsl(var(--foreground)/0.7)]"
@@ -3123,7 +3118,6 @@
 
       // ── Greeting ───────────────────────────────────────────────────
       // Fixed motivational line.
-      document.getElementById("greeting").textContent = "Let's get job done!";
 
       // ── Ask input: enable send only when there's text ──────────────
       const askInput = document.getElementById("ask-input");
