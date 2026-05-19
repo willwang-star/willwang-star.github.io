@@ -183,10 +183,10 @@
       <!-- Center: mini breadcrumb -->
       <div class="pointer-events-none absolute inset-0 flex items-center pl-[240px] pr-10" aria-hidden="false">
         <div class="pointer-events-auto mx-auto w-full max-w-[1100px]">
-          <div id="mini-breadcrumb" class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150">
+          <div id="mini-breadcrumb" class="mx-auto flex w-fit items-center">
             <div id="mini-breadcrumb-root" class="relative inline-flex">
               <button id="mini-breadcrumb-trigger" type="button"
-                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                class="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 aria-haspopup="true" aria-expanded="false">
                 <span>Leaderboard</span>
                 <i data-lucide="chevron-down" class="text-muted-foreground"></i>
@@ -265,63 +265,6 @@
       <!-- ── Main content ──────────────────────────────────────────────── -->
       <main class="pb-16 pt-6 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1100px]">
-
-          <!-- Smart breadcrumb — pill button + hover popover, matches all other pages -->
-          <nav aria-label="Breadcrumb" class="mb-6 flex justify-center">
-            <div id="breadcrumb-root" class="relative inline-flex">
-              <button
-                id="breadcrumb-trigger"
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span>Leaderboard</span>
-                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
-              </button>
-
-              <div
-                id="breadcrumb-popover"
-                class="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-0 pt-2 opacity-0 transition-[opacity,transform] duration-150"
-              >
-                <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
-                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                    You are here
-                  </p>
-                  <ol class="mb-4 flex flex-col gap-0">
-                    <li>
-                      <a href="dev-portal.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent">
-                        <span class="font-medium">Home</span>
-                        <span class="text-xs text-muted-foreground">· Dev Portal</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="ai-workbench.html" class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-foreground hover:bg-accent">
-                        <span class="font-medium">AI Workbench</span>
-                        <span class="text-xs text-muted-foreground">· Workbenches</span>
-                      </a>
-                    </li>
-                    <li>
-                      <span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm text-muted-foreground">
-                        <span>Model Discovery</span>
-                      </span>
-                    </li>
-                    <li>
-                      <span class="flex items-center gap-2 rounded-md px-2 py-0.5 text-sm font-medium text-foreground">
-                        <span>Leaderboard</span>
-                        <span class="text-xs text-muted-foreground">· current page</span>
-                      </span>
-                    </li>
-                  </ol>
-
-                  <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                    Suggested by your role
-                  </p>
-                  <ul id="breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
-                </div>
-              </div>
-            </div>
-          </nav>
 
           <!-- Chat input + action buttons -->
           <section class="mb-10 text-center">
@@ -572,20 +515,6 @@
 
       function togglePin(id) { if (pinned.has(id)) pinned.delete(id); else pinned.add(id); savePinned(); renderMenu(); }
 
-      // ── Mini breadcrumb scroll ─────────────────────────────────────────
-      (function () {
-        const pageBreadcrumb = document.querySelector("nav[aria-label='Breadcrumb']");
-        const miniEl = document.getElementById("mini-breadcrumb");
-        if (!pageBreadcrumb || !miniEl) return;
-        let showingMini = false;
-        function setShowingMini(next) {
-          if (next === showingMini) return; showingMini = next;
-          if (next) { miniEl.classList.remove("hidden"); miniEl.classList.add("flex"); void miniEl.offsetWidth; miniEl.classList.remove("opacity-0"); }
-          else { miniEl.classList.add("opacity-0"); setTimeout(() => { if (!showingMini) { miniEl.classList.add("hidden"); miniEl.classList.remove("flex"); } }, 150); }
-        }
-        const io = new IntersectionObserver(([e]) => setShowingMini(!e.isIntersecting), { rootMargin: "-44px 0px 0px 0px", threshold: 0 });
-        io.observe(pageBreadcrumb);
-      })();
 
       // ── Global nav index ───────────────────────────────────────────────
       const GLOBAL_NAV_INDEX = [
@@ -900,7 +829,6 @@
           a.textContent = s.label; li.appendChild(a); ul.appendChild(li);
         });
       }
-      renderSuggestions(document.getElementById("breadcrumb-suggestions"));
       renderSuggestions(document.getElementById("mini-breadcrumb-suggestions"));
 
       // ── Breadcrumb + mini-breadcrumb popover wiring ────────────────────
@@ -919,7 +847,6 @@
         root.addEventListener("focusout", e => { if (!root.contains(e.relatedTarget)) close(); });
         document.addEventListener("click", e => { if (!root.contains(e.target)) close(); });
       }
-      wireBreadcrumb("breadcrumb-root",      "breadcrumb-trigger",      "breadcrumb-popover");
       wireBreadcrumb("mini-breadcrumb-root", "mini-breadcrumb-trigger", "mini-breadcrumb-popover");
 
       // Initial render

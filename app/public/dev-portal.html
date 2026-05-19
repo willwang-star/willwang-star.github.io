@@ -289,13 +289,13 @@
                + Suggested popover, just like the page breadcrumb. -->
           <div
             id="mini-breadcrumb"
-            class="mx-auto hidden w-fit items-center opacity-0 transition-opacity duration-150"
+            class="mx-auto flex w-fit items-center"
           >
             <div id="mini-breadcrumb-root" class="relative inline-flex">
               <button
                 id="mini-breadcrumb-trigger"
                 type="button"
-                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                class="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 aria-haspopup="true"
                 aria-expanded="false"
               >
@@ -426,51 +426,6 @@
            starts to feel cramped against the viewport bottom. -->
       <main class="pb-16 pt-6 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
-          <!-- ── Smart breadcrumb ────────────────────────────────────────
-               Hover the current-page chip to reveal suggested destinations
-               as clickable pills. The whole group (trigger + popover) is
-               wrapped in a single hover region so the popover stays open
-               while the cursor crosses the small gap. -->
-          <nav aria-label="Breadcrumb" class="mb-6 flex justify-center">
-            <div id="breadcrumb-root" class="relative inline-flex">
-              <button
-                id="breadcrumb-trigger"
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span>Home</span>
-                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
-              </button>
-
-              <!-- Floating popover — bridged with pt-2 so the hover doesn't
-                   drop when the cursor crosses the small gap. -->
-              <div
-                id="breadcrumb-popover"
-                class="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-0 pt-2 opacity-0 transition-[opacity,transform] duration-150"
-              >
-                <div
-                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
-                >
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Recent visits
-                  </p>
-                  <ul id="breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
-
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Suggested by your role
-                  </p>
-                  <ul id="breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
-                </div>
-              </div>
-            </div>
-          </nav>
-
           <!-- ── Greeting + ask input ────────────────────────────────── -->
           <section class="text-center">
             <h1
@@ -1327,44 +1282,6 @@
       }
 
 
-      // ── Mini breadcrumb on scroll ──────────────────────────────────
-      // When the page breadcrumb scrolls off-screen, show the compact
-      // breadcrumb chip in the top nav so the user always sees their location.
-      (function () {
-        const pageBreadcrumb = document.getElementById("breadcrumb-root");
-        const miniEl = document.getElementById("mini-breadcrumb");
-        if (!pageBreadcrumb || !miniEl) return;
-
-        const NAV_HEIGHT = 44;
-        let showingMini = false;
-
-        function setShowingMini(next) {
-          if (next === showingMini) return;
-          showingMini = next;
-
-          if (next) {
-            miniEl.classList.remove("hidden");
-            miniEl.classList.add("flex");
-            void miniEl.offsetWidth;
-            miniEl.classList.remove("opacity-0");
-          } else {
-            miniEl.classList.add("opacity-0");
-            setTimeout(() => {
-              if (!showingMini) {
-                miniEl.classList.add("hidden");
-                miniEl.classList.remove("flex");
-              }
-            }, 150);
-          }
-        }
-
-        const io = new IntersectionObserver(
-          ([entry]) => setShowingMini(!entry.isIntersecting),
-          { rootMargin: `-${NAV_HEIGHT}px 0px 0px 0px`, threshold: 0 }
-        );
-        io.observe(pageBreadcrumb);
-      })();
-
       // ── Nav search autocomplete ────────────────────────────────────
       // Search indexes BOTH the current page's MENU and a shared list of
       // every destination across the portal, so a search from any page
@@ -1597,10 +1514,7 @@
         });
       }
 
-      // Populate both the page breadcrumb and the mini breadcrumb (which
-      // takes over the top nav when the page breadcrumb scrolls offscreen).
-      renderSuggestions(document.getElementById("breadcrumb-suggestions"));
-      renderHistory(document.getElementById("breadcrumb-history"));
+      // Populate the breadcrumb in the top nav.
       renderSuggestions(document.getElementById("mini-breadcrumb-suggestions"));
       renderHistory(document.getElementById("mini-breadcrumb-history"));
 
@@ -3201,7 +3115,6 @@
         });
       }
 
-      wireBreadcrumb("breadcrumb-root", "breadcrumb-trigger", "breadcrumb-popover");
       wireBreadcrumb(
         "mini-breadcrumb-root",
         "mini-breadcrumb-trigger",
