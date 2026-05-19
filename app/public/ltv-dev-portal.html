@@ -424,28 +424,10 @@
            breathing room. pt-6 (24px) aligns the breadcrumb's top with
            the floating nav; pb-16 (64px) leaves room before page content
            starts to feel cramped against the viewport bottom. -->
-      <main class="pb-40 pt-6 pl-[240px] pr-10">
+      <main class="pb-40 pt-[68px] pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
 
-          <!-- Customize view — enters edit mode that lets the user drag
-               any section in the customize area to reorder it. -->
-          <div class="mt-6 flex justify-end">
-            <button
-              type="button"
-              id="customize-view"
-              data-mode="idle"
-              class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              Customize view
-            </button>
-          </div>
-
-          <!-- Customize area — every direct child <section> is a
-               reorderable block while edit mode is on. Uses flex-wrap so
-               half-width sections (Action Items, Recent, etc.) pair up
-               on lg screens and full-width sections (Delivery Teams,
-               Continue with Agents) span the whole row. -->
-          <div id="customize-area" class="mt-2 flex flex-wrap items-stretch gap-x-4 gap-y-10">
+          <div id="customize-area" class="flex flex-wrap items-stretch gap-x-4 gap-y-10">
 
           <!-- ── Action Items (half-width) ──────────────────────────── -->
           <section
