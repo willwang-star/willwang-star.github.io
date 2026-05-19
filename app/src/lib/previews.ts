@@ -66,7 +66,7 @@ export const previews: Preview[] = [
   {
     slug: "nav-concept",
     platform: "Dev Portal",
-    title: "Nav Concept",
+    title: "Short-term Vision",
     file: "",
     tags: ["Prototype", "Dev Portal", "Navigation"],
     description:
