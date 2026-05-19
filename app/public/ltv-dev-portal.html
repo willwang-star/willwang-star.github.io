@@ -266,89 +266,70 @@
     <!-- ────────────────────────────────────────────────────────────────────
          Top nav
          ──────────────────────────────────────────────────────────────── -->
-    <header
-      class="sticky top-0 z-30 flex h-11 items-center justify-between gap-4 border-b border-border bg-background/85 px-6 backdrop-blur"
-    >
-      <div class="flex items-center gap-2">
-        <span class="text-sm font-semibold tracking-tight">Dev Portal</span>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FLOATING TOP NAV — fixed, floating pill centered at top
+         Single centered cluster: breadcrumb + divider + bell + avatar
+         ═══════════════════════════════════════════════════════════════ -->
+    <header class="pointer-events-none fixed inset-x-0 top-4 z-30 flex justify-center pl-[240px] pr-10">
+      <div class="pointer-events-auto flex items-center gap-1 rounded-2xl border border-border bg-card floating-shadow px-2 py-1.5">
 
-      <!-- Weather widget — horizontally centered above the breadcrumb.
-           The breadcrumb lives inside `main`'s content envelope:
-           pl-[240px] + pr-10 + max-w-[1000px] mx-auto. We mirror that
-           same envelope here with absolute positioning so the widget
-           sits on the same vertical centerline as the breadcrumb. -->
-      <div
-        class="pointer-events-none absolute inset-0 flex items-center pl-[240px] pr-10"
-        aria-hidden="false"
-      >
-        <div class="pointer-events-auto mx-auto w-full max-w-[1000px]">
-          <!-- Mini breadcrumb — hidden by default. The script swaps it
-               in for the weather widget once the page breadcrumb has
-               scrolled past the top nav. Carries its own Recent visits
-               + Suggested popover, just like the page breadcrumb. -->
-          <div
-            id="mini-breadcrumb"
-            class="mx-auto flex w-fit items-center"
+        <!-- Breadcrumb trigger -->
+        <div id="mini-breadcrumb-root" class="relative inline-flex">
+          <button
+            id="mini-breadcrumb-trigger"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            aria-haspopup="true"
+            aria-expanded="false"
           >
-            <div id="mini-breadcrumb-root" class="relative inline-flex">
-              <button
-                id="mini-breadcrumb-trigger"
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span>Home</span>
-                <i data-lucide="chevron-down" class="text-muted-foreground"></i>
-              </button>
+            <span>Dev Portal</span>
+            <i data-lucide="chevron-down" class="size-3.5 text-muted-foreground"></i>
+          </button>
 
-              <div
-                id="mini-breadcrumb-popover"
-                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
-              >
-                <div
-                  class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow"
-                >
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Recent visits
-                  </p>
-                  <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
-
-                  <p
-                    class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    Suggested by your role
-                  </p>
-                  <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
-                </div>
+          <div
+            id="mini-breadcrumb-popover"
+            class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+          >
+            <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
+              <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                Recent visits
+              </p>
+              <ul id="mini-breadcrumb-history" class="mb-4 flex flex-col gap-0"></ul>
+              <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                Suggested by your role
+              </p>
+              <ul id="mini-breadcrumb-suggestions" class="flex flex-wrap gap-1.5"></ul>
+              <div class="mt-4 border-t border-border pt-4">
+                <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Path</p>
+                <p class="px-1 text-xs text-muted-foreground">Dev Portal</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="flex items-center gap-1">
+        <!-- Divider -->
+        <div class="h-5 w-px bg-border mx-1"></div>
+
+        <!-- Bell -->
         <button
           type="button"
-          class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          class="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           aria-label="Notifications"
         >
-          <i data-lucide="bell"></i>
+          <i data-lucide="bell" class="size-4"></i>
         </button>
+
+        <!-- Avatar -->
         <button
           type="button"
-          class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          class="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           aria-label="Profile"
         >
-          <span
-            class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground"
-          >
+          <span class="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
             WW
           </span>
         </button>
+
       </div>
     </header>
 
@@ -424,7 +405,7 @@
            breathing room. pt-6 (24px) aligns the breadcrumb's top with
            the floating nav; pb-16 (64px) leaves room before page content
            starts to feel cramped against the viewport bottom. -->
-      <main class="pb-40 pt-6 pl-[240px] pr-10">
+      <main class="pb-40 pt-[68px] pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
 
           <div id="customize-area" class="flex flex-wrap items-stretch gap-x-4 gap-y-10">
