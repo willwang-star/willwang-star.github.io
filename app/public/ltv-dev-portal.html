@@ -3262,29 +3262,31 @@
       // • Click non-interactive area of card → select it (shows ring)
       // • Drag on any card (selected or not) → select + drag immediately
       // • Click canvas background → deselect all
-      let didDragCard = false; // track if we actually moved during this drag
-
       root.addEventListener("pointerdown", (e) => {
         if (e.button !== 0 && e.button !== 1) return;
 
         const card = e.button === 0 ? findCard(e.target) : null;
 
         if (card) {
-          // Select this card immediately
-          selectCard(card);
-          e.preventDefault();
-          e.stopPropagation();
-          mode = "card-dragging";
-          dragCard = card;
-          didDragCard = false;
-          card.style.zIndex = "10";
-          const cp = screenToCanvas(e.clientX, e.clientY);
-          cardStartX = cp.x;
-          cardStartY = cp.y;
-          cardOrigLeft = parseFloat(card.style.left) || 0;
-          cardOrigTop  = parseFloat(card.style.top)  || 0;
-          root.setPointerCapture(e.pointerId);
-          setCursor("grabbing");
+          if (card === selectedCard) {
+            // Already selected — start drag
+            e.preventDefault();
+            e.stopPropagation();
+            mode = "card-dragging";
+            dragCard = card;
+            card.style.zIndex = "10";
+            const cp = screenToCanvas(e.clientX, e.clientY);
+            cardStartX = cp.x;
+            cardStartY = cp.y;
+            cardOrigLeft = parseFloat(card.style.left) || 0;
+            cardOrigTop  = parseFloat(card.style.top)  || 0;
+            root.setPointerCapture(e.pointerId);
+            setCursor("grabbing");
+          } else {
+            // Not yet selected — select only, no drag
+            selectCard(card);
+            e.stopPropagation();
+          }
         } else {
           // Deselect on background click
           const onBg = e.target === surface || e.target === root;
