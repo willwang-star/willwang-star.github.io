@@ -3214,20 +3214,29 @@
       }, { passive: false });
 
       // ── Pointer state ──────────────────────────────────────────────────
-      let mode = "idle"; // "panning" | "card-dragging"
+      // Modes: "idle" | "panning" | "marquee" | "group-dragging"
+      let mode = "idle";
       let spaceDown = false;
 
-      // Canvas pan state
-      let panStartX = 0, panStartY = 0;
-      let txAtPanStart = 0, tyAtPanStart = 0;
+      // Pan state
+      let panStartX = 0, panStartY = 0, txAtPanStart = 0, tyAtPanStart = 0;
 
-      // Card drag state
-      let dragCard = null;       // the .customize-section being dragged
-      let cardStartX = 0, cardStartY = 0;   // canvas coords at drag start
-      let cardOrigLeft = 0, cardOrigTop = 0; // card's left/top at drag start
+      // Marquee state
+      let marqueeStartCanvas = null; // {x,y} in canvas coords
+      let marqueeEl = null;
 
-      // ── Cursor ─────────────────────────────────────────────────────────
+      // Group drag state
+      let dragOffsets = []; // [{card, origLeft, origTop}]
+      let dragStartCanvas = null; // {x,y}
+
+      // Selection
+      let selectedCards = new Set();
+
       function setCursor(c) { root.style.cursor = c; }
+
+      // ── Get all draggable cards ────────────────────────────────────────
+      const CARD_CLASS = "customize-section";
+      function allCards() { return Array.from(surface.querySelectorAll("." + CARD_CLASS)); }
 
       // ── Hit-test helpers ──────────────────────────────────────────────
       const INTERACTIVE = [
@@ -3239,7 +3248,6 @@
       function isInteractive(el) {
         try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
       }
-      const CARD_CLASS = "customize-section";
       function findCard(target) {
         let el = target;
         while (el && el !== surface) {
@@ -3249,58 +3257,94 @@
         }
         return null;
       }
-      let selectedCard = null;
-      function selectCard(card) {
-        if (selectedCard && selectedCard !== card) selectedCard.classList.remove("is-selected");
-        selectedCard = card;
-        if (card) card.classList.add("is-selected");
+
+      // ── Selection helpers ─────────────────────────────────────────────
+      function selectCards(cards) {
+        deselectAll();
+        cards.forEach(c => { c.classList.add("is-selected"); selectedCards.add(c); });
       }
-      function deselectAll() { selectCard(null); }
+      function deselectAll() {
+        selectedCards.forEach(c => c.classList.remove("is-selected"));
+        selectedCards.clear();
+      }
+
+      // ── Marquee DOM element ───────────────────────────────────────────
+      function createMarquee() {
+        const el = document.createElement("div");
+        el.style.cssText = "position:absolute;pointer-events:none;border:1.5px solid hsl(221 83% 53%);background:hsl(221 83% 53%/0.08);border-radius:3px;z-index:999;";
+        surface.appendChild(el);
+        return el;
+      }
+      function updateMarquee(a, b) {
+        const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+        const w = Math.abs(b.x - a.x),  h = Math.abs(b.y - a.y);
+        marqueeEl.style.left   = x + "px";
+        marqueeEl.style.top    = y + "px";
+        marqueeEl.style.width  = w + "px";
+        marqueeEl.style.height = h + "px";
+      }
+      function marqueeRect(a, b) {
+        return { x: Math.min(a.x,b.x), y: Math.min(a.y,b.y), w: Math.abs(b.x-a.x), h: Math.abs(b.y-a.y) };
+      }
+      function cardIntersectsMarquee(card, mr) {
+        const cl = parseFloat(card.style.left)||0, ct = parseFloat(card.style.top)||0;
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        return cl < mr.x+mr.w && cl+cw > mr.x && ct < mr.y+mr.h && ct+ch > mr.y;
+      }
 
       // ── Pointer down ───────────────────────────────────────────────────
-      // Select-then-drag model (Figma-style):
-      // • Click non-interactive area of card → select it (shows ring)
-      // • Drag on any card (selected or not) → select + drag immediately
-      // • Click canvas background → deselect all
       root.addEventListener("pointerdown", (e) => {
         if (e.button !== 0 && e.button !== 1) return;
 
         const card = e.button === 0 ? findCard(e.target) : null;
+        const onBg = e.target === surface || e.target === root;
+        const isMiddle = e.button === 1;
 
-        if (card) {
-          if (card === selectedCard) {
-            // Already selected — start drag
-            e.preventDefault();
-            e.stopPropagation();
-            mode = "card-dragging";
-            dragCard = card;
-            card.style.zIndex = "10";
-            const cp = screenToCanvas(e.clientX, e.clientY);
-            cardStartX = cp.x;
-            cardStartY = cp.y;
-            cardOrigLeft = parseFloat(card.style.left) || 0;
-            cardOrigTop  = parseFloat(card.style.top)  || 0;
+        if (card && !spaceDown) {
+          // ── Start group drag ──
+          // If card is not selected, select only it; otherwise keep existing selection
+          if (!selectedCards.has(card)) selectCards([card]);
+          e.preventDefault(); e.stopPropagation();
+          mode = "group-dragging";
+          dragStartCanvas = screenToCanvas(e.clientX, e.clientY);
+          dragOffsets = Array.from(selectedCards).map(c => ({
+            card: c,
+            origLeft: parseFloat(c.style.left) || 0,
+            origTop:  parseFloat(c.style.top)  || 0,
+          }));
+          selectedCards.forEach(c => c.style.zIndex = "10");
+          root.setPointerCapture(e.pointerId);
+          setCursor("grabbing");
+
+        } else if ((onBg || spaceDown) && !isMiddle) {
+          // ── Marquee or pan ──
+          e.preventDefault();
+          if (spaceDown) {
+            // Space held = pan
+            mode = "panning";
+            panStartX = e.clientX; panStartY = e.clientY;
+            txAtPanStart = tx; tyAtPanStart = ty;
             root.setPointerCapture(e.pointerId);
             setCursor("grabbing");
           } else {
-            // Not yet selected — select only, no drag
-            selectCard(card);
-            e.stopPropagation();
+            // Marquee draw
+            deselectAll();
+            mode = "marquee";
+            marqueeStartCanvas = screenToCanvas(e.clientX, e.clientY);
+            marqueeEl = createMarquee();
+            updateMarquee(marqueeStartCanvas, marqueeStartCanvas);
+            root.setPointerCapture(e.pointerId);
+            setCursor("crosshair");
           }
-        } else {
-          // Deselect on background click
-          const onBg = e.target === surface || e.target === root;
-          if (onBg) deselectAll();
-          const isMiddle = e.button === 1;
-          if (!onBg && !isMiddle && !spaceDown) return;
+        } else if (isMiddle) {
           e.preventDefault();
           mode = "panning";
-          panStartX = e.clientX;
-          panStartY = e.clientY;
-          txAtPanStart = tx;
-          tyAtPanStart = ty;
+          panStartX = e.clientX; panStartY = e.clientY;
+          txAtPanStart = tx; tyAtPanStart = ty;
           root.setPointerCapture(e.pointerId);
           setCursor("grabbing");
+        } else if (onBg) {
+          deselectAll();
         }
       });
 
@@ -3310,39 +3354,58 @@
           tx = txAtPanStart + (e.clientX - panStartX);
           ty = tyAtPanStart + (e.clientY - panStartY);
           applyTransform();
-        } else if (mode === "card-dragging" && dragCard) {
-          const cp = screenToCanvas(e.clientX, e.clientY);
-          const newLeft = cardOrigLeft + (cp.x - cardStartX);
-          const newTop  = cardOrigTop  + (cp.y - cardStartY);
-          dragCard.style.left = newLeft + "px";
-          dragCard.style.top  = newTop  + "px";
-          didDragCard = true;
+        } else if (mode === "marquee") {
+          const cur = screenToCanvas(e.clientX, e.clientY);
+          updateMarquee(marqueeStartCanvas, cur);
+        } else if (mode === "group-dragging") {
+          const cur = screenToCanvas(e.clientX, e.clientY);
+          const dx = cur.x - dragStartCanvas.x, dy = cur.y - dragStartCanvas.y;
+          dragOffsets.forEach(({ card, origLeft, origTop }) => {
+            card.style.left = (origLeft + dx) + "px";
+            card.style.top  = (origTop  + dy) + "px";
+          });
         } else {
-          // Hover: grab cursor only on selected card's draggable area
+          // Hover cursor hint
           const card = findCard(e.target);
-          const onSelected = card && card === selectedCard;
+          const onSelected = card && selectedCards.has(card);
           setCursor(onSelected ? "grab" : spaceDown ? "grab" : "default");
         }
       });
 
       // ── Pointer up ─────────────────────────────────────────────────────
-      function endDrag() {
-        if (mode === "card-dragging" && dragCard) {
-          dragCard.style.zIndex = "";
-          dragCard = null;
+      root.addEventListener("pointerup", endInteraction);
+      root.addEventListener("pointercancel", endInteraction);
+      function endInteraction() {
+        if (mode === "marquee" && marqueeEl) {
+          const cur_end = marqueeEl.getBoundingClientRect(); // already in place
+          const mr = marqueeRect(marqueeStartCanvas, {
+            x: parseFloat(marqueeEl.style.left) + parseFloat(marqueeEl.style.width),
+            y: parseFloat(marqueeEl.style.top)  + parseFloat(marqueeEl.style.height),
+          });
+          // Use the stored marquee position directly
+          const mLeft = parseFloat(marqueeEl.style.left);
+          const mTop  = parseFloat(marqueeEl.style.top);
+          const mRight = mLeft + parseFloat(marqueeEl.style.width);
+          const mBottom = mTop + parseFloat(marqueeEl.style.height);
+          const hit = allCards().filter(c => {
+            const cl = parseFloat(c.style.left)||0, ct = parseFloat(c.style.top)||0;
+            const cw = c.offsetWidth, ch = c.offsetHeight;
+            return cl < mRight && cl+cw > mLeft && ct < mBottom && ct+ch > mTop;
+          });
+          selectCards(hit);
+          marqueeEl.remove(); marqueeEl = null;
+        } else if (mode === "group-dragging") {
+          selectedCards.forEach(c => c.style.zIndex = "");
         }
         mode = "idle";
         setCursor(spaceDown ? "grab" : "default");
       }
-      root.addEventListener("pointerup", endDrag);
-      root.addEventListener("pointercancel", endDrag);
 
-      // ── Spacebar = pan mode ────────────────────────────────────────────
+      // ── Keyboard ───────────────────────────────────────────────────────
       document.addEventListener("keydown", (e) => {
         if (e.code === "Escape") { deselectAll(); }
         if (e.code === "Space" && e.target === document.body) {
-          e.preventDefault();
-          spaceDown = true;
+          e.preventDefault(); spaceDown = true;
           if (mode === "idle") setCursor("grab");
         }
         if ((e.metaKey || e.ctrlKey) && e.key === "0") { e.preventDefault(); resetView(); }
@@ -3350,25 +3413,18 @@
         if ((e.metaKey || e.ctrlKey) && e.key === "-") { e.preventDefault(); zoomCenter(1 / 1.15); }
       });
       document.addEventListener("keyup", (e) => {
-        if (e.code === "Space") {
-          spaceDown = false;
-          if (mode === "idle") setCursor("default");
-        }
+        if (e.code === "Space") { spaceDown = false; if (mode === "idle") setCursor("default"); }
       });
 
       // ── Zoom badge ─────────────────────────────────────────────────────
       document.getElementById("zoom-badge").addEventListener("click", resetView);
-
       function resetView() { scale = 1; tx = 0; ty = 0; applyTransform(); }
-
       function zoomCenter(factor) {
         const rect = root.getBoundingClientRect();
         const ox = rect.width / 2, oy = rect.height / 2;
         const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * factor));
         const ratio = newScale / scale;
-        tx = ox - ratio * (ox - tx);
-        ty = oy - ratio * (oy - ty);
-        scale = newScale;
+        tx = ox - ratio * (ox - tx); ty = oy - ratio * (oy - ty); scale = newScale;
         applyTransform();
       }
 
