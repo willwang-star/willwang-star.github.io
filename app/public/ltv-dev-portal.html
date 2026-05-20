@@ -166,6 +166,49 @@
           0 16px 32px -8px rgb(0 0 0 / 0.07);
       }
 
+      /* ── Infinite canvas ──────────────────────────────────────────────── */
+      html, body { overflow: hidden; height: 100%; }
+
+      #canvas-root {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        cursor: default;
+      }
+      #canvas-root.is-panning { cursor: grab; }
+      #canvas-root.is-panning:active { cursor: grabbing; }
+
+      #canvas-surface {
+        position: absolute;
+        top: 0; left: 0;
+        /* wide/tall enough to always contain content at any zoom level */
+        width: 4000px;
+        height: 4000px;
+        transform-origin: 0 0;
+        will-change: transform;
+      }
+
+      /* Zoom badge — bottom left, above nothing (fixed so it ignores canvas transform) */
+      #zoom-badge {
+        position: fixed;
+        bottom: 1.25rem;
+        left: 1.25rem;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        border-radius: 9999px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+        padding: 0.25rem 0.625rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: hsl(var(--muted-foreground));
+        user-select: none;
+        cursor: default;
+      }
+      #zoom-badge:hover { color: hsl(var(--foreground)); }
+
       /* Rolling placeholder. The native <textarea> placeholder doesn't
          animate, so we render our own overlay positioned exactly where
          the placeholder would sit, hide it once the user types, and
@@ -262,7 +305,8 @@
     </script>
   </head>
 
-  <body class="min-h-screen bg-background text-foreground antialiased">
+  <body class="bg-background text-foreground antialiased">
+    <!-- Infinite canvas root — fixed fullscreen, clips overflow -->
     <!-- ────────────────────────────────────────────────────────────────────
          Top nav
          ──────────────────────────────────────────────────────────────── -->
@@ -398,6 +442,9 @@
            breathing room. pt-6 (24px) aligns the breadcrumb's top with
            the floating nav; pb-16 (64px) leaves room before page content
            starts to feel cramped against the viewport bottom. -->
+      <!-- ── Infinite canvas: only <main> content scrolls/zooms ──────── -->
+      <div id="canvas-root">
+        <div id="canvas-surface">
       <main class="pb-40 pt-20 pl-[240px] pr-10">
         <div class="mx-auto w-full max-w-[1000px]">
 
@@ -740,7 +787,8 @@
           </div><!-- /#customize-area -->
         </div>
       </main>
-    </div>
+      </div><!-- /#canvas-surface -->
+    </div><!-- /#canvas-root -->
 
     <!-- ────────────────────────────────────────────────────────────────────
          Data + behavior
@@ -3091,5 +3139,152 @@
         </div>
       </div>
     </div>
+
+    <!-- Zoom badge (fixed, outside canvas transform) -->
+    <div id="zoom-badge" title="Double-click to reset zoom">
+      <span id="zoom-label">100%</span>
+    </div>
+
+    <!-- ── Infinite canvas controller ──────────────────────────────────── -->
+    <script>
+    (function () {
+      const root    = document.getElementById("canvas-root");
+      const surface = document.getElementById("canvas-surface");
+      const label   = document.getElementById("zoom-label");
+
+      // State
+      let scale = 1;
+      let tx = 0; // pan X in screen px
+      let ty = 0; // pan Y in screen px
+
+      const MIN_SCALE = 0.25;
+      const MAX_SCALE = 2.5;
+      const ZOOM_SPEED = 0.0008; // per wheel delta unit
+
+      function applyTransform() {
+        surface.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+        label.textContent = Math.round(scale * 100) + "%";
+      }
+
+      // ── Pinch-to-zoom & scroll-to-pan (trackpad wheel event) ──────────
+      root.addEventListener("wheel", (e) => {
+        e.preventDefault();
+
+        if (e.ctrlKey) {
+          // Pinch-to-zoom: zoom toward the cursor position
+          const rect = root.getBoundingClientRect();
+          const ox = e.clientX - rect.left;
+          const oy = e.clientY - rect.top;
+
+          const delta = -e.deltaY * ZOOM_SPEED;
+          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
+          const ratio = newScale / scale;
+
+          // Adjust translation so the point under the cursor stays fixed
+          tx = ox - ratio * (ox - tx);
+          ty = oy - ratio * (oy - ty);
+          scale = newScale;
+        } else {
+          // Two-finger pan
+          tx -= e.deltaX;
+          ty -= e.deltaY;
+        }
+
+        applyTransform();
+      }, { passive: false });
+
+      // ── Click-and-drag to pan ──────────────────────────────────────────
+      let dragging = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let txAtDragStart = 0;
+      let tyAtDragStart = 0;
+
+      root.addEventListener("pointerdown", (e) => {
+        // Only pan on middle-click or space+left-click or plain left drag on the canvas bg
+        const onSurface = e.target === surface || e.target === root;
+        const isMiddle = e.button === 1;
+        const isSpace = spaceDown && e.button === 0;
+        if (!onSurface && !isMiddle && !isSpace) return;
+        e.preventDefault();
+        dragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        txAtDragStart = tx;
+        tyAtDragStart = ty;
+        root.setPointerCapture(e.pointerId);
+        root.classList.add("is-panning");
+      });
+
+      root.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        tx = txAtDragStart + (e.clientX - dragStartX);
+        ty = tyAtDragStart + (e.clientY - dragStartY);
+        applyTransform();
+      });
+
+      root.addEventListener("pointerup", () => {
+        dragging = false;
+        root.classList.remove("is-panning");
+      });
+      root.addEventListener("pointercancel", () => {
+        dragging = false;
+        root.classList.remove("is-panning");
+      });
+
+      // ── Spacebar hold = pan mode ───────────────────────────────────────
+      let spaceDown = false;
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && e.target === document.body) {
+          e.preventDefault();
+          spaceDown = true;
+          root.classList.add("is-panning");
+        }
+        // Cmd/Ctrl + 0 → reset zoom
+        if ((e.metaKey || e.ctrlKey) && e.key === "0") {
+          e.preventDefault();
+          resetView();
+        }
+        // Cmd/Ctrl + = or + → zoom in
+        if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+")) {
+          e.preventDefault();
+          zoomCenter(1.15);
+        }
+        // Cmd/Ctrl + - → zoom out
+        if ((e.metaKey || e.ctrlKey) && e.key === "-") {
+          e.preventDefault();
+          zoomCenter(1 / 1.15);
+        }
+      });
+      document.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+          spaceDown = false;
+          if (!dragging) root.classList.remove("is-panning");
+        }
+      });
+
+      // ── Double-click badge to reset ────────────────────────────────────
+      document.getElementById("zoom-badge").addEventListener("dblclick", resetView);
+
+      function resetView() {
+        scale = 1; tx = 0; ty = 0;
+        applyTransform();
+      }
+
+      function zoomCenter(factor) {
+        const rect = root.getBoundingClientRect();
+        const ox = rect.width / 2;
+        const oy = rect.height / 2;
+        const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * factor));
+        const ratio = newScale / scale;
+        tx = ox - ratio * (ox - tx);
+        ty = oy - ratio * (oy - ty);
+        scale = newScale;
+        applyTransform();
+      }
+
+      applyTransform();
+    })();
+    </script>
   </body>
 </html>
