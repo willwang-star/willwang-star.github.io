@@ -3217,21 +3217,25 @@
       // ── Pinch-to-zoom & two-finger pan ─────────────────────────────────
       root.addEventListener("wheel", (e) => {
         e.preventDefault();
-        // Normalize delta to pixels regardless of deltaMode
-        // deltaMode 0=px, 1=line(~16px), 2=page(~600px)
-        const lineH = 16, pageH = 600;
-        const norm = e.deltaMode === 2 ? pageH : e.deltaMode === 1 ? lineH : 1;
         if (e.ctrlKey) {
+          // Pinch-to-zoom: use exp() so zoom-in and zoom-out are symmetric.
+          // Clamp deltaY to ±MAX_DELTA_PER_TICK before scaling so no single
+          // event can cause a dramatic jump regardless of input device or
+          // deltaMode. Max ~15% scale change per tick.
+          const MAX_DELTA = 25;
+          const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.deltaY));
           const rect = root.getBoundingClientRect();
           const ox = e.clientX - rect.left;
           const oy = e.clientY - rect.top;
-          const delta = -(e.deltaY * norm) * ZOOM_SPEED;
-          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
+          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * Math.exp(-dy * ZOOM_SPEED)));
           const ratio = newScale / scale;
           tx = ox - ratio * (ox - tx);
           ty = oy - ratio * (oy - ty);
           scale = newScale;
         } else {
+          // Two-finger pan: normalize deltaMode to pixels
+          const lineH = 16, pageH = 600;
+          const norm = e.deltaMode === 2 ? pageH : e.deltaMode === 1 ? lineH : 1;
           tx -= e.deltaX * norm;
           ty -= e.deltaY * norm;
         }

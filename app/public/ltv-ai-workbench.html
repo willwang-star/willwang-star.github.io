@@ -3264,16 +3264,19 @@
 
       root.addEventListener("wheel", (e) => {
         e.preventDefault();
-        const lineH = 16, pageH = 600;
-        const norm = e.deltaMode === 2 ? pageH : e.deltaMode === 1 ? lineH : 1;
         if (e.ctrlKey) {
+          const MAX_DELTA = 25;
+          const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.deltaY));
           const rect = root.getBoundingClientRect();
           const ox = e.clientX - rect.left, oy = e.clientY - rect.top;
-          const delta = -(e.deltaY * norm) * ZOOM_SPEED;
-          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
+          const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * Math.exp(-dy * ZOOM_SPEED)));
           const ratio = newScale / scale;
           tx = ox - ratio * (ox - tx); ty = oy - ratio * (oy - ty); scale = newScale;
-        } else { tx -= e.deltaX * norm; ty -= e.deltaY * norm; }
+        } else {
+          const lineH = 16, pageH = 600;
+          const norm = e.deltaMode === 2 ? pageH : e.deltaMode === 1 ? lineH : 1;
+          tx -= e.deltaX * norm; ty -= e.deltaY * norm;
+        }
         applyTransform();
       }, { passive: false });
 
