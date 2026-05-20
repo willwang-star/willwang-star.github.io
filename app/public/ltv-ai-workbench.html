@@ -177,8 +177,22 @@
       }
 
       /* Cursor handled entirely in JS — no CSS grab override needed */
-      .customize-section, .canvas-card { user-select: none; }
-      .customize-section *, .canvas-card * { user-select: auto; }
+      /* Card select-then-drag: selection ring on click, draggable when selected */
+      .canvas-card, .canvas-card {
+        user-select: none;
+        outline: 2px solid transparent;
+        outline-offset: 4px;
+        border-radius: 0.75rem;
+        transition: outline-color 0.1s;
+      }
+      .canvas-card.is-selected, .canvas-card.is-selected {
+        outline-color: hsl(221 83% 53% / 0.8);
+        cursor: grab;
+      }
+      .canvas-card.is-selected:active, .canvas-card.is-selected:active {
+        cursor: grabbing;
+      }
+      .canvas-card *, .canvas-card * { user-select: auto; }
 
       #canvas-surface {
         position: absolute;
@@ -3251,7 +3265,6 @@
         try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
       }
       function findCard(target) {
-        if (spaceDown) return null;
         let el = target;
         while (el && el !== surface) {
           if (isInteractive(el)) return null;
@@ -3260,13 +3273,22 @@
         }
         return null;
       }
+      let selectedCard = null;
+      function selectCard(card) {
+        if (selectedCard && selectedCard !== card) selectedCard.classList.remove("is-selected");
+        selectedCard = card;
+        if (card) card.classList.add("is-selected");
+      }
+      function deselectAll() { selectCard(null); }
 
+      let didDragCard = false;
       root.addEventListener("pointerdown", (e) => {
         if (e.button !== 0 && e.button !== 1) return;
         const card = e.button === 0 ? findCard(e.target) : null;
         if (card) {
+          selectCard(card);
           e.preventDefault(); e.stopPropagation();
-          mode = "card-dragging"; dragCard = card;
+          mode = "card-dragging"; dragCard = card; didDragCard = false;
           card.style.zIndex = "10";
           const cp = screenToCanvas(e.clientX, e.clientY);
           cardStartX = cp.x; cardStartY = cp.y;
@@ -3275,6 +3297,7 @@
           root.setPointerCapture(e.pointerId); setCursor("grabbing");
         } else {
           const onBg = e.target === surface || e.target === root;
+          if (onBg) deselectAll();
           if (!onBg && e.button !== 1 && !spaceDown) return;
           e.preventDefault(); mode = "panning";
           panStartX = e.clientX; panStartY = e.clientY;
@@ -3292,9 +3315,11 @@
           const cp = screenToCanvas(e.clientX, e.clientY);
           dragCard.style.left = (cardOrigLeft + (cp.x - cardStartX)) + "px";
           dragCard.style.top  = (cardOrigTop  + (cp.y - cardStartY)) + "px";
+          didDragCard = true;
         } else {
           const card = findCard(e.target);
-          setCursor(card ? "grab" : spaceDown ? "grab" : "default");
+          const onSelected = card && card === selectedCard;
+          setCursor(onSelected ? "grab" : spaceDown ? "grab" : "default");
         }
       });
 
@@ -3306,6 +3331,7 @@
       root.addEventListener("pointercancel", endDrag);
 
       document.addEventListener("keydown", (e) => {
+        if (e.code === "Escape") { deselectAll(); }
         if (e.code === "Space" && e.target === document.body) { e.preventDefault(); spaceDown = true; if (mode === "idle") setCursor("grab"); }
         if ((e.metaKey || e.ctrlKey) && e.key === "0") { e.preventDefault(); resetView(); }
         if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+")) { e.preventDefault(); zoomCenter(1.15); }

@@ -177,7 +177,21 @@
       }
 
       /* Cursor handled entirely in JS — no CSS grab override needed */
-      .customize-section, .canvas-card { user-select: none; }
+      /* Card select-then-drag: selection ring on click, draggable when selected */
+      .customize-section, .canvas-card {
+        user-select: none;
+        outline: 2px solid transparent;
+        outline-offset: 4px;
+        border-radius: 0.75rem;
+        transition: outline-color 0.1s;
+      }
+      .customize-section.is-selected, .canvas-card.is-selected {
+        outline-color: hsl(221 83% 53% / 0.8);
+        cursor: grab;
+      }
+      .customize-section.is-selected:active, .canvas-card.is-selected:active {
+        cursor: grabbing;
+      }
       .customize-section *, .canvas-card * { user-select: auto; }
 
       #canvas-surface {
@@ -3215,10 +3229,7 @@
       // ── Cursor ─────────────────────────────────────────────────────────
       function setCursor(c) { root.style.cursor = c; }
 
-      // ── Hit-test: is the pointer on a draggable card? ──────────────────
-      // Cards are .customize-section. We walk up from e.target.
-      // If space is held, we always pan — never card-drag.
-      // Interactive selectors — hovering these never shows grab
+      // ── Hit-test helpers ──────────────────────────────────────────────
       const INTERACTIVE = [
         'a','button','input','textarea','select','label',
         '[role="button"],[role="tab"],[role="menuitem"],[role="menuitemradio"]',
@@ -3228,45 +3239,56 @@
       function isInteractive(el) {
         try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
       }
+      const CARD_CLASS = "customize-section";
       function findCard(target) {
-        if (spaceDown) return null;
-        // Walk up: if we hit an interactive element before the card, abort
         let el = target;
         while (el && el !== surface) {
           if (isInteractive(el)) return null;
-          if (el.classList && el.classList.contains("customize-section")) return el;
+          if (el.classList && el.classList.contains(CARD_CLASS)) return el;
           el = el.parentElement;
         }
         return null;
       }
+      let selectedCard = null;
+      function selectCard(card) {
+        if (selectedCard && selectedCard !== card) selectedCard.classList.remove("is-selected");
+        selectedCard = card;
+        if (card) card.classList.add("is-selected");
+      }
+      function deselectAll() { selectCard(null); }
 
       // ── Pointer down ───────────────────────────────────────────────────
+      // Select-then-drag model (Figma-style):
+      // • Click non-interactive area of card → select it (shows ring)
+      // • Drag on any card (selected or not) → select + drag immediately
+      // • Click canvas background → deselect all
+      let didDragCard = false; // track if we actually moved during this drag
+
       root.addEventListener("pointerdown", (e) => {
         if (e.button !== 0 && e.button !== 1) return;
 
         const card = e.button === 0 ? findCard(e.target) : null;
 
         if (card) {
-          // ── Card drag ──
+          // Select this card immediately
+          selectCard(card);
           e.preventDefault();
           e.stopPropagation();
           mode = "card-dragging";
           dragCard = card;
-
-          // Bring card to front
+          didDragCard = false;
           card.style.zIndex = "10";
-
           const cp = screenToCanvas(e.clientX, e.clientY);
           cardStartX = cp.x;
           cardStartY = cp.y;
           cardOrigLeft = parseFloat(card.style.left) || 0;
           cardOrigTop  = parseFloat(card.style.top)  || 0;
-
           root.setPointerCapture(e.pointerId);
           setCursor("grabbing");
         } else {
-          // ── Canvas pan ──
+          // Deselect on background click
           const onBg = e.target === surface || e.target === root;
+          if (onBg) deselectAll();
           const isMiddle = e.button === 1;
           if (!onBg && !isMiddle && !spaceDown) return;
           e.preventDefault();
@@ -3292,10 +3314,12 @@
           const newTop  = cardOrigTop  + (cp.y - cardStartY);
           dragCard.style.left = newLeft + "px";
           dragCard.style.top  = newTop  + "px";
+          didDragCard = true;
         } else {
-          // Hover: show grab cursor on cards, default elsewhere
+          // Hover: grab cursor only on selected card's draggable area
           const card = findCard(e.target);
-          setCursor(card ? "grab" : spaceDown ? "grab" : "default");
+          const onSelected = card && card === selectedCard;
+          setCursor(onSelected ? "grab" : spaceDown ? "grab" : "default");
         }
       });
 
@@ -3313,6 +3337,7 @@
 
       // ── Spacebar = pan mode ────────────────────────────────────────────
       document.addEventListener("keydown", (e) => {
+        if (e.code === "Escape") { deselectAll(); }
         if (e.code === "Space" && e.target === document.body) {
           e.preventDefault();
           spaceDown = true;
