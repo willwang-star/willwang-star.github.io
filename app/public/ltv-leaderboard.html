@@ -188,7 +188,7 @@
               </button>
 
               <div id="mini-breadcrumb-popover"
-                class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150">
+                class="invisible absolute left-1/2 top-[calc(100%+8px)] z-30 -translate-x-1/2 opacity-0 transition-[opacity,transform] duration-150">
                 <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
                   <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Path</p>
                   <div class="mb-4 flex flex-wrap items-center gap-1.5 px-1 text-sm">
@@ -839,7 +839,9 @@
         const open  = () => { clearTimeout(t); popover.classList.remove("invisible","opacity-0"); popover.classList.add("opacity-100"); trigger.setAttribute("aria-expanded","true"); };
         const close = () => { popover.classList.add("opacity-0"); popover.classList.remove("opacity-100"); trigger.setAttribute("aria-expanded","false"); t = setTimeout(() => popover.classList.add("invisible"), 160); };
         root.addEventListener("mouseenter", open);
-        root.addEventListener("mouseleave", () => { t = setTimeout(close, 80); });
+        root.addEventListener("mouseleave", () => { t = setTimeout(close, 200); });
+        popover.addEventListener("mouseenter", () => clearTimeout(t));
+        popover.addEventListener("mouseleave", () => { t = setTimeout(close, 200); });
         trigger.addEventListener("focus", open);
         trigger.addEventListener("click", e => { open(); e.stopPropagation(); });
         root.addEventListener("focusout", e => { if (!root.contains(e.relatedTarget)) close(); });

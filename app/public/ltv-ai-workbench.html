@@ -285,7 +285,7 @@
 
           <div
             id="mini-breadcrumb-popover"
-            class="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-2 opacity-0 transition-[opacity,transform] duration-150"
+            class="invisible absolute left-1/2 top-[calc(100%+8px)] z-30 -translate-x-1/2 opacity-0 transition-[opacity,transform] duration-150"
           >
             <div class="w-[22rem] rounded-xl border border-border bg-popover text-popover-foreground p-4 floating-shadow">
               <p class="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Path</p>
@@ -2942,7 +2942,11 @@
         }
         root.addEventListener("mouseenter", open);
         root.addEventListener("mouseleave", () => {
-          closeTimer = setTimeout(close, 80);
+          closeTimer = setTimeout(close, 200);
+        });
+        popover.addEventListener("mouseenter", () => clearTimeout(closeTimer));
+        popover.addEventListener("mouseleave", () => {
+          closeTimer = setTimeout(close, 200);
         });
         trigger.addEventListener("focus", open);
         // Click on the trigger just guarantees the popover is open — never
