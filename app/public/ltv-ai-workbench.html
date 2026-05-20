@@ -3264,14 +3264,16 @@
 
       root.addEventListener("wheel", (e) => {
         e.preventDefault();
+        const lineH = 16, pageH = 600;
+        const norm = e.deltaMode === 2 ? pageH : e.deltaMode === 1 ? lineH : 1;
         if (e.ctrlKey) {
           const rect = root.getBoundingClientRect();
           const ox = e.clientX - rect.left, oy = e.clientY - rect.top;
-          const delta = -e.deltaY * ZOOM_SPEED;
+          const delta = -(e.deltaY * norm) * ZOOM_SPEED;
           const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
           const ratio = newScale / scale;
           tx = ox - ratio * (ox - tx); ty = oy - ratio * (oy - ty); scale = newScale;
-        } else { tx -= e.deltaX; ty -= e.deltaY; }
+        } else { tx -= e.deltaX * norm; ty -= e.deltaY * norm; }
         applyTransform();
       }, { passive: false });
 
@@ -3553,7 +3555,54 @@
         applyTransform();
       }
 
-      applyTransform();
+      // ── Persist layout to localStorage ────────────────────────────────
+      const STORAGE_KEY = "ltv-canvas-" + window.location.pathname.replace(/[^a-z0-9]/gi,'-');
+
+      function saveLayout() {
+        const cards = allCards();
+        const positions = cards.map(c => ({
+          id: c.id || c.querySelector('h2')?.textContent?.trim().slice(0,30),
+          left: c.style.left, top: c.style.top
+        }));
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ positions, scale, tx, ty })); } catch(e) {}
+      }
+
+      function loadLayout() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return false;
+          const { positions, scale: s, tx: t, ty: u } = JSON.parse(raw);
+          const cards = allCards();
+          positions.forEach(({ id, left, top }) => {
+            const card = cards.find(c =>
+              c.id === id ||
+              c.querySelector('h2')?.textContent?.trim().slice(0,30) === id
+            );
+            if (card) { card.style.left = left; card.style.top = top; }
+          });
+          scale = s; tx = t; ty = u;
+          applyTransform();
+          return true;
+        } catch(e) { return false; }
+      }
+
+      // Save whenever a drag ends or auto-arrange runs
+      const _origEndInteraction = endInteraction;
+      root.removeEventListener("pointerup", endInteraction);
+      root.removeEventListener("pointercancel", endInteraction);
+      function endInteractionAndSave() { _origEndInteraction(); saveLayout(); }
+      root.addEventListener("pointerup", endInteractionAndSave);
+      root.addEventListener("pointercancel", endInteractionAndSave);
+
+      const _origAutoArrange = autoArrange;
+      autoArrange = function() { _origAutoArrange(); setTimeout(saveLayout, 500); };
+
+      // ── Initial render: load saved or auto-arrange ─────────────────────
+      if (!loadLayout()) {
+        // First visit — auto-arrange into a clean default layout
+        // Wait one frame so cards have their dimensions
+        requestAnimationFrame(() => { autoArrange(); setTimeout(saveLayout, 500); });
+      }
     })();
     </script>
   </body>
