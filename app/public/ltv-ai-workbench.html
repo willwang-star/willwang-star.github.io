@@ -3517,20 +3517,36 @@
       function autoArrange() {
         const cards = allCards();
         if (!cards.length) return;
-        const GAP = 24, ORIGIN_X = 80, ORIGIN_Y = 80;
-        const canvasW = Math.max(...cards.map(c => c.offsetWidth), 940) + GAP * 2;
-        let rowX = ORIGIN_X, rowY = ORIGIN_Y, rowH = 0;
-        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        const GAP = 24;
+        const LEFT_NAV = 216, H_PAD = 40;
+        const rootRect = document.getElementById('canvas-root').getBoundingClientRect();
+        const viewW = rootRect.width || window.innerWidth;
+        const usableW = viewW - LEFT_NAV - H_PAD;
+        const maxCardW = Math.max(...cards.map(c => c.offsetWidth));
+        const gridW = Math.max(maxCardW, Math.min(usableW, 940 + GAP));
+        const rows = [];
+        let row = [], rowW = 0, rowH = 0;
         cards.forEach(c => {
           const w = c.offsetWidth, h = c.offsetHeight;
-          if (rowX > ORIGIN_X && rowX + w > ORIGIN_X + canvasW) {
-            rowY += rowH + GAP; rowX = ORIGIN_X; rowH = 0;
+          if (row.length && rowW + GAP + w > gridW) {
+            rows.push({ cards: row, width: rowW, height: rowH });
+            row = []; rowW = 0; rowH = 0;
           }
-          c.style.left = rowX + 'px'; c.style.top = rowY + 'px';
-          rowX += w + GAP; rowH = Math.max(rowH, h);
+          row.push(c); rowW += (row.length > 1 ? GAP : 0) + w; rowH = Math.max(rowH, h);
+        });
+        if (row.length) rows.push({ cards: row, width: rowW, height: rowH });
+        const totalW = Math.max(...rows.map(r => r.width));
+        const ORIGIN_X = LEFT_NAV + (usableW - totalW) / 2;
+        const ORIGIN_Y = 88;
+        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        let curY = ORIGIN_Y;
+        rows.forEach(({ cards: rc, height }) => {
+          let curX = ORIGIN_X;
+          rc.forEach(c => { c.style.left = curX + 'px'; c.style.top = curY + 'px'; curX += c.offsetWidth + GAP; });
+          curY += height + GAP;
         });
         setTimeout(() => cards.forEach(c => { c.style.transition = ''; }), 400);
-        setTimeout(() => fitView(cards, GAP), 420);
+        setTimeout(() => { scale = 1; tx = 0; ty = 0; applyTransform(); }, 420);
       }
       function fitView(cards, pad) {
         if (!cards.length) return;

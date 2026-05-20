@@ -3486,31 +3486,56 @@
       function autoArrange() {
         const cards = allCards();
         if (!cards.length) return;
-        const GAP = 24, ORIGIN_X = 80, ORIGIN_Y = 80;
-        // Find the canvas content width: max card width + 2 cols of narrow cards + gaps
-        const maxW = Math.max(...cards.map(c => c.offsetWidth));
-        const canvasW = Math.max(maxW, 940) + GAP * 2; // at least wide enough for 2 cols
-        // Bin-pack: place cards left→right, wrap when next card doesn't fit
-        let rowX = ORIGIN_X, rowY = ORIGIN_Y, rowH = 0;
-        // Enable smooth transition
-        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        const GAP = 24;
+        // Left nav is fixed at left:24px, width ~176px → content starts at ~216px.
+        // Mirror the same gap on the right for symmetry.
+        const LEFT_NAV = 216, H_PAD = 40;
+        const rootRect = document.getElementById('canvas-root').getBoundingClientRect();
+        const viewW = rootRect.width || window.innerWidth;
+        // Usable width between nav and right edge (at scale=1)
+        const usableW = viewW - LEFT_NAV - H_PAD;
+        // Grid content width: fit as many cards per row as possible within usableW
+        const maxCardW = Math.max(...cards.map(c => c.offsetWidth));
+        const gridW = Math.max(maxCardW, Math.min(usableW, 940 + GAP)); // cap at 940+gap wide
+        // Bin-pack rows
+        const rows = []; // [{cards, width, height}]
+        let row = [], rowW = 0, rowH = 0;
         cards.forEach(c => {
           const w = c.offsetWidth, h = c.offsetHeight;
-          // Would this card overflow the row?
-          if (rowX > ORIGIN_X && rowX + w > ORIGIN_X + canvasW) {
-            rowY += rowH + GAP;
-            rowX = ORIGIN_X;
-            rowH = 0;
+          if (row.length && rowW + GAP + w > gridW) {
+            rows.push({ cards: row, width: rowW, height: rowH });
+            row = []; rowW = 0; rowH = 0;
           }
-          c.style.left = rowX + 'px';
-          c.style.top  = rowY + 'px';
-          rowX += w + GAP;
-          rowH = Math.max(rowH, h);
+          row.push(c); rowW += (row.length > 1 ? GAP : 0) + w; rowH = Math.max(rowH, h);
         });
-        // Clear transitions after animation completes
+        if (row.length) rows.push({ cards: row, width: rowW, height: rowH });
+        // Total content block dimensions
+        const totalW = Math.max(...rows.map(r => r.width));
+        // Horizontal origin: center the block in the usable area, aligned with nav center
+        const ORIGIN_X = LEFT_NAV + (usableW - totalW) / 2;
+        const TOP_NAV_H = 88; // fixed top nav height + gap
+        const ORIGIN_Y = TOP_NAV_H;
+        // Smooth transition
+        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        // Place cards
+        let curY = ORIGIN_Y;
+        rows.forEach(({ cards: rowCards, height }) => {
+          let curX = ORIGIN_X;
+          rowCards.forEach(c => {
+            c.style.left = curX + 'px';
+            c.style.top  = curY + 'px';
+            curX += c.offsetWidth + GAP;
+          });
+          curY += height + GAP;
+        });
         setTimeout(() => cards.forEach(c => { c.style.transition = ''; }), 400);
-        // Fit view to the arranged content
-        setTimeout(() => fitView(cards, GAP), 420);
+        // Pan to show content from top-left at scale=1, no zoom change
+        setTimeout(() => {
+          scale = 1;
+          tx = 0;
+          ty = 0;
+          applyTransform();
+        }, 420);
       }
       function fitView(cards, pad) {
         if (!cards.length) return;
