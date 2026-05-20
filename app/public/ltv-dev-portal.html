@@ -3144,7 +3144,7 @@
     </div>
 
     <!-- Zoom badge (fixed, outside canvas transform) -->
-    <div id="zoom-badge" title="Double-click to reset zoom">
+    <div id="zoom-badge" title="Click to reset to 100%">
       <span id="zoom-label">100%</span>
     </div>
 
@@ -3267,7 +3267,7 @@
       });
 
       // ── Double-click badge to reset ────────────────────────────────────
-      document.getElementById("zoom-badge").addEventListener("dblclick", resetView);
+      document.getElementById("zoom-badge").addEventListener("click", resetView);
 
       function resetView() {
         scale = 1; tx = 0; ty = 0;
