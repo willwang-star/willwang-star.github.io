@@ -175,8 +175,19 @@
         overflow: hidden;
         cursor: default;
       }
-      #canvas-root.is-panning { cursor: grab; }
-      #canvas-root.is-panning:active { cursor: grabbing; }
+
+      /* Cards show grab cursor on hover, grabbing while dragging */
+      .customize-section { cursor: grab; user-select: none; }
+      .customize-section:active { cursor: grabbing; }
+      /* Restore normal cursor on interactive children */
+      .customize-section button,
+      .customize-section a,
+      .customize-section select,
+      .customize-section input,
+      .customize-section label { cursor: pointer; user-select: auto; }
+      .customize-section input[type="text"],
+      .customize-section input[type="search"],
+      .customize-section textarea { cursor: text; }
 
       #canvas-surface {
         position: absolute;
@@ -3155,129 +3166,174 @@
       const surface = document.getElementById("canvas-surface");
       const label   = document.getElementById("zoom-label");
 
-      // State
+      // ── Canvas state ───────────────────────────────────────────────────
       let scale = 1;
-      let tx = 0; // pan X in screen px
-      let ty = 0; // pan Y in screen px
+      let tx = 0;
+      let ty = 0;
 
-      const MIN_SCALE = 0.25;
-      const MAX_SCALE = 2.5;
-      const ZOOM_SPEED = 0.006; // per wheel delta unit
+      const MIN_SCALE = 0.1;
+      const MAX_SCALE = 4;
+      const ZOOM_SPEED = 0.006;
 
       function applyTransform() {
         surface.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
         label.textContent = Math.round(scale * 100) + "%";
       }
 
-      // ── Pinch-to-zoom & scroll-to-pan (trackpad wheel event) ──────────
+      // Convert screen coords → canvas coords (accounting for pan + zoom)
+      function screenToCanvas(sx, sy) {
+        return {
+          x: (sx - tx) / scale,
+          y: (sy - ty) / scale,
+        };
+      }
+
+      // ── Pinch-to-zoom & two-finger pan ─────────────────────────────────
       root.addEventListener("wheel", (e) => {
         e.preventDefault();
-
         if (e.ctrlKey) {
-          // Pinch-to-zoom: zoom toward the cursor position
           const rect = root.getBoundingClientRect();
           const ox = e.clientX - rect.left;
           const oy = e.clientY - rect.top;
-
           const delta = -e.deltaY * ZOOM_SPEED;
           const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
           const ratio = newScale / scale;
-
-          // Adjust translation so the point under the cursor stays fixed
           tx = ox - ratio * (ox - tx);
           ty = oy - ratio * (oy - ty);
           scale = newScale;
         } else {
-          // Two-finger pan
           tx -= e.deltaX;
           ty -= e.deltaY;
         }
-
         applyTransform();
       }, { passive: false });
 
-      // ── Click-and-drag to pan ──────────────────────────────────────────
-      let dragging = false;
-      let dragStartX = 0;
-      let dragStartY = 0;
-      let txAtDragStart = 0;
-      let tyAtDragStart = 0;
-
-      root.addEventListener("pointerdown", (e) => {
-        // Only pan on middle-click or space+left-click or plain left drag on the canvas bg
-        const onSurface = e.target === surface || e.target === root;
-        const isMiddle = e.button === 1;
-        const isSpace = spaceDown && e.button === 0;
-        if (!onSurface && !isMiddle && !isSpace) return;
-        e.preventDefault();
-        dragging = true;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        txAtDragStart = tx;
-        tyAtDragStart = ty;
-        root.setPointerCapture(e.pointerId);
-        root.classList.add("is-panning");
-      });
-
-      root.addEventListener("pointermove", (e) => {
-        if (!dragging) return;
-        tx = txAtDragStart + (e.clientX - dragStartX);
-        ty = tyAtDragStart + (e.clientY - dragStartY);
-        applyTransform();
-      });
-
-      root.addEventListener("pointerup", () => {
-        dragging = false;
-        root.classList.remove("is-panning");
-      });
-      root.addEventListener("pointercancel", () => {
-        dragging = false;
-        root.classList.remove("is-panning");
-      });
-
-      // ── Spacebar hold = pan mode ───────────────────────────────────────
+      // ── Pointer state ──────────────────────────────────────────────────
+      let mode = "idle"; // "panning" | "card-dragging"
       let spaceDown = false;
+
+      // Canvas pan state
+      let panStartX = 0, panStartY = 0;
+      let txAtPanStart = 0, tyAtPanStart = 0;
+
+      // Card drag state
+      let dragCard = null;       // the .customize-section being dragged
+      let cardStartX = 0, cardStartY = 0;   // canvas coords at drag start
+      let cardOrigLeft = 0, cardOrigTop = 0; // card's left/top at drag start
+
+      // ── Cursor ─────────────────────────────────────────────────────────
+      function setCursor(c) { root.style.cursor = c; }
+
+      // ── Hit-test: is the pointer on a draggable card? ──────────────────
+      // Cards are .customize-section. We walk up from e.target.
+      // If space is held, we always pan — never card-drag.
+      function findCard(target) {
+        if (spaceDown) return null;
+        let el = target;
+        while (el && el !== surface) {
+          if (el.classList && el.classList.contains("customize-section")) return el;
+          el = el.parentElement;
+        }
+        return null;
+      }
+
+      // ── Pointer down ───────────────────────────────────────────────────
+      root.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0 && e.button !== 1) return;
+
+        const card = e.button === 0 ? findCard(e.target) : null;
+
+        if (card) {
+          // ── Card drag ──
+          e.preventDefault();
+          e.stopPropagation();
+          mode = "card-dragging";
+          dragCard = card;
+
+          // Bring card to front
+          card.style.zIndex = "10";
+
+          const cp = screenToCanvas(e.clientX, e.clientY);
+          cardStartX = cp.x;
+          cardStartY = cp.y;
+          cardOrigLeft = parseFloat(card.style.left) || 0;
+          cardOrigTop  = parseFloat(card.style.top)  || 0;
+
+          root.setPointerCapture(e.pointerId);
+          setCursor("grabbing");
+        } else {
+          // ── Canvas pan ──
+          const onBg = e.target === surface || e.target === root;
+          const isMiddle = e.button === 1;
+          if (!onBg && !isMiddle && !spaceDown) return;
+          e.preventDefault();
+          mode = "panning";
+          panStartX = e.clientX;
+          panStartY = e.clientY;
+          txAtPanStart = tx;
+          tyAtPanStart = ty;
+          root.setPointerCapture(e.pointerId);
+          setCursor("grabbing");
+        }
+      });
+
+      // ── Pointer move ───────────────────────────────────────────────────
+      root.addEventListener("pointermove", (e) => {
+        if (mode === "panning") {
+          tx = txAtPanStart + (e.clientX - panStartX);
+          ty = tyAtPanStart + (e.clientY - panStartY);
+          applyTransform();
+        } else if (mode === "card-dragging" && dragCard) {
+          const cp = screenToCanvas(e.clientX, e.clientY);
+          const newLeft = cardOrigLeft + (cp.x - cardStartX);
+          const newTop  = cardOrigTop  + (cp.y - cardStartY);
+          dragCard.style.left = newLeft + "px";
+          dragCard.style.top  = newTop  + "px";
+        } else {
+          // Hover: show grab cursor on cards, default elsewhere
+          const card = findCard(e.target);
+          setCursor(card ? "grab" : spaceDown ? "grab" : "default");
+        }
+      });
+
+      // ── Pointer up ─────────────────────────────────────────────────────
+      function endDrag() {
+        if (mode === "card-dragging" && dragCard) {
+          dragCard.style.zIndex = "";
+          dragCard = null;
+        }
+        mode = "idle";
+        setCursor(spaceDown ? "grab" : "default");
+      }
+      root.addEventListener("pointerup", endDrag);
+      root.addEventListener("pointercancel", endDrag);
+
+      // ── Spacebar = pan mode ────────────────────────────────────────────
       document.addEventListener("keydown", (e) => {
         if (e.code === "Space" && e.target === document.body) {
           e.preventDefault();
           spaceDown = true;
-          root.classList.add("is-panning");
+          if (mode === "idle") setCursor("grab");
         }
-        // Cmd/Ctrl + 0 → reset zoom
-        if ((e.metaKey || e.ctrlKey) && e.key === "0") {
-          e.preventDefault();
-          resetView();
-        }
-        // Cmd/Ctrl + = or + → zoom in
-        if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+")) {
-          e.preventDefault();
-          zoomCenter(1.15);
-        }
-        // Cmd/Ctrl + - → zoom out
-        if ((e.metaKey || e.ctrlKey) && e.key === "-") {
-          e.preventDefault();
-          zoomCenter(1 / 1.15);
-        }
+        if ((e.metaKey || e.ctrlKey) && e.key === "0") { e.preventDefault(); resetView(); }
+        if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+")) { e.preventDefault(); zoomCenter(1.15); }
+        if ((e.metaKey || e.ctrlKey) && e.key === "-") { e.preventDefault(); zoomCenter(1 / 1.15); }
       });
       document.addEventListener("keyup", (e) => {
         if (e.code === "Space") {
           spaceDown = false;
-          if (!dragging) root.classList.remove("is-panning");
+          if (mode === "idle") setCursor("default");
         }
       });
 
-      // ── Double-click badge to reset ────────────────────────────────────
+      // ── Zoom badge ─────────────────────────────────────────────────────
       document.getElementById("zoom-badge").addEventListener("click", resetView);
 
-      function resetView() {
-        scale = 1; tx = 0; ty = 0;
-        applyTransform();
-      }
+      function resetView() { scale = 1; tx = 0; ty = 0; applyTransform(); }
 
       function zoomCenter(factor) {
         const rect = root.getBoundingClientRect();
-        const ox = rect.width / 2;
-        const oy = rect.height / 2;
+        const ox = rect.width / 2, oy = rect.height / 2;
         const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * factor));
         const ratio = newScale / scale;
         tx = ox - ratio * (ox - tx);
