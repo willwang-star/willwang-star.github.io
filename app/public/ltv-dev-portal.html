@@ -445,14 +445,15 @@
       <!-- ── Infinite canvas: only <main> content scrolls/zooms ──────── -->
       <div id="canvas-root">
         <div id="canvas-surface">
-      <main class="pb-40 pt-20 pl-[240px] pr-10">
-        <div class="mx-auto w-full max-w-[1000px]">
+      <main class="absolute inset-0">
+        <!-- Canvas cards positioned absolutely. Origin (0,0) = top-left of surface.
+             Left nav occupies ~260px, top nav ~56px — cards start at (280, 80). -->
+        <div id="customize-area" class="relative">
 
-          <div id="customize-area" class="flex flex-wrap items-stretch gap-x-4 gap-y-10">
-
-          <!-- ── Action Items (half-width) ──────────────────────────── -->
+          <!-- ── Action Items ───────────────────────────────────────── -->
           <section
-            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+            class="customize-section absolute"
+            style="left: 280px; top: 80px; width: 460px;"
           >
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
@@ -514,9 +515,10 @@
             </article>
           </section>
 
-          <!-- ── Recent (half-width) ────────────────────────────────── -->
+          <!-- ── Recent ─────────────────────────────────────────────── -->
           <section
-            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+            class="customize-section absolute"
+            style="left: 760px; top: 80px; width: 460px;"
           >
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
@@ -632,8 +634,8 @@
             </article>
           </section>
 
-          <!-- ── Delivery Teams (full width, no outer container) ────── -->
-          <section class="customize-section relative w-full lg:basis-full">
+          <!-- ── Delivery Teams ─────────────────────────────────────── -->
+          <section class="customize-section absolute" style="left: 280px; top: 520px; width: 940px;">
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
               aria-hidden="true"
@@ -657,8 +659,8 @@
             ></ul>
           </section>
 
-          <!-- ── Continue with Agents (full width, no outer container) -->
-          <section class="customize-section relative w-full lg:basis-full">
+          <!-- ── Continue with Agents ───────────────────────────────── -->
+          <section class="customize-section absolute" style="left: 280px; top: 860px; width: 940px;">
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
               aria-hidden="true"
@@ -682,9 +684,10 @@
             ></ul>
           </section>
 
-          <!-- ── Active Incidents & Alerts (half-width) ─────────────── -->
+          <!-- ── Active Incidents & Alerts ─────────────────────────── -->
           <section
-            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+            class="customize-section absolute"
+            style="left: 280px; top: 1200px; width: 460px;"
           >
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
@@ -712,9 +715,10 @@
             </article>
           </section>
 
-          <!-- ── Jira Tickets (half-width) ──────────────────────────── -->
+          <!-- ── Jira Tickets ───────────────────────────────────────── -->
           <section
-            class="customize-section relative w-full lg:w-[calc(50%-0.5rem)] lg:flex-grow-0 lg:basis-[calc(50%-0.5rem)]"
+            class="customize-section absolute"
+            style="left: 760px; top: 1200px; width: 460px;"
           >
             <span
               class="section-drag-handle pointer-events-none absolute -right-1 -top-3 z-10 inline-flex size-6 items-center justify-center rounded-md border border-border bg-white text-muted-foreground floating-shadow"
@@ -785,7 +789,6 @@
           </section>
 
           </div><!-- /#customize-area -->
-        </div>
       </main>
       </div><!-- /#canvas-surface -->
     </div><!-- /#canvas-root -->
