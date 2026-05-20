@@ -3194,7 +3194,9 @@
 
       // Marquee state
       let marqueeStartCanvas = null; // {x,y} in canvas coords
+      let marqueeStartScreen = null;  // {x,y} in screen coords (for threshold)
       let marqueeEl = null;
+      const MARQUEE_THRESHOLD = 4;    // px before marquee rectangle appears
 
       // Group drag state
       let dragOffsets = []; // [{card, origLeft, origTop}]
@@ -3276,7 +3278,7 @@
         if (e.button !== 0 && e.button !== 1) return;
 
         const card = e.button === 0 ? findCard(e.target) : null;
-        const onBg = e.target === surface || e.target === root;
+        const onBg = !findCardLoose(e.target);
         const isMiddle = e.button === 1;
 
         if (card && !spaceDown) {
@@ -3306,14 +3308,14 @@
             root.setPointerCapture(e.pointerId);
             setCursor("grabbing");
           } else {
-            // Marquee draw
+            // Marquee — deselect immediately, but wait for a drag threshold
+            // before drawing the rectangle (a plain click just deselects).
             deselectAll();
-            mode = "marquee";
+            mode = "marquee-pending";
+            marqueeStartScreen = { x: e.clientX, y: e.clientY };
             marqueeStartCanvas = screenToCanvas(e.clientX, e.clientY);
-            marqueeEl = createMarquee();
-            updateMarquee(marqueeStartCanvas, marqueeStartCanvas);
             root.setPointerCapture(e.pointerId);
-            setCursor("crosshair");
+            setCursor("default");
           }
         } else if (isMiddle) {
           e.preventDefault();
@@ -3335,6 +3337,16 @@
           tx = txAtPanStart + (e.clientX - panStartX);
           ty = tyAtPanStart + (e.clientY - panStartY);
           applyTransform();
+        } else if (mode === "marquee-pending") {
+          const dx = e.clientX - marqueeStartScreen.x;
+          const dy = e.clientY - marqueeStartScreen.y;
+          if (Math.sqrt(dx*dx + dy*dy) > MARQUEE_THRESHOLD) {
+            // Crossed threshold — show the rectangle
+            mode = "marquee";
+            marqueeEl = createMarquee();
+            updateMarquee(marqueeStartCanvas, screenToCanvas(e.clientX, e.clientY));
+            setCursor("crosshair");
+          }
         } else if (mode === "marquee") {
           const cur = screenToCanvas(e.clientX, e.clientY);
           updateMarquee(marqueeStartCanvas, cur);
@@ -3357,6 +3369,12 @@
       root.addEventListener("pointerup", endInteraction);
       root.addEventListener("pointercancel", endInteraction);
       function endInteraction() {
+        if (mode === "marquee-pending") {
+          // Plain click on empty canvas — selection already cleared on pointerdown
+          mode = "idle";
+          setCursor(spaceDown ? "grab" : "default");
+          return;
+        }
         if (mode === "marquee" && marqueeEl) {
           const cur_end = marqueeEl.getBoundingClientRect(); // already in place
           const mr = marqueeRect(marqueeStartCanvas, {
