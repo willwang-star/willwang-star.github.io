@@ -3241,19 +3241,33 @@
       function allCards() { return Array.from(surface.querySelectorAll("." + CARD_CLASS)); }
 
       // ── Hit-test helpers ──────────────────────────────────────────────
+      // Only truly actionable elements block card-drag — passive display
+      // elements (span, li, td) do NOT block so cards remain draggable.
       const INTERACTIVE = [
-        'a','button','input','textarea','select','label',
+        'a[href]','button','input','textarea','select',
         '[role="button"],[role="tab"],[role="menuitem"],[role="menuitemradio"]',
         '[role="checkbox"],[role="radio"],[role="link"],[role="option"]',
-        'th','td','li','[tabindex]',
+        '[tabindex]:not([tabindex="-1"])',
       ].join(',');
       function isInteractive(el) {
         try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
       }
+      // findCard: returns the card ancestor, or null if an interactive element
+      // is hit before reaching the card root (so clicks on buttons still work).
       function findCard(target) {
         let el = target;
         while (el && el !== surface) {
           if (isInteractive(el)) return null;
+          if (el.classList && el.classList.contains(CARD_CLASS)) return el;
+          el = el.parentElement;
+        }
+        return null;
+      }
+      // findCardLoose: same walk but ignores interactivity — used to detect
+      // "clicked somewhere inside a card" without caring if it's a button etc.
+      function findCardLoose(target) {
+        let el = target;
+        while (el && el !== surface) {
           if (el.classList && el.classList.contains(CARD_CLASS)) return el;
           el = el.parentElement;
         }
@@ -3346,8 +3360,12 @@
           root.setPointerCapture(e.pointerId);
           setCursor("grabbing");
         } else if (onBg) {
+          // True background click (not inside any card) — deselect
           deselectAll();
         }
+        // Note: clicks on interactive children inside a card (buttons, inputs)
+        // fall through here with card=null and onBg=false — we do nothing,
+        // preserving the current selection.
       });
 
       // ── Pointer move ───────────────────────────────────────────────────

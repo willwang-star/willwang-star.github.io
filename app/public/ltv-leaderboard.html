@@ -1063,10 +1063,10 @@
 
       // ── Hit-test helpers ──────────────────────────────────────────────
       const INTERACTIVE = [
-        'a','button','input','textarea','select','label',
+        'a[href]','button','input','textarea','select',
         '[role="button"],[role="tab"],[role="menuitem"],[role="menuitemradio"]',
         '[role="checkbox"],[role="radio"],[role="link"],[role="option"]',
-        'th','td','li','[tabindex]',
+        '[tabindex]:not([tabindex="-1"])',
       ].join(',');
       function isInteractive(el) {
         try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
@@ -1075,6 +1075,14 @@
         let el = target;
         while (el && el !== surface) {
           if (isInteractive(el)) return null;
+          if (el.classList && el.classList.contains(CARD_CLASS)) return el;
+          el = el.parentElement;
+        }
+        return null;
+      }
+      function findCardLoose(target) {
+        let el = target;
+        while (el && el !== surface) {
           if (el.classList && el.classList.contains(CARD_CLASS)) return el;
           el = el.parentElement;
         }
@@ -1169,6 +1177,8 @@
         } else if (onBg) {
           deselectAll();
         }
+        // Clicks on interactive children inside a card fall through here —
+        // do nothing so selection is preserved.
       });
 
       // ── Pointer move ───────────────────────────────────────────────────
