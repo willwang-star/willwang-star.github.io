@@ -206,6 +206,22 @@
 
       /* Zoom badge — bottom left, above nothing (fixed so it ignores canvas transform) */
       #zoom-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        border-radius: 9999px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+        padding: 0.25rem 0.625rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: hsl(var(--muted-foreground));
+        user-select: none;
+        cursor: default;
+      }
+      #zoom-badge:hover { color: hsl(var(--foreground)); }
+
+      #arrange-btn {
         position: fixed;
         bottom: 1.25rem;
         left: 1.25rem;
@@ -221,9 +237,10 @@
         font-weight: 500;
         color: hsl(var(--muted-foreground));
         user-select: none;
-        cursor: default;
+        cursor: pointer;
+        transition: color 0.15s, border-color 0.15s;
       }
-      #zoom-badge:hover { color: hsl(var(--foreground)); }
+      #arrange-btn:hover { color: hsl(var(--foreground)); border-color: hsl(var(--foreground) / 0.4); }
 
       /* Rolling placeholder. The native <textarea> placeholder doesn't
          animate, so we render our own overlay positioned exactly where
@@ -3161,9 +3178,15 @@
       </div>
     </div>
 
-    <!-- Zoom badge (fixed, outside canvas transform) -->
-    <div id="zoom-badge" title="Click to reset to 100%">
-      <span id="zoom-label">100%</span>
+    <!-- Bottom-left controls (fixed, outside canvas transform) -->
+    <div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:50;display:flex;align-items:center;gap:0.5rem;">
+      <div id="zoom-badge" title="Click to reset to 100%">
+        <span id="zoom-label">100%</span>
+      </div>
+      <button id="arrange-btn" title="Auto-arrange cards">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Arrange
+      </button>
     </div>
 
     <!-- ── Infinite canvas controller ──────────────────────────────────── -->
@@ -3457,6 +3480,58 @@
       // ── Zoom badge ─────────────────────────────────────────────────────
       document.getElementById("zoom-badge").addEventListener("click", resetView);
       function resetView() { scale = 1; tx = 0; ty = 0; applyTransform(); }
+
+      // ── Auto-arrange ───────────────────────────────────────────────────
+      document.getElementById("arrange-btn").addEventListener("click", autoArrange);
+      function autoArrange() {
+        const cards = allCards();
+        if (!cards.length) return;
+        const GAP = 24, ORIGIN_X = 80, ORIGIN_Y = 80;
+        // Find the canvas content width: max card width + 2 cols of narrow cards + gaps
+        const maxW = Math.max(...cards.map(c => c.offsetWidth));
+        const canvasW = Math.max(maxW, 940) + GAP * 2; // at least wide enough for 2 cols
+        // Bin-pack: place cards left→right, wrap when next card doesn't fit
+        let rowX = ORIGIN_X, rowY = ORIGIN_Y, rowH = 0;
+        // Enable smooth transition
+        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        cards.forEach(c => {
+          const w = c.offsetWidth, h = c.offsetHeight;
+          // Would this card overflow the row?
+          if (rowX > ORIGIN_X && rowX + w > ORIGIN_X + canvasW) {
+            rowY += rowH + GAP;
+            rowX = ORIGIN_X;
+            rowH = 0;
+          }
+          c.style.left = rowX + 'px';
+          c.style.top  = rowY + 'px';
+          rowX += w + GAP;
+          rowH = Math.max(rowH, h);
+        });
+        // Clear transitions after animation completes
+        setTimeout(() => cards.forEach(c => { c.style.transition = ''; }), 400);
+        // Fit view to the arranged content
+        setTimeout(() => fitView(cards, GAP), 420);
+      }
+      function fitView(cards, pad) {
+        if (!cards.length) return;
+        const lefts  = cards.map(c => parseFloat(c.style.left) || 0);
+        const tops   = cards.map(c => parseFloat(c.style.top)  || 0);
+        const rights = cards.map(c => (parseFloat(c.style.left) || 0) + c.offsetWidth);
+        const bots   = cards.map(c => (parseFloat(c.style.top)  || 0) + c.offsetHeight);
+        const minX = Math.min(...lefts)  - pad;
+        const minY = Math.min(...tops)   - pad;
+        const maxX = Math.max(...rights) + pad;
+        const maxY = Math.max(...bots)   + pad;
+        const rootRect = document.getElementById('canvas-root').getBoundingClientRect();
+        const newScale = Math.min(4, Math.max(0.1, Math.min(
+          rootRect.width  / (maxX - minX),
+          rootRect.height / (maxY - minY)
+        )));
+        tx = rootRect.width  / 2 - newScale * ((minX + maxX) / 2);
+        ty = rootRect.height / 2 - newScale * ((minY + maxY) / 2);
+        scale = newScale;
+        applyTransform();
+      }
       function zoomCenter(factor) {
         const rect = root.getBoundingClientRect();
         const ox = rect.width / 2, oy = rect.height / 2;

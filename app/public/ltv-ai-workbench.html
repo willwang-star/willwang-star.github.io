@@ -3217,9 +3217,15 @@
       </div>
     </div>
 
-    <!-- Zoom badge -->
-    <div id="zoom-badge" title="Click to reset to 100%">
-      <span id="zoom-label">100%</span>
+    <!-- Bottom-left controls (fixed, outside canvas transform) -->
+    <div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:50;display:flex;align-items:center;gap:0.5rem;">
+      <div id="zoom-badge" title="Click to reset to 100%">
+        <span id="zoom-label">100%</span>
+      </div>
+      <button id="arrange-btn" title="Auto-arrange cards">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Arrange
+      </button>
     </div>
 
     <!-- ── Infinite canvas controller ──────────────────────────────────── -->
@@ -3485,6 +3491,41 @@
       // ── Zoom badge ─────────────────────────────────────────────────────
       document.getElementById("zoom-badge").addEventListener("click", resetView);
       function resetView() { scale = 1; tx = 0; ty = 0; applyTransform(); }
+
+      // ── Auto-arrange ───────────────────────────────────────────────────
+      document.getElementById("arrange-btn").addEventListener("click", autoArrange);
+      function autoArrange() {
+        const cards = allCards();
+        if (!cards.length) return;
+        const GAP = 24, ORIGIN_X = 80, ORIGIN_Y = 80;
+        const canvasW = Math.max(...cards.map(c => c.offsetWidth), 940) + GAP * 2;
+        let rowX = ORIGIN_X, rowY = ORIGIN_Y, rowH = 0;
+        cards.forEach(c => { c.style.transition = 'left 0.35s cubic-bezier(.4,0,.2,1), top 0.35s cubic-bezier(.4,0,.2,1)'; });
+        cards.forEach(c => {
+          const w = c.offsetWidth, h = c.offsetHeight;
+          if (rowX > ORIGIN_X && rowX + w > ORIGIN_X + canvasW) {
+            rowY += rowH + GAP; rowX = ORIGIN_X; rowH = 0;
+          }
+          c.style.left = rowX + 'px'; c.style.top = rowY + 'px';
+          rowX += w + GAP; rowH = Math.max(rowH, h);
+        });
+        setTimeout(() => cards.forEach(c => { c.style.transition = ''; }), 400);
+        setTimeout(() => fitView(cards, GAP), 420);
+      }
+      function fitView(cards, pad) {
+        if (!cards.length) return;
+        const lefts  = cards.map(c => parseFloat(c.style.left) || 0);
+        const tops   = cards.map(c => parseFloat(c.style.top)  || 0);
+        const rights = cards.map(c => (parseFloat(c.style.left) || 0) + c.offsetWidth);
+        const bots   = cards.map(c => (parseFloat(c.style.top)  || 0) + c.offsetHeight);
+        const minX = Math.min(...lefts) - pad, minY = Math.min(...tops) - pad;
+        const maxX = Math.max(...rights) + pad, maxY = Math.max(...bots) + pad;
+        const rootRect = document.getElementById('canvas-root').getBoundingClientRect();
+        const newScale = Math.min(4, Math.max(0.1, Math.min(rootRect.width/(maxX-minX), rootRect.height/(maxY-minY))));
+        tx = rootRect.width/2 - newScale*((minX+maxX)/2);
+        ty = rootRect.height/2 - newScale*((minY+maxY)/2);
+        scale = newScale; applyTransform();
+      }
       function zoomCenter(factor) {
         const rect = root.getBoundingClientRect();
         const ox = rect.width / 2, oy = rect.height / 2;
