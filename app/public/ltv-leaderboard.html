@@ -92,7 +92,7 @@
         outline: 2px solid transparent;
         outline-offset: 4px;
         border-radius: 0.75rem;
-        transition: outline-color 0.1s;
+        transition: outline-color 0.1s, left 0.18s ease, top 0.18s ease;
       }
       .canvas-card.is-selected, .canvas-card.is-selected {
         outline-color: hsl(221 83% 53% / 0.8);
@@ -1112,8 +1112,42 @@
         }
       });
 
+      // ── No-overlap resolver ───────────────────────────────────────────
+      function getRect(card) {
+        return { left: parseFloat(card.style.left)||0, top: parseFloat(card.style.top)||0, width: card.offsetWidth, height: card.offsetHeight };
+      }
+      function rectsOverlap(a, b, gap) {
+        return a.left < b.left+b.width+gap && a.left+a.width+gap > b.left && a.top < b.top+b.height+gap && a.top+a.height+gap > b.top;
+      }
+      function resolveOverlaps(movedCard, allCards) {
+        movedCard.style.transition = "none";
+        let r = getRect(movedCard);
+        let changed = true, iters = 0;
+        while (changed && iters < 20) {
+          changed = false; iters++;
+          allCards.forEach(other => {
+            if (other === movedCard) return;
+            const o = getRect(other);
+            if (!rectsOverlap(r, o, 16)) return;
+            const oR = (r.left+r.width+16)-o.left, oL = (o.left+o.width+16)-r.left;
+            const oB = (r.top+r.height+16)-o.top, oT = (o.top+o.height+16)-r.top;
+            const m = Math.min(oR,oL,oB,oT);
+            if (m===oR) r.left=o.left-r.width-16;
+            else if (m===oL) r.left=o.left+o.width+16;
+            else if (m===oB) r.top=o.top-r.height-16;
+            else r.top=o.top+o.height+16;
+            r.left=Math.max(0,r.left); r.top=Math.max(0,r.top);
+            changed=true;
+          });
+        }
+        requestAnimationFrame(() => { movedCard.style.transition=""; movedCard.style.left=r.left+"px"; movedCard.style.top=r.top+"px"; });
+      }
       function endDrag() {
-        if (dragCard) { dragCard.style.zIndex = ""; dragCard = null; }
+        if (dragCard) {
+          const allCards = Array.from(document.querySelectorAll(".customize-section, .canvas-card"));
+          resolveOverlaps(dragCard, allCards);
+          dragCard.style.zIndex = ""; dragCard = null;
+        }
         mode = "idle"; setCursor(spaceDown ? "grab" : "default");
       }
       root.addEventListener("pointerup", endDrag);
