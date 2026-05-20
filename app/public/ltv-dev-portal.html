@@ -176,18 +176,9 @@
         cursor: default;
       }
 
-      /* Cards show grab cursor on hover, grabbing while dragging */
-      .customize-section { cursor: grab; user-select: none; }
-      .customize-section:active { cursor: grabbing; }
-      /* Restore normal cursor on interactive children */
-      .customize-section button,
-      .customize-section a,
-      .customize-section select,
-      .customize-section input,
-      .customize-section label { cursor: pointer; user-select: auto; }
-      .customize-section input[type="text"],
-      .customize-section input[type="search"],
-      .customize-section textarea { cursor: text; }
+      /* Cursor handled entirely in JS — no CSS grab override needed */
+      .customize-section, .canvas-card { user-select: none; }
+      .customize-section *, .canvas-card * { user-select: auto; }
 
       #canvas-surface {
         position: absolute;
@@ -3227,10 +3218,22 @@
       // ── Hit-test: is the pointer on a draggable card? ──────────────────
       // Cards are .customize-section. We walk up from e.target.
       // If space is held, we always pan — never card-drag.
+      // Interactive selectors — hovering these never shows grab
+      const INTERACTIVE = [
+        'a','button','input','textarea','select','label',
+        '[role="button"],[role="tab"],[role="menuitem"],[role="menuitemradio"]',
+        '[role="checkbox"],[role="radio"],[role="link"],[role="option"]',
+        'th','td','li','[tabindex]',
+      ].join(',');
+      function isInteractive(el) {
+        try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
+      }
       function findCard(target) {
         if (spaceDown) return null;
+        // Walk up: if we hit an interactive element before the card, abort
         let el = target;
         while (el && el !== surface) {
+          if (isInteractive(el)) return null;
           if (el.classList && el.classList.contains("customize-section")) return el;
           el = el.parentElement;
         }

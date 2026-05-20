@@ -85,18 +85,9 @@
         cursor: default;
       }
 
-      /* Cards show grab cursor on hover, grabbing while dragging */
-      .canvas-card { cursor: grab; user-select: none; }
-      .canvas-card:active { cursor: grabbing; }
-      /* Restore normal cursor on interactive children */
-      .canvas-card button,
-      .canvas-card a,
-      .canvas-card select,
-      .canvas-card input,
-      .canvas-card label { cursor: pointer; user-select: auto; }
-      .canvas-card input[type="text"],
-      .canvas-card input[type="search"],
-      .canvas-card textarea { cursor: text; }
+      /* Cursor handled entirely in JS — no CSS grab override needed */
+      .customize-section, .canvas-card { user-select: none; }
+      .customize-section *, .canvas-card * { user-select: auto; }
 
       #canvas-surface {
         position: absolute;
@@ -1036,10 +1027,21 @@
       let dragCard = null, cardStartX = 0, cardStartY = 0, cardOrigLeft = 0, cardOrigTop = 0;
 
       function setCursor(c) { root.style.cursor = c; }
+      // Interactive selectors — hovering these never shows grab
+      const INTERACTIVE = [
+        'a','button','input','textarea','select','label',
+        '[role="button"],[role="tab"],[role="menuitem"],[role="menuitemradio"]',
+        '[role="checkbox"],[role="radio"],[role="link"],[role="option"]',
+        'th','td','li','[tabindex]',
+      ].join(',');
+      function isInteractive(el) {
+        try { return el && el.matches && el.matches(INTERACTIVE); } catch(e) { return false; }
+      }
       function findCard(target) {
         if (spaceDown) return null;
         let el = target;
         while (el && el !== surface) {
+          if (isInteractive(el)) return null;
           if (el.classList && el.classList.contains("canvas-card")) return el;
           el = el.parentElement;
         }
