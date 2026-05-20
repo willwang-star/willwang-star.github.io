@@ -173,7 +173,7 @@
         position: fixed;
         inset: 0;
         overflow: hidden;
-        cursor: default;
+        cursor: pointer;
       }
 
       /* Cursor handled entirely in JS — no CSS grab override needed */
@@ -217,15 +217,11 @@
         font-weight: 500;
         color: hsl(var(--muted-foreground));
         user-select: none;
-        cursor: default;
+        cursor: pointer;
       }
       #zoom-badge:hover { color: hsl(var(--foreground)); }
 
       #arrange-btn {
-        position: fixed;
-        bottom: 1.25rem;
-        left: 1.25rem;
-        z-index: 50;
         display: flex;
         align-items: center;
         gap: 0.375rem;
